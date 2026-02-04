@@ -4,6 +4,7 @@ class AppColor {
   //----------------------lahal colors----------------------
   static const Color primaryColor = Color(0xFF047861);
   static const Color black = Color(0xFF0A0A0A);
+  static const Color white = Color(0xFFFFFFFF);
 
   //----------------------old code----------------------
 
@@ -46,7 +47,6 @@ class AppColor {
     0xFF433E3F,
   ); // Select Date & Calendar No. Font
 
-  static const white = Color(0xFFFFFFFF);
   static const transparent = Colors.transparent;
   static const grey = Color(0xFFB3B3B3);
 

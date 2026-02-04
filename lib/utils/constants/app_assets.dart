@@ -15,7 +15,7 @@ class AppAssets {
   // ===============================================================
   // 🖼️ Images
   // ===============================================================
-  static const onboarding = '${_images}onboarding.png';
+  // static const onboarding = '${_images}onboarding.png';
 
   //----------------------new code----------------------
   static const biryaniImage = '${_images}briyani_image.png';
@@ -23,9 +23,9 @@ class AppAssets {
   // ===============================================================
   // 🧭 Icons (PNG)
   // ===============================================================
-  static const icLocation = '${_icons}location.png';
-  static const icSelfieVerification = 'assets/icons/selfie_verfication.png';
-  static const icDocVerification = 'assets/icons/doc_verfication.png';
+  // static const icLocation = '${_icons}location.png';
+  // static const icSelfieVerification = 'assets/icons/selfie_verfication.png';
+  // static const icDocVerification = 'assets/icons/doc_verfication.png';
 
   // ===============================================================
   // 🗂️ Logos (PNG/SVG if available later)

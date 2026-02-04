@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/authentication/view/screen/sign_in_screen.dart';
+import 'package:lahal_application/features/home/view/home_screen.dart';
+import 'package:lahal_application/features/home/view/map_screen.dart';
+import 'package:lahal_application/features/home/view/prey_screen.dart';
+import 'package:lahal_application/features/home/view/profile_screen.dart';
 import 'package:lahal_application/features/splash/view/screen/splash_screen.dart';
-import 'package:lahal_application/features/authentication/view/screen/auth_entry_screen.dart';
 import 'package:lahal_application/features/authentication/view/screen/otp_verification_screen.dart';
-import 'package:lahal_application/features/authentication/view/screen/welcome_screen.dart';
-import 'package:lahal_application/features/help_and_support/view/contact_support_screen.dart';
-import 'package:lahal_application/features/help_and_support/view/f&q_screen.dart';
 import 'package:lahal_application/main.dart';
+import 'package:lahal_application/utils/components/backbutton_handler/backbutton_handler.dart';
 import 'package:lahal_application/utils/constants/enum.dart';
 import '../../features/bottomNavigationBar/view/bottom_navigationbar.dart';
-import '../../features/help_and_support/view/privacy_policy_screen.dart';
-import '../../features/help_and_support/view/terms_and_condation_screen.dart';
-import '../../features/help_and_support/view/help_and_support_Screen.dart';
-
 part 'app_routes.dart';
 
 class AppGoRouter {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+  //       // / Helper function to wrap widgets with BackButtonHandler for automatic back button handling
+
+  static Widget _wrapWithBackButtonHandler(Widget child) {
+    return BackButtonHandler(child: child);
+  }
+
   static GoRouter router = GoRouter(
     navigatorKey: navigatorKey,
     routes: [
@@ -28,6 +33,14 @@ class AppGoRouter {
         const OtpVerificationScreen(mode: AuthEntryMode.phone, data: ""),
       ),
       _createRoute(AppRoutes.bottomNavigationBar, BottomNavigationbar()),
+
+      //===================home========================
+      _createRoute(AppRoutes.homeScreen, const HomeScreen()),
+      _createRoute(AppRoutes.mapScreen, const MapScreen()),
+      _createRoute(AppRoutes.preyScreen, const PreyScreen()),
+      _createRoute(AppRoutes.profileScreen, const ProfileScreen()),
+
+      //===================old code========================
       // _createRoute(AppRoutes.fwdDetailScreen, FwdDetailScreen()),
       // _createRoute(AppRoutes.profileDetailsScreen, ProfileDetailsScreen()),
       // _createRoute(AppRoutes.chatDetailScreen, ChatDetailScreen()),
@@ -53,17 +66,17 @@ class AppGoRouter {
       //   PrivacyPolicyScreenHelp(),
       // ),
       // _createRoute("/", const SignInScreen()),
-      GoRoute(
-        path: AppRoutes.authEntry,
-        pageBuilder: (context, state) {
-          final mode = state.extra as AuthEntryMode;
-          return _buildTransitionPage(
-            context,
-            state,
-            AuthEntryScreen(mode: mode),
-          );
-        },
-      ),
+      // GoRoute(
+      //   path: AppRoutes.authEntry,
+      //   pageBuilder: (context, state) {
+      //     final mode = state.extra as AuthEntryMode;
+      //     return _buildTransitionPage(
+      //       context,
+      //       state,
+      //       AuthEntryScreen(mode: mode),
+      //     );
+      //   },
+      // ),
       // GoRoute(
       //   path: AppRoutes.otpVerify,
       //   pageBuilder: (context, state) {
@@ -125,7 +138,7 @@ class AppGoRouter {
   ) {
     return CustomTransitionPage(
       key: state.pageKey,
-      child: child,
+      child: BackButtonHandler(child: child),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(opacity: animation, child: child);
       },

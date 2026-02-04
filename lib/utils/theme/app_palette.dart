@@ -7,14 +7,12 @@ class AppPalette {
   // Brand seed (base hue)
   static const seed = Color(0xFF46C7CD);
 
-  static const brand50 = Color(
-    0xFFEDF9FA,
-  ); // Very light tint – backgrounds // Secondary Button (Cancel/Reset)
+  static const brand50 = Color(0xFFEDF9FA); // Very light tint
   static const brand100 = Color(0xFFC6EEF0); // Secondary tint, chip bg
   static const brand200 = Color(0xFFAAE5E8);
   static const brand300 = Color(0xFF7BDBE0);
   static const brand400 = Color(0xFF6BD2D7);
-  static const brand500 = Color(0xFF46C7CD); // Primary button bg, active tab bg
+  static const brand500 = Color(0xFF047861); // Primary green requested by user
   static const brand600 = Color(0xFF40B5BB);
   static const brand700 = Color(0xFF328D92); // Button Of match screen
   static const brand800 = Color(0xFF276D71);
@@ -73,10 +71,10 @@ class AppPalette {
   // ✏️ Text colors (semantic)
   // ------------------------
   static const textPrimary = Color(
-    0xFF212121,
-  ); // Title / Heading / TextField text
-  static const textSubtle = Color(0xFF616161); // Sub label / secondary text
-  static const textMuted = Color(0xFF9E9E9E); // Hint / placeholder / timestamp
+    0xFF000000,
+  ); // Pure black requested for headings
+  static const textSubtle = Color(0xFF6E6E6E); // Grey 1 requested
+  static const textMuted = Color(0xFF8A8A8A); // Grey 2 requested
   static const textInverse = Color(0xFFFFFFFF); // text on dark/colored bg
 
   // ------------------------

@@ -1,5 +1,7 @@
 class AppUrls {
-  static const String _baseUrl = "https://apibackend.trimify.com.au";
+  // ---------------------------- BASE URL--------------------------
+
+  static const String _baseUrl = "";
 
   static Uri setUrls(String uri) {
     return Uri.parse("$_baseUrl$uri");
@@ -9,6 +11,11 @@ class AppUrls {
     return "$_baseUrl$uri";
   }
 
-  // -- Auth--- lalah---
-  static Uri signUp = setUrls("/api/signup");
+  //  AUTH
+  static Uri signIn = setUrls("/api/login");
+  static Uri verifyOtp = setUrls("/api/verify-otp");
+  static Uri resendOtp = setUrls("/api/resend-otp");
+
+  // Home
+  static Uri home = setUrls("/api/home");
 }

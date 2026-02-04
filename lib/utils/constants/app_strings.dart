@@ -2,7 +2,6 @@ class AppStrings {
   // ----------------------------
   // 🔐 AUTH / LOGIN / SIGNUP
   // ----------------------------
-
   static const findFoodThatAligns = "Find food that aligns\nwith your values.";
   static const loginOrSignup = "Log in or sign up";
   static const rememberMyLogin = "Remember my login for faster sign-in";
@@ -11,17 +10,25 @@ class AppStrings {
   static const termsOfService = "Terms of Service";
   static const privacyPolicy = "Privacy Policy";
   static const contentPolicy = "Content Policy";
+  // OTP
+  static const otpVerification = "OTP Verification ";
+  static const weHaveSentVerificationCodeTo =
+      "We have sent a verification code to";
+  static const didntReceiveCode = "Didn't receive the OTP?";
+  static const resendSms = " Resend SMS";
+  static const checkTextMessages = "Check text messages for your OTP";
+  static const goBackToLogin = "Go Back to Login";
+  static const secondsSuffix = "s";
 
   //----hint text
   static const enterPhoneNumber = "Enter phone number";
 
-  //--------------------old code -------------
+  //-------------------------------------------------------------old code -------------------------------------------------------------------
   static const continueText = "Continue";
   static const signIn = "Sign in";
   static const createAccount = "Create account";
   static const welcomeTitle = "Welcome to Match at First Swipe";
   static const continueWithPhone = "Continue with Phone";
-  static const otpVerification = "OTP code verification 🔐";
   static const letsGetStarted = "Let’s Get You Started 😊";
   static const letsGetStartedDesc =
       "Enter your number for a quick, safe & seamless experience — no spam, ever.";
@@ -42,12 +49,7 @@ class AppStrings {
   static const otpSentEmail =
       "OTP sent to your email. Enter the code to verify.";
   static const enterOtpToVerify = "Enter the code to verify.";
-  static const didntReceiveCode = "Didn't receive the OTP?";
-  static const resendSms = " Resend SMS";
-  static const checkTextMessages = "Check text messages for your OTP";
-  static const goBackToLogin = "Go Back to Login";
   static const resendCodeIn = "You can resend code in";
-  static const secondsSuffix = "s";
 
   // ----------------------------
   // 🧭 LOCATION

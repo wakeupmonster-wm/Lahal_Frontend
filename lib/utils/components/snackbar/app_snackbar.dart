@@ -1,4 +1,3 @@
-import 'package:lahal_application/utils/components/text/app_text.dart';
 import 'package:lahal_application/utils/constants/app_sizer.dart';
 import 'package:lahal_application/utils/constants/enum.dart';
 import 'package:lahal_application/utils/helper/debouncing.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
-import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 
 final AppDebouncer _debouncer = AppDebouncer(milliseconds: 500);

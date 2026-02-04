@@ -1,6 +1,8 @@
 // lib/core/widgets/internal_app_bar.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
@@ -24,7 +26,11 @@ class InternalAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.suffix,
     this.showTitleWhenProgress = false,
     this.backgroundColor = Colors.transparent,
+    this.centerTitle = true,
   });
+
+  /// Whether title should be centered (default true)
+  final bool centerTitle;
 
   /// Is Back button enabled (default true)
   final bool isBackEnabled;
@@ -93,7 +99,13 @@ class InternalAppBar extends StatelessWidget implements PreferredSizeWidget {
                             padding: EdgeInsets.zero,
                             iconSize: backIconSize,
                             visualDensity: VisualDensity.compact,
-                            icon: const Icon(Iconsax.arrow_left_outline),
+                            icon: SvgPicture.asset(
+                              AppSvg.backButtonIcon,
+                              colorFilter: ColorFilter.mode(
+                                cs.onSurface,
+                                BlendMode.srcIn,
+                              ),
+                            ),
                             onPressed:
                                 onBack ??
                                 () {
@@ -105,10 +117,12 @@ class InternalAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ),
 
-                      // Spacer left to center area
-                      SizedBox(width: isBackEnabled ? 8 : 22),
+                      // Spacer if centered, or small gap if start-aligned
+                      SizedBox(
+                        width: centerTitle ? (isBackEnabled ? 8 : 22) : 12,
+                      ),
 
-                      // Title area - center aligned
+                      // Title area
                       progress != null
                           ? Expanded(
                               child: Center(
@@ -138,7 +152,10 @@ class InternalAppBar extends StatelessWidget implements PreferredSizeWidget {
                               ),
                             )
                           : Expanded(
-                              child: Center(
+                              child: Align(
+                                alignment: centerTitle
+                                    ? Alignment.center
+                                    : Alignment.centerLeft,
                                 child: showTitle
                                     ? AppText(
                                         title!,
@@ -160,7 +177,7 @@ class InternalAppBar extends StatelessWidget implements PreferredSizeWidget {
                             child: suffix,
                           ),
                         )
-                      else
+                      else if (centerTitle)
                         // keep space so center looks visually centered
                         SizedBox(width: backIconSize + 8),
                     ],

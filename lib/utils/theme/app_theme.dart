@@ -92,13 +92,13 @@ class AppTheme {
     final appTypography = AppTypography.fromTextTheme(_baseJakarta);
     final appTextColors = AppTextColors(
       link: scheme.primary, // tappable links / CTAs
-      primary: scheme.onSurface, // main readable text (body & headings)
+      primary: AppPalette.textPrimary, // Headings / Pure Black
       secondary: scheme.tertiary, // small accent text if needed
       tertiary: scheme.secondary, // alternative accent
-      neutral: scheme.onSurface, // primary body text
+      neutral: AppPalette.textPrimary, // primary body text
       inverse: scheme.onPrimary, // text on primary background
-      subtle: AppPalette.textSubtle, // placeholders / captions (#616161)
-      muted: AppPalette.textMuted, // timestamps / disabled states (#9E9E9E)
+      subtle: AppPalette.textSubtle, // #6E6E6E
+      muted: AppPalette.textMuted, // #8A8A8A
       info: AppPalette.info, // semantic info for inline text
       warning: AppPalette.warning,
       error: scheme.error,
@@ -192,30 +192,30 @@ class AppTheme {
 
   static ThemeData dark() {
     // Map semantic roles to palette shades (Dark theme)
-    const scheme = ColorScheme(
+    final scheme = ColorScheme(
       brightness: Brightness.dark,
 
-      // Brand (choose a lighter brand shade so it stands out on dark bg)
-      primary: AppPalette.brand300,
-      onPrimary: Colors.black, // text/icons on primary (brand300 is light)
-      primaryContainer: AppPalette.brand700,
+      // Brand (user wants same green as light mode)
+      primary: AppPalette.brand500,
+      onPrimary: Colors.white, // white text looks better on dark green
+      primaryContainer: AppPalette.brand500.withOpacity(0.2),
       onPrimaryContainer: Colors.white,
 
       // Secondary / tertiary accents
-      secondary: AppPalette.brand400,
+      secondary: AppPalette.brand300,
       onSecondary: Colors.black,
-      secondaryContainer: AppPalette.brand800,
+      secondaryContainer: AppPalette.brand500.withOpacity(0.1),
       onSecondaryContainer: Colors.white,
 
-      tertiary: AppPalette.brand200,
+      tertiary: AppPalette.brand300,
       onTertiary: Colors.black,
-      tertiaryContainer: AppPalette.brand800,
+      tertiaryContainer: AppPalette.brand500.withOpacity(0.1),
       onTertiaryContainer: Colors.white,
 
       // Status
       error: AppPalette.error,
       onError: Colors.white,
-      errorContainer: Color(0xFF4A1D1D),
+      errorContainer: const Color(0xFF4A1D1D),
       onErrorContainer: Colors.white,
 
       // Surfaces & text
@@ -238,15 +238,14 @@ class AppTheme {
     final appTypography = AppTypography.fromTextTheme(_baseJakarta);
 
     final appTextColors = AppTextColors(
-      link: scheme.primary, // brand accent (brand300 on dark)
-      primary: scheme.onSurface, // white-ish text on dark background
+      link: scheme.primary,
+      primary: scheme.onSurface, // white on dark
       secondary: scheme.tertiary,
       tertiary: scheme.secondary,
       neutral: scheme.onSurface,
-      inverse: scheme
-          .onPrimary, // text on primary (in dark we used black on light brand)
-      subtle: scheme.onSurface.withOpacity(0.75), // dimmer white
-      muted: AppPalette.grey400, // use slightly darker grey for muted info
+      inverse: scheme.onPrimary,
+      subtle: AppPalette.textSubtle, // #6E6E6E as requested
+      muted: AppPalette.textMuted, // #8A8A8A as requested
       info: AppPalette.info,
       warning: AppPalette.warning,
       error: scheme.error,

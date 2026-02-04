@@ -4,13 +4,11 @@ import 'package:lahal_application/features/authentication/controller/sign_in_con
 import 'package:lahal_application/features/authentication/view/widget/social_login_widget.dart';
 import 'package:lahal_application/utils/components/textfields/app_text_field.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
-import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
-import 'package:lahal_application/utils/validators/validators.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -49,12 +47,12 @@ class SignInScreen extends StatelessWidget {
                       end: Alignment.bottomCenter,
 
                       colors: [
-                        Colors.white.withOpacity(0.0),
-                        Colors.white.withOpacity(0.6),
-                        Colors.white,
-                        Colors.white,
-                        Colors.white,
-                        Colors.white,
+                        cs.surface.withOpacity(0.0),
+                        cs.surface.withOpacity(0.6),
+                        cs.surface,
+                        cs.surface,
+                        cs.surface,
+                        cs.surface,
                       ],
                     ),
                   ),
@@ -70,7 +68,7 @@ class SignInScreen extends StatelessWidget {
                     right: tok.gap.md,
                     bottom: tok.gap.xxs + mediaQuery.padding.bottom,
                   ),
-                  color: Colors.white,
+                  color: cs.surface,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -79,7 +77,7 @@ class SignInScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         size: AppTextSize.s24,
                         weight: AppTextWeight.bold,
-                        color: tx.subtle,
+                        color: cs.onSurface,
                       ),
 
                       SizedBox(height: tok.gap.md),
@@ -87,10 +85,7 @@ class SignInScreen extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Divider(
-                              color: cs.outlineVariant,
-                              thickness: 0.8,
-                            ),
+                            child: Divider(color: cs.outline, thickness: 0.8),
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
@@ -100,14 +95,11 @@ class SignInScreen extends StatelessWidget {
                               AppStrings.loginOrSignup,
                               size: AppTextSize.s14,
                               weight: AppTextWeight.medium,
-                              color: Colors.grey,
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
                           Expanded(
-                            child: Divider(
-                              color: cs.outlineVariant,
-                              thickness: 0.8,
-                            ),
+                            child: Divider(color: cs.outline, thickness: 0.8),
                           ),
                         ],
                       ),
@@ -129,17 +121,17 @@ class SignInScreen extends StatelessWidget {
                                         horizontal: tok.gap.xxs,
                                       ),
                                       child: AppText(
-                                        '+61',
-                                        size: AppTextSize.s16,
+                                        'AU (+61)',
+                                        size: AppTextSize.s14,
                                         weight: AppTextWeight.semibold,
-                                        color: tx.muted,
+                                        color: tx.neutral,
                                       ),
                                     ),
                                     SizedBox(width: tok.gap.xxs),
                                     Container(
                                       width: 1,
                                       height: tok.gap.lg,
-                                      color: cs.outlineVariant,
+                                      color: cs.outline,
                                     ),
                                   ],
                                 ),
@@ -168,7 +160,7 @@ class SignInScreen extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                side: BorderSide(color: Colors.grey.shade400),
+                                side: BorderSide(color: cs.outlineVariant),
                               ),
                             ),
                           ),
@@ -186,20 +178,20 @@ class SignInScreen extends StatelessWidget {
 
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: tok.appBarHeight,
                         child: ElevatedButton(
                           onPressed: () => controller.onGetStarted(context),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.primaryColor,
+                            backgroundColor: cs.primary,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(tok.radiusMd),
                             ),
                           ),
                           child: AppText(
+                            color: cs.onPrimary,
                             AppStrings.getStarted,
                             size: AppTextSize.s16,
                             weight: AppTextWeight.bold,
-                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -214,33 +206,37 @@ class SignInScreen extends StatelessWidget {
                         children: [
                           AppText(
                             AppStrings.byContinuingYouAgreeToOur,
-                            size: AppTextSize.s12,
+                            size: AppTextSize.s10,
                             weight: AppTextWeight.medium,
-                            color: Colors.grey,
+                            color: tx.subtle,
+                            textAlign: TextAlign.center,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AppText(
-                                AppStrings.termsOfService,
-                                size: AppTextSize.s12,
-                                weight: AppTextWeight.medium,
-                                color: Colors.grey,
-                              ),
-                              AppText(
-                                AppStrings.privacyPolicy,
-                                size: AppTextSize.s12,
-                                weight: AppTextWeight.medium,
-                                color: Colors.grey,
-                              ),
-                              AppText(
-                                AppStrings.contentPolicy,
-                                size: AppTextSize.s12,
-                                weight: AppTextWeight.medium,
-                                color: Colors.grey,
-                                textDecoration: TextDecoration.underline,
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AppText(
+                                  "${AppStrings.termsOfService}  ",
+                                  size: AppTextSize.s10,
+                                  weight: AppTextWeight.medium,
+                                  color: tx.subtle,
+                                ),
+                                AppText(
+                                  "${AppStrings.privacyPolicy}  ",
+                                  size: AppTextSize.s10,
+                                  weight: AppTextWeight.medium,
+                                  color: tx.subtle,
+                                ),
+                                AppText(
+                                  AppStrings.contentPolicy,
+                                  size: AppTextSize.s10,
+                                  weight: AppTextWeight.medium,
+                                  color: tx.subtle,
+                                  textDecoration: TextDecoration.underline,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

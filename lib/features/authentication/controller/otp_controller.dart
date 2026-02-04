@@ -1,26 +1,25 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
+import 'package:lahal_application/utils/routes/app_pages.dart';
+import 'package:lahal_application/features/authentication/repo/auth_repositories.dart';
 
 class OtpController extends GetxController {
   static OtpController get instance => Get.find();
 
-  // reactive OTP string
+  //------------------------var / controllers----------------
   final RxString otp = ''.obs;
-
-  // loading state while verifying
   final RxBool isLoading = false.obs;
-
-  // countdown timer
+  final RxString errorMessage = ''.obs;
   final RxInt remainingSeconds = 0.obs;
   Timer? _timer;
-
-  // length of OTP expected
   final int length;
-
+  final _authRepo = AuthRepositories();
   OtpController({this.length = 6});
 
-  // computed helper
+  //------------------------helper functions----------------
   bool get isComplete => otp.value.length == length;
 
   @override
@@ -35,21 +34,17 @@ class OtpController extends GetxController {
     super.onClose();
   }
 
-  /// Called by OTP widget when full code available
-  void setOtp(String code) {
+  void setOtp(String code, BuildContext context) {
     otp.value = code.trim();
     if (isComplete) {
-      verifyOtp(); // Auto-verify when filled? Based on UX patterns usually yes or user clicks button.
-      // User image has no Verify button, only "Go Back". So auto-verify is likely.
+      verifyOtp(context);
     }
   }
 
-  /// Called by individual digit widgets if you want to update each change.
   void updatePartialOtp(String partial) {
     otp.value = partial;
   }
 
-  // After Verification go to Inital State
   void reset() {
     otp.value = '';
     isLoading.value = false;
@@ -67,45 +62,74 @@ class OtpController extends GetxController {
     });
   }
 
-  /// Verify the OTP (fake network call for now)
-  Future<void> verifyOtp() async {
+  //-------------------------------------- verify otp Api call---------------------
+
+  Future<void> verifyOtp(BuildContext context) async {
     if (!isComplete || isLoading.value) return;
+
+    /*
+    ApiCallHandler().apiHandler(
+      context: Get.context!, // Using Get.context for convenience, though passing context is better
+      apiCall: () => _authRepo.verifyOtp({
+        'otp': otp.value,
+      }),
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onSuccess: (result) {
+        AppSnackBar.showToast(message: 'OTP verified');
+        reset();
+        // TODO: navigate to next screen
+      },
+      onError: (error, stack) {
+        AppSnackBar.showToast(message: 'Verification failed');
+      },
+    );
+    */
+
+    //testttttt
     try {
       isLoading.value = true;
-
-      // simulate network latency
       await Future.delayed(const Duration(seconds: 2));
-
-      // --- SUCCESS ---
       isLoading.value = false;
-
-      // show a snackbar or do navigation, whatever you need
-      AppSnackBar.showToast(message: 'OTP verified');
-
-      // Clear OTP
+      AppSnackBar.showToast(message: 'OTP verified (Mock)');
       reset();
-
-      // TODO: navigate to next screen or call auth success flow
+      context.go(AppRoutes.bottomNavigationBar);
+      // Get.context?.go(AppRoutes.bottomNavigationBar);
     } catch (e) {
       isLoading.value = false;
       AppSnackBar.showToast(message: 'Verification failed');
     }
   }
 
-  /// Resend OTP: triggers server call and resets UI timer if needed.
+  //----------------------------------------resend otp api call--------------------------------
+
   Future<void> resendOtp() async {
-    if (remainingSeconds.value > 0) return;
+    if (remainingSeconds.value > 0 || isLoading.value) return;
 
+    /*
+    ApiCallHandler().apiHandler(
+      context: Get.context!,
+      apiCall: () => _authRepo.resendOtp({}),
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onSuccess: (result) {
+        AppSnackBar.showToast(message: 'OTP resent');
+        otp.value = '';
+        startTimer();
+      },
+    );
+    */
+
+    //  TESTING
     try {
-      // fake network call
+      isLoading.value = true;
       await Future.delayed(const Duration(seconds: 1));
-      AppSnackBar.showToast(message: 'OTP resent');
-
-      // reset internal OTP (optional)
+      isLoading.value = false;
+      AppSnackBar.showToast(message: 'OTP resent (Mock)');
       otp.value = '';
-
       startTimer();
     } catch (e) {
+      isLoading.value = false;
       AppSnackBar.showToast(message: 'Resend failed');
     }
   }
