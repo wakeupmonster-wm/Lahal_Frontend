@@ -4,18 +4,24 @@ class AppSvg {
   //--------------
   static const String backButtonIcon = "assets/svgs/backButton_ic.svg";
 
+  //========home screen icons
   static const String downArrowIcon = "assets/svgs/down_arrow_icon.svg";
-  static const String starIcon = "assets/svgs/star_icon.svg";
-  static const String thumbIcon = "assets/svgs/thumb_icon.svg";
   static const String rewardIcon = "assets/svgs/reward_icon.svg";
   static const String notificaitonIcon = "assets/svgs/notificaiton_icon.svg";
-  static const String mapIcon = "assets/svgs/map_icon.svg";
   static const String logoIcon = "assets/svgs/Logo_icon.svg";
-
   static const String filterIcon = "assets/svgs/filter_icon.svg";
-  static const String clockIcon = "assets/svgs/clock_icon.svg";
-  static const String certifiedIcon = "assets/svgs/certified_icon.svg";
 
+  //=====profile icon
+  static const String heartIcon = "assets/svgs/heart_ic.svg";
+  static const String rightArrowIcon = "assets/svgs/right_arrow_ic.svg";
+  static const String logoutIcon = "assets/svgs/logout_ic.svg";
+  static const String notificationIcon = "assets/svgs/notification_ic.svg";
+  static const String aboutIcon = "assets/svgs/about_ic.svg";
+  static const String faqIcon = "assets/svgs/faq_ic.svg";
+  static const String accountIcon = "assets/svgs/account_profile_ic.svg";
+  static const String locationIcon = "assets/svgs/location_ic.svg";
+
+  //=======bottombar icons
   static const String greyMapIcon = "assets/svgs/Grey_map_icon.svg";
   static const String greyPreyIcon = "assets/svgs/Grey_prey_icon.svg";
   static const String greyProfileIcon = "assets/svgs/Grey_profile_icon.svg";

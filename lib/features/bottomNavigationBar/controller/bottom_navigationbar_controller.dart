@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lahal_application/features/home/view/map_screen.dart';
-import 'package:lahal_application/features/home/view/prey_screen.dart';
-import 'package:lahal_application/features/home/view/profile_screen.dart';
+import 'package:lahal_application/features/home/view/screens/map_screen.dart';
+import 'package:lahal_application/features/home/view/screens/prey_screen.dart';
+import 'package:lahal_application/features/profile/view/screens/profile_screen.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
-import '../../home/view/home_screen.dart';
-import '../../profile/view/profile_screen.dart';
+import '../../home/view/screens/home_screen.dart';
 
 class BottomNavController extends GetxController {
   RxInt selectedIndex = 0.obs;

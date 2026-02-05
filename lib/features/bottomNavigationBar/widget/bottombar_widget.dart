@@ -31,6 +31,10 @@ class BottomNavigationWidget extends StatelessWidget {
               width: 1,
             ),
           ),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
         ),
         child: Padding(
           padding: EdgeInsets.only(bottom: mq.padding.bottom),

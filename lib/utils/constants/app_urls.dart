@@ -18,4 +18,5 @@ class AppUrls {
 
   // Home
   static Uri home = setUrls("/api/home");
+  static Uri notifications = setUrls("/api/notifications");
 }

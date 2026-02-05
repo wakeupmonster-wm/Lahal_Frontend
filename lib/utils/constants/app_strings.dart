@@ -20,6 +20,20 @@ class AppStrings {
   static const goBackToLogin = "Go Back to Login";
   static const secondsSuffix = "s";
 
+  //------------profile section
+  static const accountSettings = "Account Settings";
+  static const editProfile = "Edit Profile";
+  static const favorites = "Favorites";
+  static const changeLocation = "Change location";
+  static const notificationPreferences = "Notification Preferences";
+  static const faqs = "FAQs";
+  static const about = "About";
+  static const logout = "Log Out";
+  static const settings = "Settings";
+  static const legal = "Legal ";
+  static const notification = "Notification";
+  static const account = "Account";
+
   //----hint text
   static const enterPhoneNumber = "Enter phone number";
 

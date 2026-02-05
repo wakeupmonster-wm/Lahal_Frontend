@@ -15,6 +15,8 @@ abstract class AppRoutes {
   static const String mapScreen = '/map_screen';
   static const String preyScreen = '/prey_screen';
   static const String profileScreen = '/profile_screen';
+  static const String restaurantDetails = '/restaurant_details';
+  static const String notificationScreen = '/notification_screen';
 
   ///===============   Bottmsheet ======================
   static const String bottomNavigationBar = '/bottomNavigationBar';

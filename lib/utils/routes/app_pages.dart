@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/authentication/view/screen/sign_in_screen.dart';
-import 'package:lahal_application/features/home/view/home_screen.dart';
-import 'package:lahal_application/features/home/view/map_screen.dart';
-import 'package:lahal_application/features/home/view/prey_screen.dart';
-import 'package:lahal_application/features/home/view/profile_screen.dart';
+import 'package:lahal_application/features/home/view/screens/home_screen.dart';
+import 'package:lahal_application/features/home/view/screens/map_screen.dart';
+import 'package:lahal_application/features/home/view/screens/prey_screen.dart';
+import 'package:lahal_application/features/home/view/screens/restaurant_details_screen.dart';
+import 'package:lahal_application/features/home/view/screens/notification_screen.dart';
+import 'package:lahal_application/features/profile/view/screens/profile_screen.dart';
 import 'package:lahal_application/features/splash/view/screen/splash_screen.dart';
 import 'package:lahal_application/features/authentication/view/screen/otp_verification_screen.dart';
 import 'package:lahal_application/main.dart';
@@ -39,7 +41,13 @@ class AppGoRouter {
       _createRoute(AppRoutes.mapScreen, const MapScreen()),
       _createRoute(AppRoutes.preyScreen, const PreyScreen()),
       _createRoute(AppRoutes.profileScreen, const ProfileScreen()),
+      _createRoute(
+        AppRoutes.restaurantDetails,
+        const RestaurantDetailsScreen(),
+      ),
+      _createRoute(AppRoutes.notificationScreen, const NotificationScreen()),
 
+      ///===============   Bottmsheet ========================
       //===================old code========================
       // _createRoute(AppRoutes.fwdDetailScreen, FwdDetailScreen()),
       // _createRoute(AppRoutes.profileDetailsScreen, ProfileDetailsScreen()),
