@@ -58,4 +58,31 @@ class HomeRepository {
       ),
     ];
   }
+
+  Future<List<RestaurantModel>> fetchFavoriteRestaurants() async {
+    // Dummy data for currently
+    await Future.delayed(const Duration(seconds: 2)); // Simulate API delay
+    return [
+      RestaurantModel(
+        id: '1',
+        name: 'Rose Garden Restaurant',
+        address: 'Melbourne, VIC 3001',
+        distance: '1.6 km',
+        rating: 5.0,
+        reviewCount: 120,
+        status: 'Open now',
+        openingHours: '11:30 AM to 11:00 PM',
+        category: 'Middle Eastern restaurant',
+        imageUrl:
+            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+        description:
+            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
+        halalSummary: ['100% Halal', 'No Alcohol'],
+        photos: [],
+        amenities: {},
+        reviews: [],
+        socialConnects: SocialConnects(),
+      ),
+    ];
+  }
 }

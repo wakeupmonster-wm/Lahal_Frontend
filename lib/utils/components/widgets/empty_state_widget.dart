@@ -3,6 +3,7 @@ import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
+import 'package:lahal_application/utils/constants/app_assets.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   final String imagePath;
@@ -12,7 +13,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   const EmptyStateWidget({
     super.key,
-    required this.imagePath,
+    this.imagePath = AppAssets.emptyStateImage,
     this.title,
     this.description,
     this.imageHeight,
@@ -22,6 +23,7 @@ class EmptyStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
+    final cs = Theme.of(context).colorScheme;
 
     return Center(
       child: Padding(

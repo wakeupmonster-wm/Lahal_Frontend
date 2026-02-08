@@ -15,7 +15,8 @@ class AppSvg {
   static const String heartIcon = "assets/svgs/heart_ic.svg";
   static const String rightArrowIcon = "assets/svgs/right_arrow_ic.svg";
   static const String logoutIcon = "assets/svgs/logout_ic.svg";
-  static const String notificationIcon = "assets/svgs/notification_ic.svg";
+  static const String bluenotificationIcon =
+      "assets/svgs/blue_notificaiton_ic.svg";
   static const String aboutIcon = "assets/svgs/about_ic.svg";
   static const String faqIcon = "assets/svgs/faq_ic.svg";
   static const String accountIcon = "assets/svgs/account_profile_ic.svg";

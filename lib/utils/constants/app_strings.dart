@@ -33,6 +33,30 @@ class AppStrings {
   static const legal = "Legal ";
   static const notification = "Notification";
   static const account = "Account";
+  static const name = "Name";
+  static const phoneNumberLabelSmall = "Phone number";
+  static const emailAddress = "Email address";
+  static const dateOfBirth = "Date of birth";
+  static const gender = "Gender";
+  static const male = "Male";
+  static const female = "Female";
+  static const change = "CHANGE";
+  static const save = "Save";
+  static const select = "Select";
+  static const dobHint = "D.O.B";
+  static const appVersion = "App Version";
+  static const versionNumber = "V2.3522";
+  static const offersAndPromotions = "Offers & Promotions";
+  static const prayerTimeAlerts = "Prayer Time Alerts";
+  static const reviewAndUpdateAlerts = "Review & Update Alerts";
+  static const yourLikedRestaurants = "Your Liked Restaurants";
+  static const noFavoritesYet = "No favorites yet";
+  static const favoritesDescription =
+      "You haven't liked any restaurants yet. Start exploring to find your favorites!";
+  static const wantToLogout = "Want to Logout ?";
+  static const logoutConfirmation =
+      "You'll be signed out of your account on this device.";
+  static const cancel = "Cancel";
 
   //----hint text
   static const enterPhoneNumber = "Enter phone number";

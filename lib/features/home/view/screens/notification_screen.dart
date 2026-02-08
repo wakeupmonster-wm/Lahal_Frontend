@@ -37,7 +37,6 @@ class NotificationScreen extends StatelessWidget {
 
         if (controller.notifications.isEmpty) {
           return const EmptyStateWidget(
-            imagePath: AppAssets.emptyStateImage,
             title: 'No notifications yet',
             description: 'We will notify you when something important happens.',
           );

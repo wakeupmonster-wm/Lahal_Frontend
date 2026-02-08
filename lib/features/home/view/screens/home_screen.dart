@@ -68,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: tok.gap.xs),
                                 AppText(
-                                  'LaHal',
+                                  'Lalah',
                                   size: AppTextSize.s24,
                                   weight: AppTextWeight.bold,
                                   color: tx.inverse,

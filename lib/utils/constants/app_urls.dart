@@ -19,4 +19,10 @@ class AppUrls {
   // Home
   static Uri home = setUrls("/api/home");
   static Uri notifications = setUrls("/api/notifications");
+  static Uri updateProfile = setUrls("/api/update-profile");
+  static Uri getProfile = setUrls("/api/get-profile");
+  static Uri faqs = setUrls("/api/faqs");
+  static Uri notificationPreferences = setUrls("/api/notification-preferences");
+  static Uri favorites = setUrls("/api/favorites");
+  static Uri logout = setUrls("/api/logout");
 }

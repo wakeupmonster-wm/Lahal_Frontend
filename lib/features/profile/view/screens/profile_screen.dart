@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
+import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
+import 'package:get/get.dart';
+import 'package:lahal_application/features/profile/controller/profile_controller.dart';
+import 'package:lahal_application/features/profile/view/widgets/logout_dialog.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(ProfileController());
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
@@ -50,7 +55,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               SizedBox(height: tok.gap.xs),
               GestureDetector(
-                onTap: () {},
+                onTap: () => context.push(AppRoutes.editProfileScreen),
                 child: AppText(
                   AppStrings.editProfile,
                   size: AppTextSize.s14,
@@ -64,6 +69,7 @@ class ProfileScreen extends StatelessWidget {
               _buildSectionTitle(tx, AppStrings.account, tok),
               _buildSectionContainer(cs, [
                 _buildProfileItem(
+                  controller,
                   context,
                   tok,
                   tx,
@@ -72,6 +78,7 @@ class ProfileScreen extends StatelessWidget {
                   label: AppStrings.favorites,
                 ),
                 _buildProfileItem(
+                  controller,
                   context,
                   tok,
                   tx,
@@ -86,14 +93,16 @@ class ProfileScreen extends StatelessWidget {
               _buildSectionTitle(tx, AppStrings.settings, tok),
               _buildSectionContainer(cs, [
                 _buildProfileItem(
+                  controller,
                   context,
                   tok,
                   tx,
                   cs,
-                  svgIcon: AppSvg.notificationIcon,
+                  svgIcon: AppSvg.bluenotificationIcon,
                   label: AppStrings.notificationPreferences,
                 ),
                 _buildProfileItem(
+                  controller,
                   context,
                   tok,
                   tx,
@@ -108,6 +117,7 @@ class ProfileScreen extends StatelessWidget {
               _buildSectionTitle(tx, AppStrings.legal, tok),
               _buildSectionContainer(cs, [
                 _buildProfileItem(
+                  controller,
                   context,
                   tok,
                   tx,
@@ -116,6 +126,7 @@ class ProfileScreen extends StatelessWidget {
                   label: AppStrings.faqs,
                 ),
                 _buildProfileItem(
+                  controller,
                   context,
                   tok,
                   tx,
@@ -130,6 +141,7 @@ class ProfileScreen extends StatelessWidget {
               _buildSectionTitle(tx, AppStrings.logout, tok),
               _buildSectionContainer(cs, [
                 _buildProfileItem(
+                  controller,
                   context,
                   tok,
                   tx,
@@ -182,6 +194,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileItem(
+    ProfileController controller,
     BuildContext context,
     AppTokens tok,
     AppTextColors tx,
@@ -191,7 +204,27 @@ class ProfileScreen extends StatelessWidget {
     bool isLast = false,
   }) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        if (label == AppStrings.about) {
+          context.push(AppRoutes.aboutScreen);
+        } else if (label == AppStrings.faqs) {
+          context.push(AppRoutes.faqScreen);
+        } else if (label == AppStrings.notificationPreferences) {
+          context.push(AppRoutes.notificationPreferenceScreen);
+        } else if (label == AppStrings.favorites) {
+          context.push(AppRoutes.favoritesScreen);
+        } else if (label == AppStrings.logout) {
+          showDialog(
+            context: context,
+            builder: (context) => LogoutDialog(
+              onConfirm: () {
+                context.pop();
+                controller.logout(context);
+              },
+            ),
+          );
+        }
+      },
       borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: EdgeInsets.symmetric(
