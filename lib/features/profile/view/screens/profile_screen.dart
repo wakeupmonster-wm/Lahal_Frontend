@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lahal_application/utils/components/image/app_circular_image.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
@@ -36,15 +37,11 @@ class ProfileScreen extends StatelessWidget {
             children: [
               SizedBox(height: tok.gap.xs),
               // --- Profile Header ---
-              CircleAvatar(
-                radius: 40,
+              AppCircularImage(
+                image:
+                    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                isNetworkImage: true,
                 backgroundColor: cs.primaryContainer.withOpacity(0.2),
-                child: AppText(
-                  'U',
-                  size: AppTextSize.s24,
-                  weight: AppTextWeight.medium,
-                  color: tx.primary,
-                ),
               ),
               SizedBox(height: tok.gap.md),
               AppText(
@@ -209,6 +206,10 @@ class ProfileScreen extends StatelessWidget {
           context.push(AppRoutes.aboutScreen);
         } else if (label == AppStrings.faqs) {
           context.push(AppRoutes.faqScreen);
+        } else if (label == AppStrings.accountSettings) {
+          context.push(AppRoutes.accountManagement);
+        } else if (label == AppStrings.changeLocation) {
+          context.push(AppRoutes.changeLocationScreen);
         } else if (label == AppStrings.notificationPreferences) {
           context.push(AppRoutes.notificationPreferenceScreen);
         } else if (label == AppStrings.favorites) {

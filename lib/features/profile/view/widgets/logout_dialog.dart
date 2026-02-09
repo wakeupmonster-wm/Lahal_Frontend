@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
@@ -55,7 +56,7 @@ class LogoutDialog extends StatelessWidget {
             SizedBox(height: tok.gap.sm),
             AppButton(
               label: AppStrings.cancel,
-              onPressed: () => Get.back(),
+              onPressed: () => context.pop(),
               variant: AppButtonVariant.ghost,
               minWidth: double.infinity,
               fgColorOverride: tx.subtle,

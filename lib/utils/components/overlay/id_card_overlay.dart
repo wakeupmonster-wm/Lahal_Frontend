@@ -50,15 +50,15 @@ class _IDOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final overlay = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    final rrect = RRect.fromRectAndRadius(holeRect, Radius.circular(borderRadius));
+    final overlay = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final rrect = RRect.fromRectAndRadius(
+      holeRect,
+      Radius.circular(borderRadius),
+    );
     final holePath = Path()..addRRect(rrect);
 
-    final combined = Path.combine(
-      PathOperation.difference,
-      overlay,
-      holePath,
-    );
+    final combined = Path.combine(PathOperation.difference, overlay, holePath);
 
     canvas.drawPath(
       combined,

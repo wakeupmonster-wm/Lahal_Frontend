@@ -18,6 +18,8 @@ abstract class AppRoutes {
   static const String restaurantDetails = '/restaurant_details';
   static const String notificationScreen = '/notification_screen';
   //========================profile==================
+  static const String accountManagement = '/account_management';
+  static const String changeLocationScreen = '/change_location_screen';
   static const String editProfileScreen = '/edit_profile_screen';
   static const String aboutScreen = '/about_screen';
   static const String termsScreen = '/terms_screen';

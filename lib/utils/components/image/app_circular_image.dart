@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class AppCircularImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.assestImage,
     this.placeholder,
+    this.imageFile,
   });
 
   final BoxFit? fit;
@@ -27,6 +29,7 @@ class AppCircularImage extends StatelessWidget {
   final double height;
   final String? assestImage;
   final Widget? placeholder;
+  final File? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +58,13 @@ class AppCircularImage extends StatelessWidget {
                         radius: 200,
                       ),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
+                )
+              : imageFile != null
+              ? Image.file(
+                  imageFile!,
+                  fit: fit,
+                  width: w * 0.24,
+                  height: w * 0.24,
                 )
               : placeholder ??
                     Image(

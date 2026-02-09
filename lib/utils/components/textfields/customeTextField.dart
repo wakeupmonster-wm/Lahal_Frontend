@@ -1,5 +1,4 @@
 import 'package:lahal_application/utils/constants/app_colors.dart';
-import 'package:lahal_application/utils/theme/app_palette.dart';
 import 'package:lahal_application/utils/validators/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -106,31 +105,36 @@ class _MyTextFeildState extends State<MyTextFeild> {
               ),
               contentPadding: EdgeInsets.only(top: 0, left: width * 0.035),
               hoverColor: AppColor.primaryColor1,
-              border: const OutlineInputBorder(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
                   color: AppColor.primaryColor1,
                   width: 1.4,
                 ),
               ),
-              disabledBorder: const OutlineInputBorder(
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
                   color: AppColor.primaryColor1,
                   width: 1.4,
                 ),
               ),
-              enabledBorder: const OutlineInputBorder(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
                   color: AppColor.primaryColor1,
                   width: 1.4,
                 ),
               ),
-              focusedBorder: const OutlineInputBorder(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
                   color: AppColor.primaryColor1,
                   width: 1.4,
                 ),
               ),
-              errorBorder: const OutlineInputBorder(
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(color: Colors.red, width: 1.4),
               ),
               fillColor: widget.fillColor ?? Colors.transparent,

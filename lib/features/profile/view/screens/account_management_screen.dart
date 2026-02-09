@@ -7,11 +7,11 @@ import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
-import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
+import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({super.key});
+class AccountManagementScreen extends StatelessWidget {
+  const AccountManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,40 +21,41 @@ class AboutScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: cs.surface,
-      appBar: InternalAppBar(title: AppStrings.about, centerTitle: false),
-      body: Column(
-        children: [
-          SizedBox(height: tok.gap.md),
-          _buildItem(
-            context,
-            AppStrings.termsOfService,
-            onTap: () => context.push(AppRoutes.termsScreen),
-            showArrow: true,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-            child: Divider(color: cs.outlineVariant, thickness: 0.8),
-          ),
-          _buildItem(
-            context,
-            AppStrings.privacyPolicy,
-            onTap: () => context.push(AppRoutes.privacyScreen),
-            showArrow: true,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-            child: Divider(color: cs.outlineVariant, thickness: 0.8),
-          ),
-          _buildItem(
-            context,
-            AppStrings.appVersion,
-            trailing: AppText(
-              AppStrings.versionNumber,
-              size: AppTextSize.s14,
-              color: tx.subtle,
+      appBar: InternalAppBar(
+        title: AppStrings.accountManagement,
+        centerTitle: false,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
+              child: Divider(color: cs.outlineVariant, thickness: 0.8),
             ),
-          ),
-        ],
+            _buildItem(
+              context,
+              AppStrings.editProfile,
+              onTap: () => context.push(AppRoutes.editProfileScreen),
+              showArrow: true,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
+              child: Divider(color: cs.outlineVariant, thickness: 0.8),
+            ),
+            _buildItem(
+              context,
+              AppStrings.deleteYourAccount,
+              onTap: () {
+                // Handle Delete Account Logic
+              },
+              showArrow: true,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
+              child: Divider(color: cs.outlineVariant, thickness: 0.8),
+            ),
+          ],
+        ),
       ),
     );
   }

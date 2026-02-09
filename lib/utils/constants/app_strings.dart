@@ -22,9 +22,14 @@ class AppStrings {
 
   //------------profile section
   static const accountSettings = "Account Settings";
+  static const accountManagement = "Account Management";
+  static const deleteYourAccount = "Delete Your Account";
   static const editProfile = "Edit Profile";
   static const favorites = "Favorites";
   static const changeLocation = "Change location";
+  static const changeLocationTitle = "Change location";
+  static const searchLocationHint = "Search for area, street name...";
+  static const useCurrentLocation = "Use current location";
   static const notificationPreferences = "Notification Preferences";
   static const faqs = "FAQs";
   static const about = "About";
@@ -57,6 +62,10 @@ class AppStrings {
   static const logoutConfirmation =
       "You'll be signed out of your account on this device.";
   static const cancel = "Cancel";
+  static const uploadFromGallery = "Upload from Gallery";
+  static const uploadFromDocument = "Upload from Document";
+  static const takeAPhoto = "Take a Photo";
+  static const removeCurrentPhoto = "Remove Current Photo";
 
   //----hint text
   static const enterPhoneNumber = "Enter phone number";

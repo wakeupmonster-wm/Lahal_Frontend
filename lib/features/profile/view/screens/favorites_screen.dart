@@ -26,8 +26,7 @@ class FavoritesScreen extends StatelessWidget {
       backgroundColor: cs.surface,
       appBar: InternalAppBar(title: AppStrings.favorites, centerTitle: false),
       body: Obx(() {
-        if (controller.isLoading.value &&
-            controller.favoriteRestaurants.isEmpty) {
+        if (controller.isLoading.value) {
           return _buildShimmer(tok);
         }
 

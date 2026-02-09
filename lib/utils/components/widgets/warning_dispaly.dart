@@ -37,7 +37,8 @@ class WarningDisplay extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(iconPath, width: width * 0.15),
+          // SvgPicture.asset(iconPath, width: width * 0.15),
+          Icon(Icons.warning, size: width * 0.15, color: tx.error),
           SizedBox(height: height * 0.015),
           AppText(
             warningMessage,

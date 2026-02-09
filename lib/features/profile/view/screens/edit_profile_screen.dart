@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lahal_application/features/profile/controller/edit_profile_controller.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
+import 'package:lahal_application/utils/components/image/app_circular_image.dart';
+import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/theme/app_button.dart';
 import 'package:lahal_application/utils/components/textfields/customeTextField.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
@@ -35,27 +39,35 @@ class EditProfileScreen extends StatelessWidget {
               Center(
                 child: Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: cs.primaryContainer.withOpacity(0.2),
-                      child: AppText(
-                        'U',
-                        size: AppTextSize.s24,
-                        weight: AppTextWeight.medium,
-                        color: tx.primary,
+                    Obx(
+                      () => AppCircularImage(
+                        image:
+                            'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                        isNetworkImage: controller.pickedImage.value == null,
+                        imageFile: controller.pickedImage.value,
+                        backgroundColor: cs.primaryContainer.withOpacity(0.2),
                       ),
                     ),
                     Positioned(
                       bottom: 0,
                       right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.shade300),
+                      child: InkWell(
+                        onTap: () => _showImagePickerBottomSheet(
+                          context,
+                          controller,
+                          tok,
+                          tx,
+                          cs,
                         ),
-                        child: const Icon(Icons.edit_outlined, size: 16),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: SvgPicture.asset(AppSvg.pencilIcon),
+                        ),
                       ),
                     ),
                   ],
@@ -115,6 +127,7 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
               SizedBox(height: tok.gap.md),
 
               // DOB Field
@@ -147,7 +160,7 @@ class EditProfileScreen extends StatelessWidget {
                             color: AppColor.primaryColor1,
                             width: 1.4,
                           ),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -176,7 +189,7 @@ class EditProfileScreen extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 4),
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: controller.genderOptions.map((gender) {
@@ -206,6 +219,106 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  //-----------------------------image picker bottmsheet---------------------------
+
+  void _showImagePickerBottomSheet(
+    BuildContext context,
+    EditProfileController controller,
+    AppTokens tok,
+    AppTextColors tx,
+    ColorScheme cs,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: cs.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: tok.gap.lg,
+            vertical: tok.gap.xl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildBottomSheetItem(
+                svg: AppSvg.galleryIcon,
+                label: AppStrings.uploadFromGallery,
+                onTap: () {
+                  context.pop();
+                  controller.pickImage(ImageSource.gallery);
+                },
+                tx: tx,
+                tok: tok,
+              ),
+              _buildBottomSheetItem(
+                svg: AppSvg.filesIcon,
+                label: AppStrings.uploadFromDocument,
+                onTap: () {
+                  context.pop();
+                  // Document picking logic could go here
+                },
+                tx: tx,
+                tok: tok,
+              ),
+              _buildBottomSheetItem(
+                svg: AppSvg.cameraIcon,
+                label: AppStrings.takeAPhoto,
+                onTap: () {
+                  context.pop();
+                  controller.pickImage(ImageSource.camera);
+                },
+                tx: tx,
+                tok: tok,
+              ),
+              _buildBottomSheetItem(
+                svg: AppSvg.deleteIcon,
+                label: AppStrings.removeCurrentPhoto,
+                onTap: () {
+                  context.pop();
+                  controller.removeImage();
+                },
+                tx: tx,
+                tok: tok,
+                isDanger: true,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  //------------------------------------bottmsheet item-------------------------------
+
+  Widget _buildBottomSheetItem({
+    required String svg,
+    required String label,
+    required VoidCallback onTap,
+    required AppTextColors tx,
+    required AppTokens tok,
+    bool isDanger = false,
+  }) {
+    final color = isDanger ? tx.error : tx.primary;
+    return ListTile(
+      leading: SvgPicture.asset(
+        svg,
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        width: tok.iconLg,
+        height: tok.iconLg,
+      ),
+      title: AppText(
+        label,
+        size: AppTextSize.s14,
+        weight: AppTextWeight.bold,
+        color: tx.primary,
+      ),
+      onTap: onTap,
     );
   }
 

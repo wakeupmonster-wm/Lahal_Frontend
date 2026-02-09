@@ -21,6 +21,12 @@ class AppSvg {
   static const String faqIcon = "assets/svgs/faq_ic.svg";
   static const String accountIcon = "assets/svgs/account_profile_ic.svg";
   static const String locationIcon = "assets/svgs/location_ic.svg";
+  static const String pencilIcon = "assets/svgs/pencil_icon.svg";
+  static const String cameraIcon = "assets/svgs/camera_icon.svg";
+  static const String galleryIcon = "assets/svgs/gallery_icon.svg";
+  static const String filesIcon = "assets/svgs/files_icon.svg";
+  static const String deleteIcon = "assets/svgs/delete_icon.svg";
+  static const String shareIcon = "assets/svgs/share_icon.svg";
 
   //=======bottombar icons
   static const String greyMapIcon = "assets/svgs/Grey_map_icon.svg";

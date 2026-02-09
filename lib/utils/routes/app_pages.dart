@@ -6,14 +6,16 @@ import 'package:lahal_application/features/home/view/screens/map_screen.dart';
 import 'package:lahal_application/features/home/view/screens/prey_screen.dart';
 import 'package:lahal_application/features/home/view/screens/restaurant_details_screen.dart';
 import 'package:lahal_application/features/home/view/screens/notification_screen.dart';
+import 'package:lahal_application/features/profile/view/screens/favorites_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/profile_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/edit_profile_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/about_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/terms_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/privacy_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/faq_screen.dart';
+import 'package:lahal_application/features/profile/view/screens/change_location_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/notification_preference_screen.dart';
-import 'package:lahal_application/features/profile/view/screens/favorites_screen.dart';
+import 'package:lahal_application/features/profile/view/screens/account_management_screen.dart';
 import 'package:lahal_application/features/splash/view/screen/splash_screen.dart';
 import 'package:lahal_application/features/authentication/view/screen/otp_verification_screen.dart';
 import 'package:lahal_application/utils/components/backbutton_handler/backbutton_handler.dart';
@@ -52,6 +54,14 @@ class AppGoRouter {
         const RestaurantDetailsScreen(),
       ),
       _createRoute(AppRoutes.editProfileScreen, const EditProfileScreen()),
+      _createRoute(
+        AppRoutes.changeLocationScreen,
+        const ChangeLocationScreen(),
+      ),
+      _createRoute(
+        AppRoutes.accountManagement,
+        const AccountManagementScreen(),
+      ),
       _createRoute(AppRoutes.aboutScreen, const AboutScreen()),
       _createRoute(AppRoutes.termsScreen, const TermsScreen()),
       _createRoute(AppRoutes.privacyScreen, const PrivacyScreen()),
@@ -60,6 +70,7 @@ class AppGoRouter {
         AppRoutes.notificationPreferenceScreen,
         const NotificationPreferenceScreen(),
       ),
+      _createRoute(AppRoutes.favoritesScreen, const FavoritesScreen()),
 
       _createRoute(AppRoutes.notificationScreen, const NotificationScreen()),
 

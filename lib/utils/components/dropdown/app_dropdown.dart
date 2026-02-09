@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lahal_application/utils/theme/app_palette.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';

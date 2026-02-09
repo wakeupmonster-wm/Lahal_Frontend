@@ -72,10 +72,10 @@ class FaqScreen extends StatelessWidget {
                     final faq = controller.filteredFaqs[index];
                     return Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: cs.surface,
                         borderRadius: BorderRadius.circular(tok.radiusMd),
                         border: Border.all(
-                          color: cs.outlineVariant.withOpacity(0.5),
+                          color: cs.outlineVariant.withOpacity(0.9),
                         ),
                         boxShadow: [
                           BoxShadow(

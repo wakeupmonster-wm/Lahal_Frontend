@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lahal_application/utils/constants/app_colors.dart';
 
 /// A widget that handles back button press with "press again to exit" logic
 /// when there's no previous screen in the navigation stack.
