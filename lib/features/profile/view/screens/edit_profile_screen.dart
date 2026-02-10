@@ -15,6 +15,7 @@ import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
+import 'package:lahal_application/features/profile/view/widgets/image_picker_bottom_sheet.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -52,12 +53,20 @@ class EditProfileScreen extends StatelessWidget {
                       bottom: 0,
                       right: 0,
                       child: InkWell(
-                        onTap: () => _showImagePickerBottomSheet(
+                        onTap: () => ImagePickerBottomSheet.show(
                           context,
-                          controller,
-                          tok,
-                          tx,
-                          cs,
+                          onGalleryTap: () {
+                            context.pop();
+                            controller.pickImage(ImageSource.gallery);
+                          },
+                          onCameraTap: () {
+                            context.pop();
+                            controller.pickImage(ImageSource.camera);
+                          },
+                          onRemoveTap: () {
+                            context.pop();
+                            controller.removeImage();
+                          },
                         ),
                         child: Container(
                           padding: const EdgeInsets.all(4),
@@ -91,7 +100,7 @@ class EditProfileScreen extends StatelessWidget {
                   hintText: AppStrings.phoneNumberLabelSmall,
                   typingEnabled: controller.isPhoneEditable.value,
                   suffix: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: EdgeInsets.only(right: tok.gap.xs),
                     child: TextButton(
                       onPressed: controller.togglePhoneEditable,
                       child: AppText(
@@ -157,7 +166,7 @@ class EditProfileScreen extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: AppColor.primaryColor1,
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1.4,
                           ),
                           borderRadius: BorderRadius.circular(10),
@@ -219,106 +228,6 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  //-----------------------------image picker bottmsheet---------------------------
-
-  void _showImagePickerBottomSheet(
-    BuildContext context,
-    EditProfileController controller,
-    AppTokens tok,
-    AppTextColors tx,
-    ColorScheme cs,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: cs.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: tok.gap.lg,
-            vertical: tok.gap.xl,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildBottomSheetItem(
-                svg: AppSvg.galleryIcon,
-                label: AppStrings.uploadFromGallery,
-                onTap: () {
-                  context.pop();
-                  controller.pickImage(ImageSource.gallery);
-                },
-                tx: tx,
-                tok: tok,
-              ),
-              _buildBottomSheetItem(
-                svg: AppSvg.filesIcon,
-                label: AppStrings.uploadFromDocument,
-                onTap: () {
-                  context.pop();
-                  // Document picking logic could go here
-                },
-                tx: tx,
-                tok: tok,
-              ),
-              _buildBottomSheetItem(
-                svg: AppSvg.cameraIcon,
-                label: AppStrings.takeAPhoto,
-                onTap: () {
-                  context.pop();
-                  controller.pickImage(ImageSource.camera);
-                },
-                tx: tx,
-                tok: tok,
-              ),
-              _buildBottomSheetItem(
-                svg: AppSvg.deleteIcon,
-                label: AppStrings.removeCurrentPhoto,
-                onTap: () {
-                  context.pop();
-                  controller.removeImage();
-                },
-                tx: tx,
-                tok: tok,
-                isDanger: true,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  //------------------------------------bottmsheet item-------------------------------
-
-  Widget _buildBottomSheetItem({
-    required String svg,
-    required String label,
-    required VoidCallback onTap,
-    required AppTextColors tx,
-    required AppTokens tok,
-    bool isDanger = false,
-  }) {
-    final color = isDanger ? tx.error : tx.primary;
-    return ListTile(
-      leading: SvgPicture.asset(
-        svg,
-        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-        width: tok.iconLg,
-        height: tok.iconLg,
-      ),
-      title: AppText(
-        label,
-        size: AppTextSize.s14,
-        weight: AppTextWeight.bold,
-        color: tx.primary,
-      ),
-      onTap: onTap,
     );
   }
 

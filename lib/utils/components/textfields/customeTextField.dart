@@ -99,47 +99,50 @@ class _MyTextFeildState extends State<MyTextFeild> {
               floatingLabelBehavior: FloatingLabelBehavior.never,
               hintText: widget.hintText,
               hintStyle: GoogleFonts.manrope(
-                color: AppColor.primaryColor1.withAlpha(100),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 fontSize: width * 0.03,
                 fontWeight: FontWeight.w700,
               ),
               contentPadding: EdgeInsets.only(top: 0, left: width * 0.035),
-              hoverColor: AppColor.primaryColor1,
+              hoverColor: Theme.of(context).colorScheme.primary,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1.4,
                 ),
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
                   width: 1.4,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1.4,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.primary,
                   width: 1.4,
                 ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.red, width: 1.4),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.error,
+                  width: 1.4,
+                ),
               ),
               fillColor: widget.fillColor ?? Colors.transparent,
               filled: true,
-              focusColor: Colors.black,
+              focusColor: Theme.of(context).colorScheme.primary,
             ),
             validator: (value) {
               if (widget.validator == "Password") {
@@ -386,42 +389,50 @@ class _NewMyTextFeildState extends State<NewMyTextFeild> {
               floatingLabelBehavior: FloatingLabelBehavior.never,
               hintText: widget.hintText,
               hintStyle: GoogleFonts.manrope(
-                color: AppColor.primaryColor1,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 fontSize: width * 0.03,
                 fontWeight: FontWeight.w700,
               ),
               contentPadding: EdgeInsets.only(top: 0, left: width * 0.035),
-              hoverColor: AppColor.primaryColor1,
-              border: const OutlineInputBorder(
+              hoverColor: Theme.of(context).colorScheme.primary,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1.4,
                 ),
               ),
-              disabledBorder: const OutlineInputBorder(
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
                   width: 1.4,
                 ),
               ),
-              enabledBorder: const OutlineInputBorder(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.outline,
                   width: 1.4,
                 ),
               ),
-              focusedBorder: const OutlineInputBorder(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: AppColor.primaryColor1,
+                  color: Theme.of(context).colorScheme.primary,
                   width: 1.4,
                 ),
               ),
-              errorBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.red, width: 1.4),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.error,
+                  width: 1.4,
+                ),
               ),
               fillColor: widget.fillColor ?? Colors.transparent,
               filled: true,
-              focusColor: Colors.black,
+              focusColor: Theme.of(context).colorScheme.primary,
             ),
             validator: widget.validator,
             focusNode: widget.focusNode,

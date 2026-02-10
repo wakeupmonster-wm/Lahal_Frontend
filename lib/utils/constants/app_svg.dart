@@ -24,7 +24,6 @@ class AppSvg {
   static const String pencilIcon = "assets/svgs/pencil_icon.svg";
   static const String cameraIcon = "assets/svgs/camera_icon.svg";
   static const String galleryIcon = "assets/svgs/gallery_icon.svg";
-  static const String filesIcon = "assets/svgs/files_icon.svg";
   static const String deleteIcon = "assets/svgs/delete_icon.svg";
   static const String shareIcon = "assets/svgs/share_icon.svg";
 

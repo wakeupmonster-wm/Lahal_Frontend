@@ -63,9 +63,14 @@ class AppStrings {
       "You'll be signed out of your account on this device.";
   static const cancel = "Cancel";
   static const uploadFromGallery = "Upload from Gallery";
-  static const uploadFromDocument = "Upload from Document";
+
   static const takeAPhoto = "Take a Photo";
   static const removeCurrentPhoto = "Remove Current Photo";
+  static const changeProfilePhoto = "Change Profile Photo";
+  static const wantToDeleteAccount = "Want to delete account?";
+  static const deleteAccountConfirmation =
+      "Are you sure you want to delete your account? This action cannot be undone.";
+  static const delete = "Delete";
 
   //----hint text
   static const enterPhoneNumber = "Enter phone number";
@@ -190,4 +195,13 @@ class AppStrings {
   static const findingPeople = "Finding people near you ...";
   static const privacySafe =
       "We never share this with anyone — your privacy is safe with us.";
+
+  // ----------------------------
+  // 🔍 FILTERS
+  // ----------------------------
+  static const filterResults = "Filter results";
+  static const distanceRangeLabel = "Distance Range";
+  static const ratingsLabel = "Ratings";
+  static const clearFilter = "Clear filter";
+  static const reset = "Reset";
 }

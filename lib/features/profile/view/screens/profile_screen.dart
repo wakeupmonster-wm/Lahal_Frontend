@@ -12,7 +12,7 @@ import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:get/get.dart';
 import 'package:lahal_application/features/profile/controller/profile_controller.dart';
-import 'package:lahal_application/features/profile/view/widgets/logout_dialog.dart';
+import 'package:lahal_application/features/profile/view/widgets/confirmation_bottom_sheet.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -215,14 +215,15 @@ class ProfileScreen extends StatelessWidget {
         } else if (label == AppStrings.favorites) {
           context.push(AppRoutes.favoritesScreen);
         } else if (label == AppStrings.logout) {
-          showDialog(
-            context: context,
-            builder: (context) => LogoutDialog(
-              onConfirm: () {
-                context.pop();
-                controller.logout(context);
-              },
-            ),
+          ConfirmationBottomSheet.show(
+            context,
+            title: AppStrings.wantToLogout,
+            subtitle: AppStrings.logoutConfirmation,
+            confirmLabel: AppStrings.logout,
+            onConfirm: () {
+              context.pop();
+              controller.logout(context);
+            },
           );
         }
       },

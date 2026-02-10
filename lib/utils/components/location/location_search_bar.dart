@@ -37,7 +37,9 @@ class LocationSearchBar extends StatelessWidget {
           hintStyle: TextStyle(color: tx.subtle, fontSize: tok.radiusLg),
           prefixIcon: Icon(Icons.search, color: tx.primary, size: tok.iconSm),
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: cs.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
             borderRadius: BorderRadius.circular(tok.radiusMd),
           ),
           contentPadding: EdgeInsets.symmetric(vertical: tok.gap.sm),

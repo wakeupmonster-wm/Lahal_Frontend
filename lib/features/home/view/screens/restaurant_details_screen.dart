@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lahal_application/features/home/controller/restaurant_details_controller.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
+import 'package:lahal_application/utils/components/widgets/empty_state_widget.dart';
+import 'package:lahal_application/utils/components/widgets/warning_dispaly.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
@@ -25,9 +27,21 @@ class RestaurantDetailsScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
+        // if (controller.errorMessage.isNotEmpty &&
+        //     controller.bestRestaurants.isEmpty) {
+        //   return WarningDisplay(
+        //     warningMessage: "Something went wrong",
+        //     subWarningMessage: controller.errorMessage.value,
+        //     onRetry: () => controller.getBestRestaurants(),
+        //   );
+        // }
+
         final restaurant = controller.restaurant.value;
         if (restaurant == null) {
-          return const Center(child: AppText('No details found'));
+          return const EmptyStateWidget(
+            title: "No Restaurants details found",
+            description: "We couldn't find any restaurants details.",
+          );
         }
 
         return Stack(
@@ -38,7 +52,6 @@ class RestaurantDetailsScreen extends StatelessWidget {
                 children: [
                   // --- Header Image & Overlay ---
                   _buildHeader(context, tok, tx, cs, restaurant),
-
                   Padding(
                     padding: EdgeInsets.all(tok.gap.lg),
                     child: Column(
@@ -117,26 +130,6 @@ class RestaurantDetailsScreen extends StatelessWidget {
             ),
 
             // Back Button Overlay (Fixed)
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.all(tok.gap.md),
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ],
         );
       }),
@@ -165,6 +158,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
+                Colors.black.withOpacity(0.1),
                 Colors.black.withOpacity(0.2),
                 Colors.black.withOpacity(0.6),
               ],
@@ -174,11 +168,32 @@ class RestaurantDetailsScreen extends StatelessWidget {
         Positioned(
           top: 60,
           right: 20,
+          left: 5,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildRoundIcon(Iconsax.share_outline),
-              const SizedBox(width: 12),
-              _buildRoundIcon(Iconsax.heart_outline),
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  _buildRoundIcon(Iconsax.share_outline),
+                  const SizedBox(width: 12),
+                  _buildRoundIcon(Iconsax.heart_outline),
+                ],
+              ),
             ],
           ),
         ),
@@ -199,18 +214,24 @@ class RestaurantDetailsScreen extends StatelessWidget {
                       size: AppTextSize.s24,
                       weight: AppTextWeight.bold,
                       color: Colors.white,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     AppText(
                       restaurant.address,
                       size: AppTextSize.s14,
                       color: Colors.white.withOpacity(0.9),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     AppText(
                       restaurant.distance,
                       size: AppTextSize.s14,
                       color: Colors.white.withOpacity(0.9),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -225,6 +246,8 @@ class RestaurantDetailsScreen extends StatelessWidget {
                           '${restaurant.status} | ${restaurant.openingHours}',
                           size: AppTextSize.s12,
                           color: Colors.white,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -234,11 +257,11 @@ class RestaurantDetailsScreen extends StatelessWidget {
               Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: tok.gap.sm,
+                      vertical: tok.gap.xxs,
                     ),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Color(0xFF047857),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(8),
@@ -252,18 +275,20 @@ class RestaurantDetailsScreen extends StatelessWidget {
                           size: AppTextSize.s14,
                           weight: AppTextWeight.bold,
                           color: Colors.white,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.star, color: Colors.white, size: 14),
+                        SizedBox(width: tok.gap.xs),
+                        Icon(Icons.star, color: Colors.white, size: 14),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: tok.gap.sm,
+                      vertical: tok.gap.xxs,
                     ),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(8),
@@ -378,33 +403,91 @@ class RestaurantDetailsScreen extends StatelessWidget {
   Widget _buildPhotosGrid(AppTokens tok, List<String> photos) {
     if (photos.isEmpty) return const SizedBox.shrink();
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // Helper to build a single photo item
+    Widget buildPhotoItem(String url) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(tok.radiusMd),
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) =>
+              Container(color: Colors.grey.shade200),
+        ),
+      );
+    }
+
+    return Column(
       children: [
-        Expanded(
-          flex: 2,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(photos[0], height: 250, fit: BoxFit.cover),
+        // Top Row (Indices 0, 1, 2)
+        if (photos.isNotEmpty)
+          SizedBox(
+            height: 250,
+            child: Row(
+              children: [
+                // Big Image (Index 0)
+                Expanded(flex: 2, child: buildPhotoItem(photos[0])),
+                if (photos.length > 1) ...[
+                  SizedBox(width: tok.gap.sm),
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        Expanded(child: buildPhotoItem(photos[1])),
+                        if (photos.length > 2) ...[
+                          SizedBox(height: tok.gap.sm),
+                          Expanded(child: buildPhotoItem(photos[2])),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          flex: 1,
-          child: Column(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(photos[1], height: 121, fit: BoxFit.cover),
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(photos[2], height: 121, fit: BoxFit.cover),
-              ),
-            ],
+
+        // Bottom Row (Indices 3, 4, 5)
+        if (photos.length > 3) ...[
+          SizedBox(height: tok.gap.sm),
+          SizedBox(
+            height: 120,
+            child: Row(
+              children: [
+                Expanded(child: buildPhotoItem(photos[3])),
+                if (photos.length > 4) ...[
+                  SizedBox(width: tok.gap.sm),
+                  Expanded(child: buildPhotoItem(photos[4])),
+                ],
+                if (photos.length > 5) ...[
+                  SizedBox(width: tok.gap.sm),
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        buildPhotoItem(photos[5]),
+                        if (photos.length > 6)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(tok.radiusMd),
+                            child: Container(
+                              color: Colors.black.withOpacity(0.5),
+                              alignment: Alignment.center,
+                              child: AppText(
+                                '+${photos.length - 6}',
+                                size: AppTextSize.s24,
+                                weight: AppTextWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
-        ),
+        ],
       ],
     );
   }

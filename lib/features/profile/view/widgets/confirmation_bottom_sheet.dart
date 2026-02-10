@@ -7,25 +7,50 @@ import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/app_button.dart';
 
-class LogoutBottomSheet extends StatefulWidget {
+class ConfirmationBottomSheet extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final String confirmLabel;
   final VoidCallback onConfirm;
+  final AppButtonVariant confirmVariant;
 
-  const LogoutBottomSheet({super.key, required this.onConfirm});
+  const ConfirmationBottomSheet({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.confirmLabel,
+    required this.onConfirm,
+    this.confirmVariant = AppButtonVariant.danger,
+  });
 
-  static void show(BuildContext context, {required VoidCallback onConfirm}) {
+  static void show(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required String confirmLabel,
+    required VoidCallback onConfirm,
+    AppButtonVariant confirmVariant = AppButtonVariant.danger,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => LogoutBottomSheet(onConfirm: onConfirm),
+      builder: (context) => ConfirmationBottomSheet(
+        title: title,
+        subtitle: subtitle,
+        confirmLabel: confirmLabel,
+        onConfirm: onConfirm,
+        confirmVariant: confirmVariant,
+      ),
     );
   }
 
   @override
-  State<LogoutBottomSheet> createState() => _LogoutBottomSheetState();
+  State<ConfirmationBottomSheet> createState() =>
+      _ConfirmationBottomSheetState();
 }
 
-class _LogoutBottomSheetState extends State<LogoutBottomSheet>
+class _ConfirmationBottomSheetState extends State<ConfirmationBottomSheet>
     with SingleTickerProviderStateMixin {
   late AnimationController _animController;
 
@@ -164,7 +189,7 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet>
             child: SlideTransition(
               position: _titleSlide,
               child: AppText(
-                AppStrings.wantToLogout,
+                widget.title,
                 size: AppTextSize.s18,
                 weight: AppTextWeight.bold,
                 color: tx.neutral,
@@ -180,7 +205,7 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet>
             child: SlideTransition(
               position: _messageSlide,
               child: AppText(
-                AppStrings.logoutConfirmation,
+                widget.subtitle,
                 size: AppTextSize.s14,
                 color: tx.subtle,
                 textAlign: TextAlign.center,
@@ -197,9 +222,9 @@ class _LogoutBottomSheetState extends State<LogoutBottomSheet>
               child: Column(
                 children: [
                   AppButton(
-                    label: AppStrings.logout,
+                    label: widget.confirmLabel,
                     onPressed: widget.onConfirm,
-                    variant: AppButtonVariant.danger,
+                    variant: widget.confirmVariant,
                     minWidth: double.infinity,
                   ),
                   SizedBox(height: tok.gap.sm),

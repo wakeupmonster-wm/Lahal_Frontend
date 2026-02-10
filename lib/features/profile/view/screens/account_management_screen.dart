@@ -4,11 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
-import 'package:lahal_application/utils/routes/app_pages.dart';
+
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
+import 'package:lahal_application/features/profile/view/widgets/confirmation_bottom_sheet.dart';
 
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});
@@ -30,29 +31,38 @@ class AccountManagementScreen extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-              child: Divider(color: cs.outlineVariant, thickness: 0.8),
+              child: Divider(color: cs.outline, thickness: 0.6),
             ),
-            _buildItem(
-              context,
-              AppStrings.editProfile,
-              onTap: () => context.push(AppRoutes.editProfileScreen),
-              showArrow: true,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-              child: Divider(color: cs.outlineVariant, thickness: 0.8),
-            ),
+            // _buildItem(
+            //   context,
+            //   AppStrings.editProfile,
+            //   onTap: () => context.push(AppRoutes.editProfileScreen),
+            //   showArrow: true,
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
+            //   child: Divider(color: cs.outlineVariant, thickness: 0.8),
+            // ),
             _buildItem(
               context,
               AppStrings.deleteYourAccount,
               onTap: () {
-                // Handle Delete Account Logic
+                ConfirmationBottomSheet.show(
+                  context,
+                  title: AppStrings.wantToDeleteAccount,
+                  subtitle: AppStrings.deleteAccountConfirmation,
+                  confirmLabel: AppStrings.delete,
+                  onConfirm: () {
+                    // Logic to delete account
+                    context.pop();
+                  },
+                );
               },
-              showArrow: true,
+              showArrow: false,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-              child: Divider(color: cs.outlineVariant, thickness: 0.8),
+              child: Divider(color: cs.outline, thickness: 0.6),
             ),
           ],
         ),

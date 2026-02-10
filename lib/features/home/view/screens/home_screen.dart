@@ -12,6 +12,7 @@ import 'package:lahal_application/utils/components/widgets/empty_state_widget.da
 import 'package:lahal_application/utils/components/widgets/warning_dispaly.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
+import 'package:lahal_application/features/home/view/widgets/filter_bottom_sheet.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
@@ -45,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     child: SvgPicture.asset(
                       AppAssets.homeBackground,
-                      height: 250,
+                      height: 275,
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
@@ -130,7 +131,14 @@ class HomeScreen extends StatelessWidget {
                               ),
 
                               SizedBox(width: tok.gap.md),
-                              SvgPicture.asset(AppSvg.filterIcon),
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () => FilterBottomSheet.show(context),
+                                child: Padding(
+                                  padding: EdgeInsets.all(tok.gap.xs),
+                                  child: SvgPicture.asset(AppSvg.filterIcon),
+                                ),
+                              ),
                             ],
                           ),
                           // SizedBox(height: tok.gap.lg),
@@ -238,6 +246,11 @@ class HomeScreen extends StatelessWidget {
                   },
                 );
               }),
+              SizedBox(height: tok.gap.lg),
+              SizedBox(height: tok.gap.lg),
+              SizedBox(height: tok.gap.lg),
+
+              SizedBox(height: tok.gap.lg), SizedBox(height: tok.gap.lg),
             ],
           ),
         ),
@@ -271,7 +284,7 @@ class HomeScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(tok.gap.xs),
             decoration: BoxDecoration(
-              color: cs.surfaceContainerHighest.withOpacity(0.5),
+              color: cs.surfaceContainerHighest.withOpacity(0.9),
               borderRadius: BorderRadius.circular(tok.radiusMd),
               boxShadow: [
                 BoxShadow(
