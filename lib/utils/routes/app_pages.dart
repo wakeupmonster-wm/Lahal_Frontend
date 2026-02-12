@@ -4,6 +4,7 @@ import 'package:lahal_application/features/authentication/view/screen/sign_in_sc
 import 'package:lahal_application/features/home/view/screens/home_screen.dart';
 import 'package:lahal_application/features/home/view/screens/map_screen.dart';
 import 'package:lahal_application/features/home/view/screens/prey_screen.dart';
+import 'package:lahal_application/features/home/view/screens/report_error_screen.dart';
 import 'package:lahal_application/features/home/view/screens/restaurant_details_screen.dart';
 import 'package:lahal_application/features/home/view/screens/notification_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/favorites_screen.dart';
@@ -71,6 +72,7 @@ class AppGoRouter {
         const NotificationPreferenceScreen(),
       ),
       _createRoute(AppRoutes.favoritesScreen, const FavoritesScreen()),
+      _createRoute(AppRoutes.reportErrorScreen, const ReportErrorScreen()),
 
       _createRoute(AppRoutes.notificationScreen, const NotificationScreen()),
 

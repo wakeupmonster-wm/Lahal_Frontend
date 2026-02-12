@@ -56,7 +56,12 @@ class SocialConnects {
   final String? website;
   final String? facebook;
   final String? email;
-  final String? twitter;
+  final String twitter;
 
-  SocialConnects({this.website, this.facebook, this.email, this.twitter});
+  SocialConnects({
+    this.website,
+    this.facebook,
+    this.email,
+    required this.twitter,
+  });
 }

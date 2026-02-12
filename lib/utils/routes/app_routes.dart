@@ -28,6 +28,7 @@ abstract class AppRoutes {
   static const String notificationPreferenceScreen =
       '/notification_preference_screen';
   static const String favoritesScreen = '/favorites_screen';
+  static const String reportErrorScreen = '/report_error_screen';
 
   ///===============   Bottmsheet ======================
   static const String bottomNavigationBar = '/bottomNavigationBar';
