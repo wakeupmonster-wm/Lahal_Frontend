@@ -810,10 +810,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                   color: tx.subtle,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    context.push(AppRoutes.reportErrorScreen);
-                    // Get.to(() => const ReportErrorScreen());
-                  },
+                  onTap: () => context.push(AppRoutes.reportErrorScreen),
                   child: AppText(
                     'Report error \u2192',
                     size: AppTextSize.s12,
@@ -824,7 +821,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
               ],
             ),
           ),
-          SvgPicture.asset(AppSvg.locationIcon),
+          SvgPicture.asset(AppSvg.warning2Icon),
         ],
       ),
     );

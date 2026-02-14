@@ -8,6 +8,7 @@ import 'package:lahal_application/utils/components/location/location_search_bar.
 import 'package:lahal_application/utils/components/shimmer/restaurant_card_shimmer.dart';
 import 'package:lahal_application/utils/components/widgets/restaurant_card.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
+import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/components/widgets/empty_state_widget.dart';
 import 'package:lahal_application/utils/components/widgets/warning_dispaly.dart';
@@ -30,7 +31,7 @@ class HomeScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     // Responsive heights
-    final expandedHeight = 230.0;
+    final expandedHeight = 220.0;
     final collapsedHeight = kToolbarHeight + 20; // Search bar + padding
 
     return Scaffold(
@@ -106,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            SizedBox(height: tok.gap.md),
+                            SizedBox(height: tok.gap.sm),
 
                             // Location Row
                             Row(
@@ -117,11 +118,15 @@ class HomeScreen extends StatelessWidget {
                                   size: 18,
                                 ),
                                 SizedBox(width: tok.gap.xs),
-                                AppText(
-                                  'Melbourne, Victoria (VIC)',
-                                  size: AppTextSize.s14,
-                                  weight: AppTextWeight.medium,
-                                  color: tx.inverse,
+                                Obx(
+                                  () => AppText(
+                                    controller.isLocationLoading.value
+                                        ? "Fetching location..."
+                                        : controller.currentAddress.value,
+                                    size: AppTextSize.s14,
+                                    weight: AppTextWeight.medium,
+                                    color: tx.inverse,
+                                  ),
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_down,
@@ -139,7 +144,7 @@ class HomeScreen extends StatelessWidget {
               ),
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(
-                  30,
+                  35,
                 ), // Height of search bar area
                 child: Container(
                   height: 100,
@@ -176,12 +181,12 @@ class HomeScreen extends StatelessWidget {
             SliverPersistentHeader(
               pinned: true,
               delegate: CategoryHeaderDelegate(
-                height: 130, // Height for category row + padding
+                height: 110, // Height for category row + padding
                 backgroundColor: cs.surface,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: tok.gap.md,
-                    vertical: tok.gap.sm,
+                    // vertical: tok.gap.,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -299,8 +304,31 @@ class HomeScreen extends StatelessWidget {
               );
             }),
 
-            SliverToBoxAdapter(child: SizedBox(height: tok.gap.xxl)),
+            SliverToBoxAdapter(child: SizedBox(height: tok.gap.xxl * 3)),
           ],
+        ),
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: tok.gap.xxl * 2.8),
+        child: SizedBox(
+          height: 45,
+          child: FloatingActionButton.extended(
+            onPressed: () => context.push(AppRoutes.mapScreen),
+            backgroundColor: AppColor.primaryColor,
+            elevation: 4,
+            shape: StadiumBorder(side: BorderSide(color: cs.surface)),
+            icon: SvgPicture.asset(
+              AppSvg.mapIcon,
+              width: tok.iconSm,
+              height: tok.iconSm,
+            ),
+            label: AppText(
+              "Map",
+              size: AppTextSize.s16,
+              weight: AppTextWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

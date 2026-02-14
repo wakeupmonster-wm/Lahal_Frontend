@@ -74,7 +74,11 @@ dependencies:
   fluttertoast: ^9.0.0   # Toast messages
   go_router: ^17.0.1     # Declarative routing
   flutter_lints: ^6.0.0
-  device_preview: ^1.0.0 # Device preview
+  device_preview: ^1.0.0 # Device preview 
+  geolocator: ^10.1.0
+  permission_handler: ^11.0.0 
+  geocoding: ^4.0.0
+
 
 
 

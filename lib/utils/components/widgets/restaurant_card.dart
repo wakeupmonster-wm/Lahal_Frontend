@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
+import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
@@ -72,7 +73,16 @@ class RestaurantCard extends StatelessWidget {
                         horizontal: tok.gap.xs,
                         vertical: tok.gap.xxs,
                       ),
-                      color: Colors.black.withOpacity(0.3),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            AppColor.primaryColor.withOpacity(0.7),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
                       child: AppText(
                         restaurant.category,
                         size: AppTextSize.s12,

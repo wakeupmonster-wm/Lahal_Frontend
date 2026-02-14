@@ -38,6 +38,9 @@ class AppSvg {
   static const String locationNobcakgroundIcon =
       "assets/svgs/location_nobcakground.svg";
 
+  static const String galleryAddIcon = "assets/svgs/gallery-add.svg";
+  static const String mapIcon = "assets/svgs/map.svg";
+
   //=======bottombar icons
   static const String greyMapIcon = "assets/svgs/Grey_map_icon.svg";
   static const String greyPreyIcon = "assets/svgs/Grey_prey_icon.svg";

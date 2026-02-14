@@ -29,6 +29,13 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app needs location to show nearby restaurants</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs camera access to take photos</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs photo library access to pick photos</string>
+
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
