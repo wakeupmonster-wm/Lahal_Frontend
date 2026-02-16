@@ -66,6 +66,8 @@ class RestaurantRepository {
         email: 'rose@example.com',
         twitter: 'https://twitter.com',
       ),
+      latitude: -37.802,
+      longitude: 144.96,
     );
   }
 }

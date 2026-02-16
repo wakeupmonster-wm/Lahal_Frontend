@@ -29,11 +29,17 @@ class AddRestaurantScreen extends StatelessWidget {
             // Header Image Background
             Stack(
               children: [
-                Image.asset(
-                  AppAssets.biryaniImage,
-                  width: double.infinity,
-                  height: 280,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(tok.radiusLg * 2),
+                    bottomRight: Radius.circular(tok.radiusLg * 2),
+                  ),
+                  child: Image.asset(
+                    AppAssets.addResturentBanner,
+                    width: double.infinity,
+                    height: 280,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Positioned(
                   top: 80,

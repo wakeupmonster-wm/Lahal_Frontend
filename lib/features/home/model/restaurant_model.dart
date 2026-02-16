@@ -14,6 +14,8 @@ class RestaurantModel {
   final List<String> photos;
   final Map<String, bool> amenities; // e.g., {"Dine-in": true, "Takeout": true}
   final List<ReviewModel> reviews;
+  final double latitude;
+  final double longitude;
   final SocialConnects socialConnects;
 
   RestaurantModel({
@@ -32,6 +34,8 @@ class RestaurantModel {
     required this.photos,
     required this.amenities,
     required this.reviews,
+    required this.latitude,
+    required this.longitude,
     required this.socialConnects,
   });
 }

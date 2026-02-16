@@ -35,6 +35,8 @@ class HomeRepository {
         photos: [],
         amenities: {},
         reviews: [],
+        latitude: -37.802,
+        longitude: 144.96,
         socialConnects: SocialConnects(twitter: ""),
       ),
       RestaurantModel(
@@ -54,6 +56,8 @@ class HomeRepository {
         photos: [],
         amenities: {},
         reviews: [],
+        latitude: -37.805,
+        longitude: 144.965,
         socialConnects: SocialConnects(twitter: ""),
       ),
       RestaurantModel(
@@ -74,6 +78,8 @@ class HomeRepository {
         photos: [],
         amenities: {},
         reviews: [],
+        latitude: -37.81,
+        longitude: 144.97,
         socialConnects: SocialConnects(twitter: ""),
       ),
       RestaurantModel(
@@ -93,6 +99,8 @@ class HomeRepository {
         photos: [],
         amenities: {},
         reviews: [],
+        latitude: -37.795,
+        longitude: 144.95,
         socialConnects: SocialConnects(twitter: ""),
       ),
     ];
@@ -120,6 +128,8 @@ class HomeRepository {
         photos: [],
         amenities: {},
         reviews: [],
+        latitude: -37.802,
+        longitude: 144.96,
         socialConnects: SocialConnects(twitter: ""),
       ),
       RestaurantModel(
@@ -140,6 +150,8 @@ class HomeRepository {
         photos: [],
         amenities: {},
         reviews: [],
+        latitude: -37.802,
+        longitude: 144.96,
         socialConnects: SocialConnects(twitter: ""),
       ),
       RestaurantModel(
@@ -160,6 +172,8 @@ class HomeRepository {
         photos: [],
         amenities: {},
         reviews: [],
+        latitude: -37.802,
+        longitude: 144.96,
         socialConnects: SocialConnects(twitter: ""),
       ),
     ];
