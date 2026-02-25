@@ -40,6 +40,7 @@ class AppSvg {
 
   static const String galleryAddIcon = "assets/svgs/gallery-add.svg";
   static const String mapIcon = "assets/svgs/map.svg";
+  static const String mosqueImage = "assets/svgs/mosque_image.svg";
 
   //=======bottombar icons
   static const String greyMapIcon = "assets/svgs/Grey_map_icon.svg";

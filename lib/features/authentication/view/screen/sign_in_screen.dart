@@ -148,32 +148,31 @@ class SignInScreen extends StatelessWidget {
 
                       SizedBox(height: tok.gap.xs),
 
-                      Row(
-                        children: [
-                          Obx(
-                            () => SizedBox(
-                              width: tok.iconLg,
-                              height: tok.iconLg,
-                              child: Checkbox(
-                                value: controller.rememberMe.value,
-                                onChanged: controller.toggleRememberMe,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                side: BorderSide(color: cs.outlineVariant),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: tok.gap.xs),
-                          AppText(
-                            AppStrings.rememberMyLogin,
-                            size: AppTextSize.s12,
-                            weight: AppTextWeight.medium,
-                            color: tx.subtle,
-                          ),
-                        ],
-                      ),
-
+                      // Row(
+                      //   children: [
+                      //     Obx(
+                      //       () => SizedBox(
+                      //         width: tok.iconLg,
+                      //         height: tok.iconLg,
+                      //         child: Checkbox(
+                      //           value: controller.rememberMe.value,
+                      //           onChanged: controller.toggleRememberMe,
+                      //           shape: RoundedRectangleBorder(
+                      //             borderRadius: BorderRadius.circular(4),
+                      //           ),
+                      //           side: BorderSide(color: cs.outlineVariant),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     SizedBox(width: tok.gap.xs),
+                      //     AppText(
+                      //       AppStrings.rememberMyLogin,
+                      //       size: AppTextSize.s12,
+                      //       weight: AppTextWeight.medium,
+                      //       color: tx.subtle,
+                      //     ),
+                      //   ],
+                      // ),
                       SizedBox(height: tok.gap.md),
 
                       SizedBox(

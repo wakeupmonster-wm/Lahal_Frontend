@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/authentication/view/screen/sign_in_screen.dart';
 import 'package:lahal_application/features/home/view/screens/home_screen.dart';
 import 'package:lahal_application/features/home/view/screens/map_screen.dart';
-import 'package:lahal_application/features/home/view/screens/prey_screen.dart';
 import 'package:lahal_application/features/home/view/screens/report_error_screen.dart';
 import 'package:lahal_application/features/home/view/screens/restaurant_details_screen.dart';
 import 'package:lahal_application/features/home/view/screens/notification_screen.dart';
+import 'package:lahal_application/features/prey/view/prayer_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/favorites_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/profile_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/edit_profile_screen.dart';
@@ -48,7 +48,7 @@ class AppGoRouter {
       //===================home========================
       _createRoute(AppRoutes.homeScreen, const HomeScreen()),
       _createRoute(AppRoutes.mapScreen, const MapScreen()),
-      _createRoute(AppRoutes.preyScreen, const PreyScreen()),
+      _createRoute(AppRoutes.preyScreen, const PrayerScreen()),
       _createRoute(AppRoutes.profileScreen, const ProfileScreen()),
       _createRoute(
         AppRoutes.restaurantDetails,

@@ -101,15 +101,14 @@ class OtpVerificationScreen extends StatelessWidget {
 
                 SizedBox(height: tok.gap.md),
 
-                Center(
-                  child: AppText(
-                    AppStrings.checkTextMessages,
-                    size: AppTextSize.s14,
-                    weight: AppTextWeight.medium,
-                    color: tx.subtle,
-                  ),
-                ),
-
+                // Center(
+                //   child: AppText(
+                //     AppStrings.checkTextMessages,
+                //     size: AppTextSize.s14,
+                //     weight: AppTextWeight.medium,
+                //     color: tx.subtle,
+                //   ),
+                // ),
                 const Spacer(),
 
                 Padding(

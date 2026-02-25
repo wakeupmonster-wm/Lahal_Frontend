@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/controller/home_controller.dart';
+import 'package:lahal_application/features/home/controller/location_controller.dart';
 import 'package:lahal_application/features/home/view/widgets/category_header_delegate.dart';
 import 'package:lahal_application/utils/components/location/location_search_bar.dart';
 import 'package:lahal_application/utils/components/shimmer/restaurant_card_shimmer.dart';
@@ -26,6 +27,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(HomeController());
+    final locationController = Get.put(LocationController());
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
@@ -120,9 +122,11 @@ class HomeScreen extends StatelessWidget {
                                 SizedBox(width: tok.gap.xs),
                                 Obx(
                                   () => AppText(
-                                    controller.isLocationLoading.value
+                                    locationController.isLocationLoading.value
                                         ? "Fetching location..."
-                                        : controller.currentAddress.value,
+                                        : locationController
+                                              .currentAddress
+                                              .value,
                                     size: AppTextSize.s14,
                                     weight: AppTextWeight.medium,
                                     color: tx.inverse,
