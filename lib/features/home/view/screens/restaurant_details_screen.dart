@@ -12,7 +12,6 @@ import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
-import 'package:lahal_application/features/home/view/screens/report_error_screen.dart';
 
 class RestaurantDetailsScreen extends StatelessWidget {
   const RestaurantDetailsScreen({super.key});
@@ -95,7 +94,13 @@ class RestaurantDetailsScreen extends StatelessWidget {
                         // --- Reviews Section ---
                         _buildSectionHeader(tx, 'Reviews'),
                         SizedBox(height: tok.gap.md),
-                        _buildReviewsList(tok, tx, cs, restaurant.reviews),
+                        _buildReviewsList(
+                          tok,
+                          tx,
+                          cs,
+                          restaurant.reviews,
+                          controller,
+                        ),
 
                         SizedBox(height: tok.gap.xl),
 
@@ -196,7 +201,19 @@ class RestaurantDetailsScreen extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          _buildRoundIcon(Iconsax.share_outline, tx, tok),
+                          Container(
+                            padding: EdgeInsets.all(tok.gap.xxs),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.3),
+                              shape: BoxShape.circle,
+                            ),
+                            child: SvgPicture.asset(
+                              AppSvg.shareIcon,
+
+                              width: tok.iconLg,
+                              height: tok.iconLg,
+                            ),
+                          ),
                           SizedBox(width: tok.gap.xs),
                           _buildRoundIcon(Iconsax.heart_outline, tx, tok),
                         ],
@@ -264,64 +281,67 @@ class RestaurantDetailsScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: tok.gap.sm,
-                              vertical: tok.gap.xxs,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF047857), // Keep brand color
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8),
+                      Container(
+                        width: tok.gap.xxl * 2,
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: tok.gap.xxxs,
+                              ),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF047857), // Keep brand color
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(8),
+                                  topRight: Radius.circular(8),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AppText(
+                                    restaurant.rating.toStringAsFixed(0),
+                                    size: AppTextSize.s14,
+                                    weight: AppTextWeight.bold,
+                                    color: tx.inverse,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  // SizedBox(width: tok.gap.xs),
+                                  Icon(Icons.star, color: tx.inverse, size: 14),
+                                ],
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                AppText(
-                                  restaurant.rating.toStringAsFixed(0),
-                                  size: AppTextSize.s14,
-                                  weight: AppTextWeight.bold,
-                                  color: tx.inverse,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                            Container(
+                              width: tok.gap.xxl * 2,
+                              padding: EdgeInsets.symmetric(
+                                vertical: tok.gap.xxxs,
+                              ),
+                              decoration: BoxDecoration(
+                                color: cs.surface,
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(8),
+                                  bottomRight: Radius.circular(8),
                                 ),
-                                SizedBox(width: tok.gap.xs),
-                                Icon(Icons.star, color: tx.inverse, size: 14),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: tok.gap.sm,
-                              vertical: tok.gap.xxs,
-                            ),
-                            decoration: BoxDecoration(
-                              color: cs.surface,
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(8),
-                                bottomRight: Radius.circular(8),
+                              ),
+                              child: Column(
+                                children: [
+                                  AppText(
+                                    restaurant.reviewCount.toString(),
+                                    size: AppTextSize.s14,
+                                    weight: AppTextWeight.bold,
+                                    color: tx.neutral,
+                                  ),
+                                  AppText(
+                                    'Reviews',
+                                    size: AppTextSize.s10,
+                                    color: tx.neutral,
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Column(
-                              children: [
-                                AppText(
-                                  restaurant.reviewCount.toString(),
-                                  size: AppTextSize.s14,
-                                  weight: AppTextWeight.bold,
-                                  color: tx.neutral,
-                                ),
-                                AppText(
-                                  'Reviews',
-                                  size: AppTextSize.s10,
-                                  color: tx.subtle,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -380,6 +400,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(tok.radiusLg * 2),
+        border: Border.all(color: cs.outline),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -574,7 +595,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
             restaurant.address,
             tx,
           ),
-          SizedBox(height: tok.gap.md),
+          SizedBox(height: tok.gap.xxxs),
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
@@ -590,14 +611,16 @@ class RestaurantDetailsScreen extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: tok.gap.xxs),
           GridView.builder(
             shrinkWrap: true,
+            padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 6,
-              mainAxisSpacing: tok.gap.xs,
-              crossAxisSpacing: tok.gap.xs,
+              mainAxisSpacing: tok.gap.xxs,
+              crossAxisSpacing: tok.gap.xxs,
             ),
             itemCount: restaurant.amenities.length,
             itemBuilder: (context, index) {
@@ -642,88 +665,30 @@ class RestaurantDetailsScreen extends StatelessWidget {
     AppTextColors tx,
     ColorScheme cs,
     List<ReviewModel> reviews,
+    RestaurantDetailsController controller,
   ) {
-    return SizedBox(
-      height: 120,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: reviews.length,
-        separatorBuilder: (_, __) => SizedBox(width: tok.gap.xs),
-        itemBuilder: (context, index) {
-          final review = reviews[index];
-          return Container(
-            width: 300,
-            padding: EdgeInsets.all(tok.gap.xs),
-            decoration: BoxDecoration(
-              color: cs.surface,
-              borderRadius: BorderRadius.circular(tok.radiusMd),
-              border: Border.all(color: cs.outlineVariant.withOpacity(0.5)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(review.userImageUrl),
-                    ),
-                    SizedBox(width: tok.gap.xs),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            review.userName,
-                            size: AppTextSize.s14,
-                            weight: AppTextWeight.bold,
-                          ),
-                          AppText(
-                            review.date,
-                            size: AppTextSize.s10,
-                            color: tx.muted,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF047857),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Row(
-                        children: [
-                          AppText(
-                            review.rating.toStringAsFixed(0),
-                            size: AppTextSize.s10,
-                            weight: AppTextWeight.bold,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 2),
-                          const Icon(Icons.star, color: Colors.white, size: 10),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: tok.gap.xs),
-                AppText(
-                  review.comment,
-                  size: AppTextSize.s12,
-                  color: tx.subtle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+    return Obx(() {
+      final isAnyExpanded = controller.expandedReviewIndices.isNotEmpty;
+      return SizedBox(
+        height: isAnyExpanded ? 200 : 140, // Dynamic height
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: reviews.length,
+          separatorBuilder: (_, __) => SizedBox(width: tok.gap.xs),
+          itemBuilder: (context, index) {
+            final review = reviews[index];
+            return _ReviewCard(
+              review: review,
+              tok: tok,
+              tx: tx,
+              cs: cs,
+              controller: controller,
+              index: index,
+            );
+          },
+        ),
+      );
+    });
   }
 
   Widget _buildConnectsGrid(
@@ -750,9 +715,9 @@ class RestaurantDetailsScreen extends StatelessWidget {
         for (int i = 0; i < items.length; i++) ...[
           Expanded(
             child: Container(
-              // aspectRatio: 1,
+              padding: EdgeInsets.all(tok.gap.xs),
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHighest.withOpacity(0.2),
+                color: cs.surfaceContainerHighest.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(tok.radiusMd),
               ),
               child: Column(
@@ -822,6 +787,125 @@ class RestaurantDetailsScreen extends StatelessWidget {
             ),
           ),
           SvgPicture.asset(AppSvg.warning2Icon),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReviewCard extends StatelessWidget {
+  final ReviewModel review;
+  final AppTokens tok;
+  final AppTextColors tx;
+  final ColorScheme cs;
+  final RestaurantDetailsController controller;
+  final int index;
+
+  const _ReviewCard({
+    required this.review,
+    required this.tok,
+    required this.tx,
+    required this.cs,
+    required this.controller,
+    required this.index,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 300,
+      padding: EdgeInsets.all(tok.gap.xs),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(tok.radiusMd),
+        border: Border.all(color: cs.outlineVariant.withOpacity(0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(review.userImageUrl),
+              ),
+              SizedBox(width: tok.gap.xs),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      review.userName,
+                      size: AppTextSize.s14,
+                      weight: AppTextWeight.bold,
+                    ),
+                    AppText(
+                      review.date,
+                      size: AppTextSize.s10,
+                      color: tx.muted,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF047857),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Row(
+                  children: [
+                    AppText(
+                      review.rating.toStringAsFixed(0),
+                      size: AppTextSize.s10,
+                      weight: AppTextWeight.bold,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(Icons.star, color: Colors.white, size: 10),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: tok.gap.xs),
+
+          Expanded(
+            child: Obx(() {
+              final isExpanded = controller.expandedReviewIndices.contains(
+                index,
+              );
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      review.comment,
+                      size: AppTextSize.s12,
+                      color: tx.subtle,
+                      maxLines: isExpanded ? null : 2,
+                      overflow: isExpanded ? null : TextOverflow.ellipsis,
+                    ),
+                    if (review.comment.length > 60)
+                      GestureDetector(
+                        onTap: () => controller.toggleReviewExpansion(index),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: AppText(
+                            isExpanded ? "less" : "more",
+                            size: AppTextSize.s12,
+                            weight: AppTextWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }),
+          ),
         ],
       ),
     );

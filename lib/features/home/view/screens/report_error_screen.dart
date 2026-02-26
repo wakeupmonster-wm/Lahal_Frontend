@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lahal_application/features/home/controller/report_error_controller.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
@@ -59,9 +60,14 @@ class ReportErrorScreen extends StatelessWidget {
 
                       // More Info TextField
                       Container(
+                        clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
-                          color: cs.surfaceContainerHighest.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(tok.radiusMd),
+                          color: cs.surfaceContainerHighest.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(tok.radiusLg),
+                          border: Border.all(
+                            color: cs.outlineVariant.withOpacity(0.1),
+                            width: 1,
+                          ),
                         ),
                         child: TextField(
                           controller: controller.moreInfoController,
@@ -69,8 +75,9 @@ class ReportErrorScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             color: tx.neutral,
-                            fontFamily: 'Inter', // Assuming Inter font
+                            fontFamily: GoogleFonts.urbanist().fontFamily,
                           ),
+
                           decoration: InputDecoration(
                             hintText: 'More info',
                             hintStyle: TextStyle(
@@ -79,6 +86,8 @@ class ReportErrorScreen extends StatelessWidget {
                             ),
                             contentPadding: EdgeInsets.all(tok.gap.md),
                             border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
                           ),
                         ),
                       ),
@@ -158,12 +167,17 @@ class ReportErrorScreen extends StatelessWidget {
                   color: isSelected
                       ? const Color(0xFF047857)
                       : Colors.grey.withOpacity(0.4),
-                  width: 1.5,
+                  width: 2,
                 ),
               ),
             ),
             SizedBox(width: tok.gap.sm),
-            AppText(label, size: AppTextSize.s14, color: tx.neutral),
+            AppText(
+              label,
+              size: AppTextSize.s16,
+              color: tx.neutral,
+              weight: AppTextWeight.semibold,
+            ),
           ],
         ),
       ),

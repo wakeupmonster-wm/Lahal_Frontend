@@ -18,6 +18,7 @@ class PrayerScreen extends StatelessWidget {
     final controller = Get.put(PrayerController());
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
+
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -26,16 +27,11 @@ class PrayerScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Header (Clock, Location, Mosque SVG)
             const PrayerHeader(),
 
-            // 2. Upcoming Prayer Card (Floating over header overlap)
-            Transform.translate(
-              offset: const Offset(0, -40),
-              child: const UpcomingPrayerCard(),
-            ),
-
+            const UpcomingPrayerCard(),
             // 3. Prayer Times Title
+            SizedBox(height: tok.gap.xxl),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
               child: AppText(
@@ -46,7 +42,7 @@ class PrayerScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: tok.gap.xl),
 
             // 4. Horizontal Prayer Times List
             SizedBox(

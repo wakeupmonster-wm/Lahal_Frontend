@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lahal_application/features/profile/controller/location_controller.dart';
+import 'package:lahal_application/features/profile/controller/change_location_controller.dart';
 import 'package:lahal_application/features/profile/model/location_model.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
+import 'package:lahal_application/utils/components/textfields/app_search_text_field.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
+import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
-import 'package:lahal_application/utils/constants/app_colors.dart';
-import 'package:lahal_application/utils/components/location/location_search_bar.dart';
 import 'package:lahal_application/utils/components/location/use_current_location_tile.dart';
 
 class ChangeLocationScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class ChangeLocationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(LocationController());
+    final controller = Get.put(ChangeLocationController());
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
@@ -35,17 +36,18 @@ class ChangeLocationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: tok.gap.md),
-              // Search Bar
-              LocationSearchBar(
+              AppSearchField(
+                hintText: AppStrings.searchLocationHint,
                 controller: controller.searchController,
                 onChanged: (value) => controller.searchLocations(value),
-                hintText: AppStrings.searchLocationHint,
               ),
+
+              // Search Bar
               SizedBox(height: tok.gap.md),
 
               // Use Current Location
               UseCurrentLocationTile(
-                onTap: () => controller.useCurrentLocation(),
+                onTap: () => controller.useCurrentLocation(context),
                 label: AppStrings.useCurrentLocation,
               ),
               SizedBox(height: tok.gap.lg),
@@ -62,12 +64,10 @@ class ChangeLocationScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: cs.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: cs.outlineVariant.withOpacity(0.5),
-                    ),
+
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: Colors.black.withOpacity(0.08),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -112,7 +112,7 @@ class ChangeLocationScreen extends StatelessWidget {
     AppTokens tok,
     AppTextColors tx,
     ColorScheme cs,
-    LocationController controller,
+    ChangeLocationController controller,
   ) {
     return ListTile(
       onTap: () => controller.selectLocation(location),
@@ -123,17 +123,17 @@ class ChangeLocationScreen extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(color: cs.surface, shape: BoxShape.circle),
-        child: Icon(Icons.location_on_outlined, color: tx.neutral, size: 22),
+        child: SvgPicture.asset(AppSvg.locationIcon),
       ),
       title: AppText(
         location.title,
-        size: AppTextSize.s16,
-        weight: AppTextWeight.semibold,
+        size: AppTextSize.s18,
+        weight: AppTextWeight.bold,
         color: tx.subtle,
       ),
       subtitle: AppText(
         location.subtitle,
-        size: AppTextSize.s12,
+        size: AppTextSize.s14,
         color: tx.subtle,
       ),
       trailing: Icon(Icons.chevron_right, color: tx.subtle, size: 20),

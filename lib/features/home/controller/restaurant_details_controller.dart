@@ -9,6 +9,8 @@ class RestaurantDetailsController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
 
+  final RxList<int> expandedReviewIndices = <int>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -23,10 +25,20 @@ class RestaurantDetailsController extends GetxController {
       error.value = '';
       final data = await _repository.getRestaurantDetails(id);
       restaurant.value = data;
+      expandedReviewIndices
+          .clear(); // Clear indices when new details are loaded
     } catch (e) {
       error.value = 'Failed to load restaurant details';
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void toggleReviewExpansion(int index) {
+    if (expandedReviewIndices.contains(index)) {
+      expandedReviewIndices.remove(index);
+    } else {
+      expandedReviewIndices.add(index);
     }
   }
 

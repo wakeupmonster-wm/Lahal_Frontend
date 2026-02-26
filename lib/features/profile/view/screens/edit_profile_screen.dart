@@ -101,15 +101,15 @@ class EditProfileScreen extends StatelessWidget {
                   typingEnabled: controller.isPhoneEditable.value,
                   suffix: Padding(
                     padding: EdgeInsets.only(right: tok.gap.xs),
-                    child: TextButton(
-                      onPressed: controller.togglePhoneEditable,
-                      child: AppText(
-                        AppStrings.change,
-                        size: AppTextSize.s12,
-                        weight: AppTextWeight.bold,
-                        color: AppColor.primaryColor,
-                      ),
-                    ),
+                    // child: TextButton(
+                    //   onPressed: controller.togglePhoneEditable,
+                    //   child: AppText(
+                    //     AppStrings.change,
+                    //     size: AppTextSize.s12,
+                    //     weight: AppTextWeight.bold,
+                    //     color: AppColor.primaryColor,
+                    //   ),
+                    // ),
                   ),
                 ),
               ),
@@ -124,15 +124,15 @@ class EditProfileScreen extends StatelessWidget {
                   typingEnabled: controller.isEmailEditable.value,
                   suffix: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: TextButton(
-                      onPressed: controller.toggleEmailEditable,
-                      child: AppText(
-                        AppStrings.change,
-                        size: AppTextSize.s12,
-                        weight: AppTextWeight.bold,
-                        color: AppColor.primaryColor,
-                      ),
-                    ),
+                    // child: TextButton(
+                    //   onPressed: controller.toggleEmailEditable,
+                    //   child: AppText(
+                    //     AppStrings.change,
+                    //     size: AppTextSize.s12,
+                    //     weight: AppTextWeight.bold,
+                    //     color: AppColor.primaryColor,
+                    //   ),
+                    // ),
                   ),
                 ),
               ),
@@ -209,6 +209,17 @@ class EditProfileScreen extends StatelessWidget {
                           }).toList(),
                         ),
                       ),
+                    Obx(
+                      () => controller.isOtherGenderSelected.value
+                          ? Padding(
+                              padding: EdgeInsets.only(top: tok.gap.md),
+                              child: MyTextFeild(
+                                controller: controller.customGenderController,
+                                hintText: "Enter your gender",
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                   ],
                 ),
               ),
@@ -217,6 +228,7 @@ class EditProfileScreen extends StatelessWidget {
               // Save Button
               Obx(
                 () => AppButton(
+                  radiusOverride: 12,
                   onPressed: controller.isLoading.value
                       ? null
                       : () => controller.saveProfile(context),

@@ -183,7 +183,7 @@ class ProfileScreen extends StatelessWidget {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest.withOpacity(0.3),
+        color: cs.surfaceContainerHighest.withOpacity(0.9),
         borderRadius: BorderRadius.circular(tok.radiusMd),
       ),
       child: Column(children: children),
@@ -227,6 +227,7 @@ class ProfileScreen extends StatelessWidget {
           );
         }
       },
+
       borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: EdgeInsets.symmetric(

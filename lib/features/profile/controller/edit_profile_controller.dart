@@ -16,15 +16,17 @@ class EditProfileController extends GetxController {
   final emailController = TextEditingController();
   final dobController = TextEditingController();
   final genderController = TextEditingController();
+  final customGenderController = TextEditingController();
 
   final RxBool isLoading = false.obs;
   final RxBool isPhoneEditable = false.obs;
   final RxBool isEmailEditable = false.obs;
   final RxString selectedGender = ''.obs;
+  final RxBool isOtherGenderSelected = false.obs;
   final RxBool isGenderExpanded = false.obs;
   final Rx<File?> pickedImage = Rx<File?>(null);
 
-  final genderOptions = ['Male', 'Female'];
+  final genderOptions = ['Male', 'Female', 'Other'];
 
   @override
   void onInit() {
@@ -40,6 +42,7 @@ class EditProfileController extends GetxController {
     emailController.dispose();
     dobController.dispose();
     genderController.dispose();
+    customGenderController.dispose();
     super.onClose();
   }
 
@@ -51,6 +54,8 @@ class EditProfileController extends GetxController {
     dobController.text = "";
     selectedGender.value = "";
     genderController.text = "";
+    customGenderController.text = "";
+    isOtherGenderSelected.value = false;
   }
 
   void togglePhoneEditable() {
@@ -67,7 +72,10 @@ class EditProfileController extends GetxController {
 
   void selectGender(String gender) {
     selectedGender.value = gender;
-    genderController.text = gender;
+    isOtherGenderSelected.value = (gender == 'Other');
+    if (!isOtherGenderSelected.value) {
+      genderController.text = gender;
+    }
     isGenderExpanded.value = false;
   }
 

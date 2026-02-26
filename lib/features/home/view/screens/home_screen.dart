@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/controller/home_controller.dart';
 import 'package:lahal_application/features/home/controller/location_controller.dart';
 import 'package:lahal_application/features/home/view/widgets/category_header_delegate.dart';
-import 'package:lahal_application/utils/components/location/location_search_bar.dart';
 import 'package:lahal_application/utils/components/shimmer/restaurant_card_shimmer.dart';
+import 'package:lahal_application/utils/components/textfields/app_search_text_field.dart';
 import 'package:lahal_application/utils/components/widgets/restaurant_card.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
@@ -160,7 +160,7 @@ class HomeScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: LocationSearchBar(
+                        child: AppSearchField(
                           controller: TextEditingController(),
                           onChanged: (value) {},
                           hintText: AppStrings.searchLocationHint,
@@ -192,45 +192,57 @@ class HomeScreen extends StatelessWidget {
                     horizontal: tok.gap.md,
                     // vertical: tok.gap.,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildCategoryItem(
-                        tok,
-                        tx,
-                        cs,
-                        'Near you',
-                        AppAssets.mapIcon,
-                      ),
-                      _buildCategoryItem(
-                        tok,
-                        tx,
-                        cs,
-                        'Top rated',
-                        AppAssets.thumbIcon,
-                      ),
-                      _buildCategoryItem(
-                        tok,
-                        tx,
-                        cs,
-                        'Open now',
-                        AppAssets.clockIcon,
-                      ),
-                      _buildCategoryItem(
-                        tok,
-                        tx,
-                        cs,
-                        'Certified',
-                        AppAssets.certifiedIcon,
-                      ),
-                      _buildCategoryItem(
-                        tok,
-                        tx,
-                        cs,
-                        'Top reviewed',
-                        AppAssets.reviewIcon,
-                      ),
-                    ],
+                  child: Obx(
+                    () => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildCategoryItem(
+                          tok,
+                          tx,
+                          cs,
+                          'Near you',
+                          AppAssets.mapIcon,
+                          controller.selectedCategory.value == 'Near you',
+                          () => controller.onCategorySelected('Near you'),
+                        ),
+                        _buildCategoryItem(
+                          tok,
+                          tx,
+                          cs,
+                          'Top rated',
+                          AppAssets.thumbIcon,
+                          controller.selectedCategory.value == 'Top rated',
+                          () => controller.onCategorySelected('Top rated'),
+                        ),
+                        _buildCategoryItem(
+                          tok,
+                          tx,
+                          cs,
+                          'Open now',
+                          AppAssets.clockIcon,
+                          controller.selectedCategory.value == 'Open now',
+                          () => controller.onCategorySelected('Open now'),
+                        ),
+                        _buildCategoryItem(
+                          tok,
+                          tx,
+                          cs,
+                          'Certified',
+                          AppAssets.certifiedIcon,
+                          controller.selectedCategory.value == 'Certified',
+                          () => controller.onCategorySelected('Certified'),
+                        ),
+                        _buildCategoryItem(
+                          tok,
+                          tx,
+                          cs,
+                          'Top reviewed',
+                          AppAssets.reviewIcon,
+                          controller.selectedCategory.value == 'Top reviewed',
+                          () => controller.onCategorySelected('Top reviewed'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -344,9 +356,11 @@ class HomeScreen extends StatelessWidget {
     ColorScheme cs,
     String label,
     String iconPath,
+    bool isSelected,
+    VoidCallback onTap,
   ) {
-    return Padding(
-      padding: EdgeInsets.only(right: tok.gap.sm),
+    return GestureDetector(
+      onTap: onTap,
       child: Column(
         mainAxisSize:
             MainAxisSize.min, // Important for layout inside row/column
@@ -354,8 +368,14 @@ class HomeScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(tok.gap.xs),
             decoration: BoxDecoration(
-              color: cs.surfaceContainerHighest.withOpacity(0.9),
+              color: isSelected
+                  ? AppColor.primaryColor.withOpacity(0.05)
+                  : cs.surfaceContainerHighest.withOpacity(0.9),
               borderRadius: BorderRadius.circular(tok.radiusMd),
+              border: Border.all(
+                color: isSelected ? AppColor.primaryColor : Colors.transparent,
+                width: 1.5,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: cs.onSurface.withOpacity(0.02),
@@ -375,7 +395,7 @@ class HomeScreen extends StatelessWidget {
             label,
             size: AppTextSize.s12,
             weight: AppTextWeight.medium,
-            color: tx.subtle,
+            color: isSelected ? AppColor.primaryColor : tx.subtle,
           ),
         ],
       ),

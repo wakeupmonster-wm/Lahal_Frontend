@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/components/location/location_permission_sheet.dart';
 import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
+import 'package:lahal_application/utils/components/location/location_permission_dialog.dart';
+import 'package:lahal_application/data/datasources/local/storage_utility.dart';
 
 class LocationController extends GetxController {
   final isLocationLoading = false.obs;
@@ -16,7 +18,37 @@ class LocationController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchLocation(openSettings: false);
+    _checkFirstTimeLocationPopup();
+  }
+
+  Future<void> _checkFirstTimeLocationPopup() async {
+    final hasShown =
+        AppLocalStorage.instance().readData<bool>('has_shown_location_popup') ??
+        false;
+
+    if (!hasShown) {
+      // Mark as shown
+      await AppLocalStorage.instance().writeData(
+        'has_shown_location_popup',
+        true,
+      );
+
+      // Show the first-time popup
+      if (Get.context != null) {
+        LocationPermissionDialog.show(
+          Get.context!,
+          onEnable: () async {
+            await fetchLocation(openSettings: true);
+          },
+          onManualSearch: () {
+            Get.context!.push(AppRoutes.changeLocationScreen);
+          },
+        );
+      }
+    } else {
+      // Subsequent visits, fetch location silently but don't open settings by default
+      fetchLocation(openSettings: false);
+    }
   }
 
   Future<void> fetchLocation({bool openSettings = true}) async {

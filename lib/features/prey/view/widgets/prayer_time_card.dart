@@ -14,7 +14,6 @@ class PrayerTimeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
-    final cs = Theme.of(context).colorScheme;
 
     return Container(
       width: 100, // Fixed width for horizontal scroll
@@ -24,19 +23,19 @@ class PrayerTimeCard extends StatelessWidget {
         horizontal: tok.gap.sm,
       ),
       decoration: BoxDecoration(
-        color: cs.primaryContainer.withOpacity(0.5), // Themed light teal
-        borderRadius: BorderRadius.circular(tok.radiusMd),
+        color: const Color(0xFFE0F2F1).withOpacity(0.4), // Very light mint
+        borderRadius: BorderRadius.circular(tok.radiusMd * 1.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AppText(prayerTime.time, size: AppTextSize.s14, color: tx.subtle),
+          AppText(prayerTime.time, size: AppTextSize.s12, color: tx.subtle),
           const SizedBox(height: 8),
           AppText(
             prayerTime.name,
             size: AppTextSize.s16,
             weight: AppTextWeight.bold,
-            color: tx.primary,
+            color: tx.neutral,
           ),
         ],
       ),

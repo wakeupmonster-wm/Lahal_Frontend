@@ -222,13 +222,16 @@ class _ConfirmationBottomSheetState extends State<ConfirmationBottomSheet>
               child: Column(
                 children: [
                   AppButton(
+                    radiusOverride: 12,
                     label: widget.confirmLabel,
                     onPressed: widget.onConfirm,
-                    variant: widget.confirmVariant,
+                    // variant: widget.confirmVariant,
                     minWidth: double.infinity,
+                    variant: AppButtonVariant.danger,
                   ),
                   SizedBox(height: tok.gap.sm),
                   AppButton(
+                    radiusOverride: 12,
                     label: AppStrings.cancel,
                     onPressed: () => context.pop(),
                     variant: AppButtonVariant.ghost,

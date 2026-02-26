@@ -14,10 +14,18 @@ class HomeController extends GetxController {
   // --- Filter State ---
   final RxDouble distanceRange = 200.0.obs;
   final RxInt rating = 0.obs;
+  final RxString selectedCategory = 'Near you'.obs;
 
   @override
   void onInit() {
     super.onInit();
+    getBestRestaurants();
+  }
+
+  void onCategorySelected(String category) {
+    selectedCategory.value = category;
+    // For now, we just refresh all restaurants.
+    // In a real app, you'd filter by category here.
     getBestRestaurants();
   }
 
@@ -44,7 +52,20 @@ class HomeController extends GetxController {
       isLoading.value = true;
       errorMessage.value = "";
       final result = await _repository.fetchBestRestaurants();
-      bestRestaurants.assignAll(result);
+
+      if (selectedCategory.value == 'Near you') {
+        bestRestaurants.assignAll(result);
+      } else if (selectedCategory.value == 'Open now') {
+        bestRestaurants.assignAll(
+          result.where((r) => r.status == 'Open now').toList(),
+        );
+      } else if (selectedCategory.value == 'Top rated') {
+        bestRestaurants.assignAll(
+          result.where((r) => r.rating >= 4.5).toList(),
+        );
+      } else {
+        bestRestaurants.assignAll(result);
+      }
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

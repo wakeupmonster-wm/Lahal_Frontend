@@ -4,13 +4,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/controller/map_controller.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
-import 'package:lahal_application/utils/constants/app_assets.dart';
-import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lahal_application/utils/theme/app_map_styles.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
 
 class MapScreen extends StatelessWidget {
@@ -33,6 +31,9 @@ class MapScreen extends StatelessWidget {
             }
             return GoogleMap(
               initialCameraPosition: MapController.initialCameraPosition,
+              style: Theme.of(context).brightness == Brightness.dark
+                  ? AppMapStyles.darkMapStyle
+                  : null,
               markers: controller.markers,
               onMapCreated: (GoogleMapController mapController) {
                 controller.mapController.complete(mapController);
@@ -50,39 +51,32 @@ class MapScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: tok.gap.md,
+                    horizontal: tok.gap.xs,
                     vertical: tok.gap.sm,
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       // Back Button
                       GestureDetector(
                         onTap: () => context.pop(),
                         child: Container(
-                          padding: EdgeInsets.all(tok.gap.xs),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(0.5),
-                          ),
+                          padding: EdgeInsets.all(tok.gap.xxs),
+
                           child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 24,
+                            Icons.arrow_back_ios_new,
+                            color: cs.onSurface,
+                            size: tok.iconLg,
                           ),
                         ),
                       ),
-                      SizedBox(width: tok.gap.sm),
 
                       // Location Header
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: tok.gap.md,
-                            vertical: tok.gap.xs,
-                          ),
-                          // decoration: BoxDecoration(
-                          //   color: Colors.black.withOpacity(0.5),
-                          //   borderRadius: BorderRadius.circular(20),
+                          // padding: EdgeInsets.symmetric(
+                          //   horizontal: tok.gap.md,
+                          //   vertical: tok.gap.sm,
                           // ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -90,31 +84,30 @@ class MapScreen extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.location_on,
-                                color: Colors.white,
-                                size: 18,
+                                color: tx.primary,
+                                size: 25,
                               ),
-                              SizedBox(width: tok.gap.xs),
+                              SizedBox(width: tok.gap.xxs),
                               Flexible(
-                                child: Text(
-                                  "Melbourne, Victoria (VIC)", // TODO: Bind to controller location
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                child: AppText(
+                                  "Melbourne, Victoria (VIC)",
+                                  size: AppTextSize.s24,
+                                  color: tx.primary,
+                                  weight: AppTextWeight.bold,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              SizedBox(width: tok.gap.xxxs),
                               Icon(
                                 Icons.keyboard_arrow_down,
-                                color: Colors.white,
+                                color: tx.primary,
                                 size: 18,
                               ),
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(width: tok.gap.xl), // Balance row
+                      SizedBox(width: 34), // Balance back button width
                     ],
                   ),
                 ),
@@ -128,7 +121,7 @@ class MapScreen extends StatelessWidget {
                     children: [
                       _buildFilterChip(
                         "Near you",
-                        AppAssets.mapIcon,
+                        Icons.location_on_outlined,
                         controller,
                         tok,
                         cs,
@@ -136,7 +129,7 @@ class MapScreen extends StatelessWidget {
                       ),
                       _buildFilterChip(
                         "Top rated",
-                        AppAssets.thumbIcon,
+                        Icons.star,
                         controller,
                         tok,
                         cs,
@@ -144,7 +137,7 @@ class MapScreen extends StatelessWidget {
                       ),
                       _buildFilterChip(
                         "Open now",
-                        AppAssets.clockIcon,
+                        Icons.access_time,
                         controller,
                         tok,
                         cs,
@@ -152,7 +145,7 @@ class MapScreen extends StatelessWidget {
                       ),
                       _buildFilterChip(
                         "Certified",
-                        AppAssets.certifiedIcon,
+                        Icons.verified_outlined,
                         controller,
                         tok,
                         cs,
@@ -167,7 +160,7 @@ class MapScreen extends StatelessWidget {
 
           // 3. Bottom Carousel
           Positioned(
-            bottom: tok.gap.lg,
+            bottom: tok.gap.xxl,
             left: 0,
             right: 0,
             child: SizedBox(
@@ -202,7 +195,7 @@ class MapScreen extends StatelessWidget {
 
   Widget _buildFilterChip(
     String label,
-    String iconPath,
+    IconData? icon,
     MapController controller,
     AppTokens tok,
     ColorScheme cs,
@@ -215,43 +208,42 @@ class MapScreen extends StatelessWidget {
         child: Container(
           margin: EdgeInsets.only(right: tok.gap.sm),
           padding: EdgeInsets.symmetric(
-            horizontal: tok.gap.md,
-            vertical: tok.gap.xs,
+            horizontal: tok.gap.sm,
+            // vertical: tok.gap.xs,
           ),
           decoration: BoxDecoration(
-            color: isSelected
-                ? AppColor.primaryColor
-                : Colors.black.withOpacity(0.6),
-            borderRadius: BorderRadius.circular(20),
-            border: isSelected
+            color: isSelected ? cs.primary : cs.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? cs.primary : cs.outlineVariant,
+              width: 1.6,
+            ),
+            boxShadow: isSelected
                 ? null
-                : Border.all(color: Colors.white.withOpacity(0.2)),
+                : [
+                    BoxShadow(
+                      color: cs.shadow.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
           ),
           child: Row(
             children: [
-              // Icon (using SVG or Icon depending on asset type, assuming SVG per project)
-              // If assets are strictly images/svgs, verifying usage.
-              // Assuming SVG for now based on home_screen usage.
-              if (iconPath.isNotEmpty)
+              if (icon != null)
                 Padding(
-                  padding: EdgeInsets.only(right: tok.gap.xs),
-                  child: SvgPicture.asset(
-                    iconPath,
-                    width: 16,
-                    height: 16,
-                    colorFilter: ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
+                  padding: EdgeInsets.only(right: tok.gap.xxs),
+                  child: Icon(
+                    icon,
+                    size: 16,
+                    color: isSelected ? cs.onPrimary : tx.subtle,
                   ),
                 ),
-              Text(
+              AppText(
                 label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 12,
-                ),
+                size: AppTextSize.s14,
+                color: isSelected ? cs.onPrimary : tx.subtle,
+                weight: isSelected ? AppTextWeight.bold : AppTextWeight.regular,
               ),
             ],
           ),
@@ -268,129 +260,147 @@ class MapScreen extends StatelessWidget {
     AppTextColors tx,
   ) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: tok.gap.xs),
+      margin: EdgeInsets.symmetric(
+        horizontal: tok.gap.xxxs,
+        // vertical: tok.gap.xxxs,
+      ),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E), // Dark card background from screenshot
+        color: cs.surface,
         borderRadius: BorderRadius.circular(tok.radiusLg),
+        border: Border.all(color: cs.outlineVariant.withOpacity(0.8)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: Offset(0, 5),
+            color: cs.shadow.withOpacity(0.08),
+            blurRadius: 15,
+            offset: Offset(0, 8),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(tok.gap.sm),
-        child: Row(
+        padding: EdgeInsets.symmetric(
+          horizontal: tok.gap.sm,
+          vertical: tok.gap.md,
+        ),
+        child: Column(
           children: [
-            // Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(tok.radiusMd),
-              child: Image.network(
-                restaurant.imageUrl,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.grey[800],
-                  child: Icon(Icons.restaurant, color: Colors.white),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(tok.radiusSm),
+                  child: Image.network(
+                    restaurant.imageUrl,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey[800],
+                      child: Icon(Icons.restaurant, color: Colors.white),
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(width: tok.gap.md),
+
+                // Content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: AppText(
+                              restaurant.name,
+                              size: AppTextSize.s16,
+                              weight: AppTextWeight.bold,
+                              color: tx.primary,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: tok.gap.xxs,
+                              vertical: tok.gap.xxxs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: cs.primary, // Primary Green
+                              borderRadius: BorderRadius.circular(tok.radiusSm),
+                            ),
+                            child: Row(
+                              children: [
+                                AppText(
+                                  "${restaurant.rating}",
+                                  size: AppTextSize.s12,
+                                  weight: AppTextWeight.bold,
+                                  color: cs.onPrimary,
+                                ),
+                                SizedBox(width: 2),
+                                Icon(Icons.star, color: cs.onPrimary, size: 13),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: tok.gap.xxxs),
+                      AppText(
+                        restaurant.category,
+                        size: AppTextSize.s12,
+                        weight: AppTextWeight.bold,
+                        color: tx.subtle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: tok.gap.xxxs),
+                      AppText(
+                        restaurant.distance,
+                        size: AppTextSize.s12,
+                        weight: AppTextWeight.bold,
+                        color: tx.subtle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      // Buttons
+                    ],
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: tok.gap.md),
-
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          restaurant.name,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+            SizedBox(height: tok.gap.xxxs),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      context.push(AppRoutes.restaurantDetails);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: cs.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColor.primaryColor,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "${restaurant.rating}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Icon(Icons.star, color: Colors.white, size: 8),
-                          ],
-                        ),
-                      ),
-                    ],
+                      padding: EdgeInsets.symmetric(vertical: 0),
+                      // minimumSize: Size(0, 36),
+                    ),
+                    child: AppText(
+                      "View Restaurant",
+                      size: AppTextSize.s12,
+                      weight: AppTextWeight.bold,
+                      color: cs.onPrimary,
+                    ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    restaurant.category,
-                    style: TextStyle(color: Colors.grey[400], fontSize: 10),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    restaurant.distance,
-                    style: TextStyle(color: Colors.grey[400], fontSize: 10),
-                  ),
-                  SizedBox(height: tok.gap.md),
-
-                  // Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.push(AppRoutes.restaurantDetails);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 0),
-                            minimumSize: Size(0, 32),
-                          ),
-                          child: Text(
-                            "View Restaurant",
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: tok.gap.xs),
-                      _buildCircleButton(Icons.directions_outlined),
-                      SizedBox(width: tok.gap.xs),
-                      _buildCircleButton(Icons.call_outlined),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(width: tok.gap.sm),
+                _buildCircleButton(Icons.percent_outlined, cs, tx),
+                SizedBox(width: tok.gap.sm),
+                _buildCircleButton(Icons.call_outlined, cs, tx),
+              ],
             ),
           ],
         ),
@@ -398,15 +408,16 @@ class MapScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCircleButton(IconData icon) {
+  Widget _buildCircleButton(IconData icon, ColorScheme cs, AppTextColors tx) {
     return Container(
-      width: 32,
-      height: 32,
+      width: 36,
+      height: 36,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey[700]!),
+        border: Border.all(color: cs.outlineVariant),
+        color: Colors.transparent,
       ),
-      child: Icon(icon, color: Colors.grey[400], size: 16),
+      child: Icon(icon, color: tx.primary, size: 18),
     );
   }
 }

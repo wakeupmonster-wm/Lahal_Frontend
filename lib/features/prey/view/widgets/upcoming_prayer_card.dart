@@ -25,8 +25,8 @@ class UpcomingPrayerCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(tok.radiusLg),
           boxShadow: [
             BoxShadow(
-              color: cs.shadow.withOpacity(0.05),
-              blurRadius: 10,
+              color: cs.shadow.withOpacity(0.07),
+              blurRadius: 13,
               offset: const Offset(0, 4),
             ),
           ],
@@ -58,7 +58,7 @@ class UpcomingPrayerCard extends StatelessWidget {
               children: [
                 AppText(
                   "Time remaining",
-                  size: AppTextSize.s14,
+                  size: AppTextSize.s12,
                   color: tx.subtle,
                 ),
                 const SizedBox(height: 4),
@@ -66,7 +66,7 @@ class UpcomingPrayerCard extends StatelessWidget {
                   () => AppText(
                     controller.timeRemaining.value,
                     size: AppTextSize.s24,
-                    weight: AppTextWeight.bold,
+                    weight: AppTextWeight.medium,
                     color: tx.primary,
                   ),
                 ),

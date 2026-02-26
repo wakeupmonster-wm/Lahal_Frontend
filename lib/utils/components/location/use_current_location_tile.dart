@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
@@ -32,14 +33,14 @@ class UseCurrentLocationTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.my_location, color: tx.primary, size: 22),
+            Icon(Icons.my_location, color: AppColor.primaryColor, size: 25),
             SizedBox(width: tok.gap.md),
             Expanded(
               child: AppText(
                 label,
-                size: AppTextSize.s14,
-                weight: AppTextWeight.semibold,
-                color: tx.primary,
+                size: AppTextSize.s16,
+                weight: AppTextWeight.bold,
+                color: AppColor.primaryColor,
               ),
             ),
             Icon(Icons.chevron_right, color: tx.subtle, size: 20),

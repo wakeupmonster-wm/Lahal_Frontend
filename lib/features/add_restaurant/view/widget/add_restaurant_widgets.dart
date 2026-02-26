@@ -27,17 +27,17 @@ class ImagePickerTile extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         GestureDetector(
           onTap: onTap,
           child: Container(
-            width: 100,
+            width: double.infinity,
             height: 100,
-            margin: EdgeInsets.only(right: tok.gap.sm),
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(tok.radiusMd),
-              border: Border.all(color: cs.outline),
+              // border: Border.all(color: cs.outline.withOpacity(0.5)),
             ),
             child: isAddButton
                 ? Padding(
@@ -68,17 +68,25 @@ class ImagePickerTile extends StatelessWidget {
         ),
         if (!isAddButton && onRemove != null)
           Positioned(
-            top: 4,
-            right: tok.gap.sm + 4,
+            top: -6,
+            right: -6,
             child: GestureDetector(
               onTap: onRemove,
               child: Container(
-                padding: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: cs.error,
                   shape: BoxShape.circle,
+                  // border: Border.all(color: cs.surface, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                child: const Icon(Icons.close, color: Colors.white, size: 14),
+                child: const Icon(Icons.close, color: Colors.white, size: 12),
               ),
             ),
           ),
@@ -101,7 +109,7 @@ class FormLabel extends StatelessWidget {
       child: AppText(
         label,
         size: AppTextSize.s14,
-        weight: AppTextWeight.semibold,
+        weight: AppTextWeight.bold,
         colorToken: tx.neutral,
       ),
     );

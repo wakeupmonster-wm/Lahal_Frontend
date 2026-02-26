@@ -69,7 +69,7 @@ class NotificationScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: EdgeInsets.all(tok.gap.sm),
+          padding: EdgeInsets.all(tok.gap.md),
           decoration: BoxDecoration(
             color: cs.surface,
             shape: BoxShape.circle,
@@ -80,7 +80,7 @@ class NotificationScreen extends StatelessWidget {
                 ? Iconsax.star_outline
                 : Iconsax.notification_outline,
             color: tx.neutral,
-            size: tok.gap.lg,
+            size: tok.gap.md,
           ),
         ),
         SizedBox(width: tok.gap.md),
@@ -94,13 +94,13 @@ class NotificationScreen extends StatelessWidget {
                 weight: AppTextWeight.bold,
                 color: tx.neutral,
               ),
-              SizedBox(height: tok.gap.xs),
+              SizedBox(height: tok.gap.xxs),
               AppText(
                 notification.description,
-                size: AppTextSize.s14,
+                size: AppTextSize.s12,
                 color: tx.subtle,
               ),
-              SizedBox(height: tok.gap.xs),
+              SizedBox(height: tok.gap.xxs),
               AppText(
                 notification.time,
                 size: AppTextSize.s12,

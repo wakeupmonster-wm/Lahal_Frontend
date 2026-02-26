@@ -20,65 +20,66 @@ class PrayerHeader extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      height: 350, // Approximate height for header
+      height: 400, // Slightly increased height
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            cs.primaryContainer.withOpacity(0.5), // Light teal at top
-            cs.surface, // Background colored bottom
+            cs.primary.withOpacity(0.0),
+            cs.primary.withOpacity(0.1),
+            cs.primary.withOpacity(0.4),
+
+            cs.surface,
           ],
         ),
       ),
       child: Column(
         children: [
-          const SizedBox(height: 60),
+          SizedBox(height: tok.gap.xxl),
+          SizedBox(height: tok.gap.xxl),
           // Clock Time
           Obx(
             () => AppText(
               controller.currentTime.value,
-              size: AppTextSize.s24,
+              size: AppTextSize.s64,
               weight: AppTextWeight.bold,
-              color: cs.primary,
+              color: const Color(0xFF047861),
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: tok.gap.md),
           // Location Badge
           Container(
             padding: EdgeInsets.symmetric(
-              horizontal: tok.gap.sm,
+              horizontal: tok.gap.md,
               vertical: tok.gap.xxs,
             ),
             decoration: BoxDecoration(
-              color: cs.primary.withOpacity(0.2),
+              color: const Color(0xFF047861).withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.location_on, size: 16, color: cs.primary),
+                const Icon(Icons.location_on, size: 14, color: Colors.white),
                 const SizedBox(width: 4),
                 Obx(
                   () => AppText(
                     controller.currentLocation.value,
                     size: AppTextSize.s12,
-                    color: cs.primary,
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
           ),
-          const Spacer(),
-          // Mosque Background
+
           SvgPicture.asset(
             AppSvg.mosqueImage,
-            width: double.infinity,
-            fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(
-              cs.primary.withOpacity(0.1),
-              BlendMode.srcIn,
-            ),
+            width: 400,
+            height: 200,
+            fit: BoxFit.fitHeight,
+            alignment: Alignment.bottomCenter,
           ),
         ],
       ),

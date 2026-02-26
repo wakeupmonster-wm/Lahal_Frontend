@@ -25,6 +25,8 @@ class AppAssets {
   //----------------------new code----------------------
   static const biryaniImage = '${_images}briyani_image.png';
   static const emptyStateImage = '${_images}empty_state_image.png';
+  static const locationPermissionImage =
+      '${_images}location_permission_image.png';
 
   // ===============================================================
   // 🧭 Icons (PNG)

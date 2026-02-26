@@ -77,7 +77,7 @@ class AddRestaurantScreen extends StatelessWidget {
                     hintText: "Hamza food court",
                     isOutline: true,
                   ),
-                  SizedBox(height: tok.gap.md),
+                  SizedBox(height: tok.gap.xs),
 
                   // Address
                   const FormLabel(label: "Address"),
@@ -86,7 +86,7 @@ class AddRestaurantScreen extends StatelessWidget {
                     hintText: "Full restaurant address",
                     isOutline: true,
                   ),
-                  SizedBox(height: tok.gap.md),
+                  SizedBox(height: tok.gap.xs),
 
                   // City
                   const FormLabel(label: "City"),
@@ -95,7 +95,7 @@ class AddRestaurantScreen extends StatelessWidget {
                     hintText: "City",
                     isOutline: true,
                   ),
-                  SizedBox(height: tok.gap.md),
+                  SizedBox(height: tok.gap.xs),
 
                   // Halal Status
                   const FormLabel(label: "Halal Status"),
@@ -106,7 +106,7 @@ class AddRestaurantScreen extends StatelessWidget {
                           title: AppText(
                             status,
                             size: AppTextSize.s14,
-                            weight: AppTextWeight.medium,
+                            weight: AppTextWeight.semibold,
                             colorToken: tx.neutral,
                           ),
                           value: status,
@@ -115,37 +115,50 @@ class AddRestaurantScreen extends StatelessWidget {
                             if (value != null) controller.setHalalStatus(value);
                           },
                           contentPadding: EdgeInsets.zero,
-                          activeColor: AppColor.primaryColor,
+                          fillColor: MaterialStateProperty.resolveWith<Color>((
+                            states,
+                          ) {
+                            if (states.contains(MaterialState.selected)) {
+                              return AppColor.primaryColor;
+                            }
+                            return AppColor.grey.withOpacity(0.4);
+                          }),
                           dense: true,
                         );
                       }).toList(),
                     ),
                   ),
-                  SizedBox(height: tok.gap.md),
+                  SizedBox(height: tok.gap.xs),
 
                   // Add Restaurant Photos
                   const FormLabel(label: "Add restaurant photos"),
                   Obx(
-                    () => SizedBox(
-                      height: 110,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          ...controller.selectedImages.asMap().entries.map((
-                            entry,
-                          ) {
-                            return ImagePickerTile(
-                              image: entry.value,
-                              onTap: () {},
-                              onRemove: () => controller.removeImage(entry.key),
-                            );
-                          }).toList(),
-                          ImagePickerTile(
+                    () => GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      clipBehavior: Clip.none,
+                      padding: EdgeInsets.only(top: tok.gap.xs),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: tok.gap.sm,
+                        mainAxisSpacing: tok.gap.sm,
+                        mainAxisExtent: 110,
+                      ),
+                      itemCount: controller.selectedImages.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index < controller.selectedImages.length) {
+                          return ImagePickerTile(
+                            image: controller.selectedImages[index],
+                            onTap: () {},
+                            onRemove: () => controller.removeImage(index),
+                          );
+                        } else {
+                          return ImagePickerTile(
                             isAddButton: true,
                             onTap: controller.pickImages,
-                          ),
-                        ],
-                      ),
+                          );
+                        }
+                      },
                     ),
                   ),
                   SizedBox(height: tok.gap.md),
@@ -168,7 +181,7 @@ class AddRestaurantScreen extends StatelessWidget {
                           onPressed: controller.clearForm,
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: cs.outline),
-                            padding: EdgeInsets.symmetric(vertical: tok.gap.md),
+                            padding: EdgeInsets.symmetric(vertical: tok.gap.sm),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(tok.radiusMd),
                             ),
@@ -191,7 +204,7 @@ class AddRestaurantScreen extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColor.primaryColor,
                               padding: EdgeInsets.symmetric(
-                                vertical: tok.gap.md,
+                                vertical: tok.gap.sm,
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(

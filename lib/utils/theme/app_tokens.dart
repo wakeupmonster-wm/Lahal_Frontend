@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 /// All values are resolved (already scaled for the ßdevice).
 @immutable
 class AppGaps {
+  final double xxxs; // 8–10
   final double xxs; // 8–10
   final double xs; // 12-14
   final double sm; // 16-20
@@ -17,6 +18,7 @@ class AppGaps {
   final double xxl; // 32-36
 
   const AppGaps({
+    required this.xxxs,
     required this.xxs,
     required this.xs,
     required this.sm,
@@ -27,6 +29,7 @@ class AppGaps {
   });
 
   AppGaps lerp(AppGaps other, double t) => AppGaps(
+    xxxs: lerpDouble(xxxs, other.xxxs, t)!,
     xxs: lerpDouble(xxs, other.xxs, t)!,
     xs: lerpDouble(xs, other.xs, t)!,
     sm: lerpDouble(sm, other.sm, t)!,
@@ -85,6 +88,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
   final double radiusLg;
 
   // Icons
+  final double iconXxs;
   final double iconSm; // 20
   final double iconLg; // 24
 
@@ -94,6 +98,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
   final double cardElevation;
 
   const AppTokens({
+    required this.iconXxs,
     required this.gap,
     required this.inset,
     required this.radiusSm,
@@ -120,6 +125,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
     double? cardElevation,
   }) {
     return AppTokens(
+      iconXxs: iconXxs ?? this.iconXxs,
       gap: gap ?? this.gap,
       inset: inset ?? this.inset,
       radiusSm: radiusSm ?? this.radiusSm,
@@ -137,6 +143,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
   AppTokens lerp(ThemeExtension<AppTokens>? other, double t) {
     if (other is! AppTokens) return this;
     return AppTokens(
+      iconXxs: lerpDouble(iconXxs, other.iconXxs, t)!,
       gap: gap.lerp(other.gap, t),
       inset: inset.lerp(other.inset, t),
       radiusSm: lerpDouble(radiusSm, other.radiusSm, t)!,
@@ -167,6 +174,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
 
     // Spacing: choose clear bases for 430px; everything scales from there.
     final gaps = AppGaps(
+      xxxs: s(4),
       xxs: s(8), // very tight
       xs: s(12),
       sm: s(16),
@@ -187,6 +195,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
     );
 
     return AppTokens(
+      iconXxs: s(12),
       gap: gaps,
       inset: insets,
       radiusSm: s(8),

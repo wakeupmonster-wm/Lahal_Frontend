@@ -254,6 +254,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                   Obx(
                     () => SliderTheme(
                       data: SliderTheme.of(context).copyWith(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 1,
+                          vertical: 8,
+                        ),
                         activeTrackColor: cs.primary,
                         inactiveTrackColor: cs.surfaceContainerHighest,
                         thumbColor: Colors.white,
@@ -262,7 +266,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                         overlayColor: cs.primary.withOpacity(0.12),
                         trackHeight: 4,
                         thumbShape: const RoundSliderThumbShape(
-                          enabledThumbRadius: 10,
+                          disabledThumbRadius: 8,
+                          enabledThumbRadius: 13,
                           elevation: 4,
                         ),
                       ),

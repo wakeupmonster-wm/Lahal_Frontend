@@ -85,7 +85,8 @@ class _AppTextFieldState extends State<AppTextField> {
     // Colors according to your request
     final Color textColor = tc.neutral; // main text color
     const Color hintColor = AppPalette.textMuted; // muted/hint color
-    final Color fillColor = cs.surfaceContainerHighest; // background
+    final Color fillColor =
+        cs.surfaceContainerHighest; // background  onSecondary
     final Color outlineColor = cs.outline; // normal border
     final Color focusColor = cs.primary; // focused border
     final Color disabledColor = cs.onSurface.withOpacity(0.12);
