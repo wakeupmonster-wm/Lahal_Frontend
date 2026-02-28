@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/controller/home_controller.dart';
 import 'package:lahal_application/features/home/controller/location_controller.dart';
 import 'package:lahal_application/features/home/view/widgets/category_header_delegate.dart';
+import 'package:lahal_application/utils/components/location/location_permission_sheet.dart';
 import 'package:lahal_application/utils/components/shimmer/restaurant_card_shimmer.dart';
 import 'package:lahal_application/utils/components/textfields/app_search_text_field.dart';
 import 'package:lahal_application/utils/components/widgets/restaurant_card.dart';
@@ -112,32 +113,37 @@ class HomeScreen extends StatelessWidget {
                             SizedBox(height: tok.gap.sm),
 
                             // Location Row
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  color: tx.inverse,
-                                  size: 18,
-                                ),
-                                SizedBox(width: tok.gap.xs),
-                                Obx(
-                                  () => AppText(
-                                    locationController.isLocationLoading.value
-                                        ? "Fetching location..."
-                                        : locationController
-                                              .currentAddress
-                                              .value,
-                                    size: AppTextSize.s14,
-                                    weight: AppTextWeight.medium,
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () =>
+                                  context.push(AppRoutes.changeLocationScreen),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
                                     color: tx.inverse,
+                                    size: 18,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: tx.inverse,
-                                  size: 18,
-                                ),
-                              ],
+                                  SizedBox(width: tok.gap.xs),
+                                  Obx(
+                                    () => AppText(
+                                      locationController.isLocationLoading.value
+                                          ? "Fetching location..."
+                                          : locationController
+                                                .currentAddress
+                                                .value,
+                                      size: AppTextSize.s14,
+                                      weight: AppTextWeight.medium,
+                                      color: tx.inverse,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: tx.inverse,
+                                    size: 22,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

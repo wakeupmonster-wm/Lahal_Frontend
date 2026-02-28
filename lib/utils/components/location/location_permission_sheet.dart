@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lahal_application/utils/constants/app_assets.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/theme/app_button.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
@@ -57,57 +58,13 @@ class LocationPermissionSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Close Button
-          Align(
-            alignment: Alignment.topRight,
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                padding: EdgeInsets.all(tok.gap.xxs),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Icon(Icons.close, size: 20, color: tx.subtle),
-              ),
-            ),
-          ),
-
           SizedBox(height: tok.gap.md),
 
           // Illustration
-          // Note: Using a placeholder container since I don't have the exact illustration SVG
-          Container(
+          Image.asset(
+            AppAssets.locationPermissionImage,
             height: 150,
-            width: double.infinity,
-            alignment: Alignment.center,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Generic cloud/background shape
-                Container(
-                  width: 200,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: tx.neutral.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-                // Location icon with slash/stop
-                const Icon(
-                  Icons.location_off_outlined,
-                  size: 60,
-                  color: Colors.redAccent,
-                ),
-              ],
-            ),
+            fit: BoxFit.contain,
           ),
 
           SizedBox(height: tok.gap.lg),

@@ -209,17 +209,6 @@ class EditProfileScreen extends StatelessWidget {
                           }).toList(),
                         ),
                       ),
-                    Obx(
-                      () => controller.isOtherGenderSelected.value
-                          ? Padding(
-                              padding: EdgeInsets.only(top: tok.gap.md),
-                              child: MyTextFeild(
-                                controller: controller.customGenderController,
-                                hintText: "Enter your gender",
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
                   ],
                 ),
               ),

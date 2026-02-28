@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
 import 'package:lahal_application/features/home/repo/home_repository.dart';
 
@@ -15,6 +13,17 @@ class HomeController extends GetxController {
   final RxDouble distanceRange = 200.0.obs;
   final RxInt rating = 0.obs;
   final RxString selectedCategory = 'Near you'.obs;
+
+  // Cuisine filters
+  final RxList<String> allCuisines = <String>[
+    'Italian 🍝',
+    'Indian 🍛',
+    'Chinese 🥢',
+    'Mexican 🌮',
+    'Thai 🍜',
+    'Vegetarian 🥗',
+  ].obs;
+  final RxList<String> selectedCuisines = <String>[].obs;
 
   @override
   void onInit() {
@@ -40,6 +49,15 @@ class HomeController extends GetxController {
   void clearFilters() {
     distanceRange.value = 200.0;
     rating.value = 0;
+    selectedCuisines.clear();
+  }
+
+  void toggleCuisine(String cuisine) {
+    if (selectedCuisines.contains(cuisine)) {
+      selectedCuisines.remove(cuisine);
+    } else {
+      selectedCuisines.add(cuisine);
+    }
   }
 
   void applyFilters() {

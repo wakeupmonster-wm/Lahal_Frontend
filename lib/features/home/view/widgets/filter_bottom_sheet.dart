@@ -53,6 +53,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   late Animation<Offset> _ratingSlide;
   late Animation<double> _ratingFade;
 
+  late Animation<Offset> _cuisineSlide;
+  late Animation<double> _cuisineFade;
+
   late Animation<Offset> _buttonSlide;
   late Animation<double> _buttonFade;
 
@@ -75,13 +78,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
         .animate(
           CurvedAnimation(
             parent: _animController,
-            curve: const Interval(0.0, 0.3, curve: Curves.easeOutQuad),
+            curve: const Interval(0.0, 0.2, curve: Curves.easeOutQuad),
           ),
         );
     _pullBarFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
+        curve: const Interval(0.0, 0.2, curve: Curves.easeOut),
       ),
     );
 
@@ -90,13 +93,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
         .animate(
           CurvedAnimation(
             parent: _animController,
-            curve: const Interval(0.1, 0.4, curve: Curves.easeOutQuad),
+            curve: const Interval(0.1, 0.3, curve: Curves.easeOutQuad),
           ),
         );
     _titleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.1, 0.4, curve: Curves.easeOut),
+        curve: const Interval(0.1, 0.3, curve: Curves.easeOut),
       ),
     );
 
@@ -105,13 +108,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
         Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
           CurvedAnimation(
             parent: _animController,
-            curve: const Interval(0.2, 0.5, curve: Curves.easeOutQuad),
+            curve: const Interval(0.2, 0.4, curve: Curves.easeOutQuad),
           ),
         );
     _distanceFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.2, 0.5, curve: Curves.easeOut),
+        curve: const Interval(0.2, 0.4, curve: Curves.easeOut),
       ),
     );
 
@@ -120,28 +123,43 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
         .animate(
           CurvedAnimation(
             parent: _animController,
-            curve: const Interval(0.3, 0.6, curve: Curves.easeOutQuad),
+            curve: const Interval(0.3, 0.5, curve: Curves.easeOutQuad),
           ),
         );
     _ratingFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.3, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0.3, 0.5, curve: Curves.easeOut),
       ),
     );
 
-    // 5. Buttons (400ms - 600ms approx)
+    // 5. Cuisine Section (400ms - 600ms approx)
+    _cuisineSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _animController,
+            curve: const Interval(0.4, 0.6, curve: Curves.easeOutQuad),
+          ),
+        );
+    _cuisineFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.4, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
+    // 6. Buttons (500ms - 700ms approx) -> scale back to fit the 600ms
     _buttonSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
         .animate(
           CurvedAnimation(
             parent: _animController,
-            curve: const Interval(0.4, 0.7, curve: Curves.easeOutQuad),
+            curve: const Interval(0.5, 0.8, curve: Curves.easeOutQuad),
           ),
         );
     _buttonFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.4, 0.7, curve: Curves.easeOut),
+        curve: const Interval(0.5, 0.8, curve: Curves.easeOut),
       ),
     );
 
@@ -323,6 +341,68 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                           ),
                         );
                       }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: tok.gap.xl),
+
+          // ---------------------------------------------------------
+          // 4.5. Cuisine Animation
+          // ---------------------------------------------------------
+          FadeTransition(
+            opacity: _cuisineFade,
+            child: SlideTransition(
+              position: _cuisineSlide,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText(
+                    "Cuisine",
+                    size: AppTextSize.s16,
+                    weight: AppTextWeight.bold,
+                    color: tx.neutral,
+                  ),
+                  SizedBox(height: tok.gap.md),
+                  Obx(
+                    () => Wrap(
+                      spacing: tok.gap.sm,
+                      runSpacing: tok.gap.sm,
+                      children: controller.allCuisines.map((cuisine) {
+                        final isSelected = controller.selectedCuisines.contains(
+                          cuisine,
+                        );
+                        return GestureDetector(
+                          onTap: () => controller.toggleCuisine(cuisine),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: tok.gap.md,
+                              vertical: tok.gap.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? cs.primary
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(tok.radiusLg),
+                              border: Border.all(
+                                color: isSelected
+                                    ? cs.primary
+                                    : cs.outlineVariant,
+                              ),
+                            ),
+                            child: AppText(
+                              cuisine,
+                              size: AppTextSize.s14,
+                              color: isSelected ? cs.onPrimary : tx.subtle,
+                              weight: isSelected
+                                  ? AppTextWeight.bold
+                                  : AppTextWeight.medium,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],

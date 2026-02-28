@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/components/location/location_permission_sheet.dart';
 import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
-import 'package:lahal_application/utils/components/location/location_permission_dialog.dart';
 import 'package:lahal_application/data/datasources/local/storage_utility.dart';
 
 class LocationController extends GetxController {
@@ -35,7 +34,7 @@ class LocationController extends GetxController {
 
       // Show the first-time popup
       if (Get.context != null) {
-        LocationPermissionDialog.show(
+        LocationPermissionSheet.show(
           Get.context!,
           onEnable: () async {
             await fetchLocation(openSettings: true);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:lahal_application/features/prey/model/prayer_time_model.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
@@ -9,6 +10,49 @@ class PrayerTimeCard extends StatelessWidget {
   final PrayerTimeModel prayerTime;
 
   const PrayerTimeCard({super.key, required this.prayerTime});
+
+  Widget _getIconForPrayer(String name) {
+    switch (name.toLowerCase()) {
+      case 'fajr':
+      case 'fazar':
+        return const Icon(
+          CupertinoIcons.cloud_sun_fill,
+          color: Colors.orange,
+          size: 28,
+        );
+      case 'sunrise':
+      case 'dhuhr':
+        return const Icon(
+          CupertinoIcons.sun_max_fill,
+          color: Colors.orange,
+          size: 28,
+        );
+      case 'asr':
+        return const Icon(
+          CupertinoIcons.cloud_sun_fill,
+          color: Colors.orange,
+          size: 28,
+        );
+      case 'magrib':
+        return const Icon(
+          CupertinoIcons.moon_fill,
+          color: Colors.deepOrangeAccent,
+          size: 28,
+        );
+      case 'isha':
+        return const Icon(
+          CupertinoIcons.moon_stars_fill,
+          color: Colors.deepOrangeAccent,
+          size: 28,
+        );
+      default:
+        return const Icon(
+          CupertinoIcons.sun_max_fill,
+          color: Colors.orange,
+          size: 28,
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +73,12 @@ class PrayerTimeCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AppText(prayerTime.time, size: AppTextSize.s12, color: tx.subtle),
-          const SizedBox(height: 8),
+          _getIconForPrayer(prayerTime.name),
+          const SizedBox(height: 6),
+          AppText(prayerTime.name, size: AppTextSize.s14, color: tx.neutral),
+          const SizedBox(height: 2),
           AppText(
-            prayerTime.name,
+            prayerTime.time,
             size: AppTextSize.s16,
             weight: AppTextWeight.bold,
             color: tx.neutral,

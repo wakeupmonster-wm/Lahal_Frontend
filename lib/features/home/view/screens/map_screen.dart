@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/controller/map_controller.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
+import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
@@ -397,9 +399,9 @@ class MapScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: tok.gap.sm),
-                _buildCircleButton(Icons.percent_outlined, cs, tx),
+                _buildCircleButton(cs, tx, AppSvg.routingIcon, tok),
                 SizedBox(width: tok.gap.sm),
-                _buildCircleButton(Icons.call_outlined, cs, tx),
+                _buildCircleButton(cs, tx, AppSvg.callCallingIcon, tok),
               ],
             ),
           ],
@@ -408,16 +410,31 @@ class MapScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCircleButton(IconData icon, ColorScheme cs, AppTextColors tx) {
+  Widget _buildCircleButton(
+    ColorScheme cs,
+    AppTextColors tx,
+    String iconPath,
+    tok,
+  ) {
     return Container(
-      width: 36,
-      height: 36,
+      width: 54,
+      height: 34,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: cs.outlineVariant),
         color: Colors.transparent,
       ),
-      child: Icon(icon, color: tx.primary, size: 18),
+      alignment: Alignment.center,
+      child: SvgPicture.asset(
+        iconPath,
+        width: 18,
+        height: 18,
+        fit: BoxFit.contain,
+        colorFilter: const ColorFilter.mode(
+          Color(0xFF047857), // Keep brand color
+          BlendMode.srcIn,
+        ),
+      ),
     );
   }
 }
