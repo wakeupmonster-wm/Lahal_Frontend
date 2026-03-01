@@ -94,24 +94,10 @@ class EditProfileScreen extends StatelessWidget {
 
               // Phone Number Field
               _buildLabel(AppStrings.phoneNumberLabelSmall, tx, tok),
-              Obx(
-                () => MyTextFeild(
-                  controller: controller.phoneController,
-                  hintText: AppStrings.phoneNumberLabelSmall,
-                  typingEnabled: controller.isPhoneEditable.value,
-                  suffix: Padding(
-                    padding: EdgeInsets.only(right: tok.gap.xs),
-                    // child: TextButton(
-                    //   onPressed: controller.togglePhoneEditable,
-                    //   child: AppText(
-                    //     AppStrings.change,
-                    //     size: AppTextSize.s12,
-                    //     weight: AppTextWeight.bold,
-                    //     color: AppColor.primaryColor,
-                    //   ),
-                    // ),
-                  ),
-                ),
+              MyTextFeild(
+                controller: controller.phoneController,
+                hintText: AppStrings.phoneNumberLabelSmall,
+                keyboardType: TextInputType.phone,
               ),
               SizedBox(height: tok.gap.md),
 

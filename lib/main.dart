@@ -15,6 +15,11 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await AppLocalStorage.init("user_pref");
   // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  // Lock orientation to Portrait
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 

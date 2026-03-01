@@ -8,6 +8,7 @@ import 'package:lahal_application/features/home/view/widgets/category_header_del
 import 'package:lahal_application/utils/components/location/location_permission_sheet.dart';
 import 'package:lahal_application/utils/components/shimmer/restaurant_card_shimmer.dart';
 import 'package:lahal_application/utils/components/textfields/app_search_text_field.dart';
+import 'package:lahal_application/utils/components/widgets/app_footer.dart';
 import 'package:lahal_application/utils/components/widgets/restaurant_card.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
@@ -119,11 +120,15 @@ class HomeScreen extends StatelessWidget {
                                   context.push(AppRoutes.changeLocationScreen),
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: tx.inverse,
-                                    size: 18,
+                                  SvgPicture.asset(
+                                    AppSvg.locationNobcakgroundIcon,
+                                    color: Colors.white,
                                   ),
+                                  // Icon(
+                                  //   Icons.location_on,
+                                  //   color: tx.inverse,
+                                  //   size: 18,
+                                  // ),
                                   SizedBox(width: tok.gap.xs),
                                   Obx(
                                     () => AppText(
@@ -178,7 +183,11 @@ class HomeScreen extends StatelessWidget {
                         onTap: () => FilterBottomSheet.show(context),
                         child: Padding(
                           padding: EdgeInsets.all(tok.gap.xs),
-                          child: SvgPicture.asset(AppSvg.filterIcon),
+                          child: SvgPicture.asset(
+                            AppSvg.filterIcon,
+                            // color: cs.surface,
+                            // clipBehavior: cs.surface,
+                          ),
                         ),
                       ),
                     ],
@@ -326,7 +335,8 @@ class HomeScreen extends StatelessWidget {
               );
             }),
 
-            SliverToBoxAdapter(child: SizedBox(height: tok.gap.xxl * 3)),
+            // --- 5. Footer ---
+            SliverToBoxAdapter(child: AppFooter()),
           ],
         ),
       ),

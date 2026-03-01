@@ -38,91 +38,170 @@ class RestaurantDetailsScreen extends StatelessWidget {
           );
         }
 
-        return Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // --- Header Image & Overlay ---
-                  _buildHeader(context, tok, tx, cs, restaurant, controller),
-                  SizedBox(height: tok.gap.xl), // Spacing for floating buttons
-
-                  Padding(
-                    padding: EdgeInsets.all(tok.gap.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // --- Halal Summary Section ---
-                        _buildSectionHeader(tx, 'Halal summary'),
-                        SizedBox(height: tok.gap.md),
-                        AppText(
-                          restaurant.description,
-                          size: AppTextSize.s14,
-                          color: tx.subtle,
-                        ),
-                        SizedBox(height: tok.gap.md),
-                        Wrap(
-                          spacing: tok.gap.sm,
-                          children: restaurant.halalSummary.map((tag) {
-                            return _buildTag(cs, tx, tag);
-                          }).toList(),
-                        ),
-
-                        SizedBox(height: tok.gap.xl),
-
-                        // --- Photos Grid ---
-                        _buildSectionHeader(tx, 'Photos'),
-                        SizedBox(height: tok.gap.md),
-                        _buildPhotosGrid(tok, restaurant.photos),
-
-                        SizedBox(height: tok.gap.xl),
-
-                        // --- About this place ---
-                        _buildSectionHeader(tx, 'About this place'),
-                        SizedBox(height: tok.gap.md),
-                        AppText(
-                          restaurant.description,
-                          size: AppTextSize.s14,
-                          color: tx.subtle,
-                        ),
-                        SizedBox(height: tok.gap.md),
-                        _buildAmenitiesCard(tok, tx, cs, restaurant),
-
-                        SizedBox(height: tok.gap.xl),
-
-                        // --- Reviews Section ---
-                        _buildSectionHeader(tx, 'Reviews'),
-                        SizedBox(height: tok.gap.md),
-                        _buildReviewsList(
-                          tok,
-                          tx,
-                          cs,
-                          restaurant.reviews,
-                          controller,
-                        ),
-
-                        SizedBox(height: tok.gap.xl),
-
-                        // --- Connects Section ---
-                        _buildSectionHeader(tx, 'Connects'),
-                        SizedBox(height: tok.gap.md),
-                        _buildConnectsGrid(
-                          tok,
-                          tx,
-                          cs,
-                          restaurant.socialConnects,
-                        ),
-
-                        SizedBox(height: tok.gap.xl),
-
-                        // --- Footer ---
-                        _buildFooter(tok, tx, cs, context),
-                        SizedBox(height: tok.gap.xl),
-                      ],
+        return CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              expandedHeight: MediaQuery.of(context).size.height * 0.45,
+              backgroundColor: cs.surface,
+              elevation: 0,
+              leading: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Center(
+                  child: Container(
+                    margin: EdgeInsets.only(left: tok.gap.sm),
+                    padding: EdgeInsets.all(tok.gap.xs),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: tx.inverse,
+                      size: 18,
                     ),
                   ),
-                ],
+                ),
+              ),
+              actions: [
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.all(tok.gap.xs),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Iconsax.heart_outline,
+                      color: tx.inverse,
+                      size: 20,
+                    ),
+                  ),
+                ),
+                SizedBox(width: tok.gap.sm),
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(right: tok.gap.lg),
+                    padding: EdgeInsets.all(tok.gap.xs),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: SvgPicture.asset(
+                      AppSvg.shareIcon,
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+              ],
+              flexibleSpace: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  var top = constraints.biggest.height;
+                  var isCollapsed =
+                      top <=
+                      kToolbarHeight + MediaQuery.of(context).padding.top + 20;
+
+                  return FlexibleSpaceBar(
+                    centerTitle: true,
+                    titlePadding: EdgeInsets.only(
+                      left: 60,
+                      bottom: 16,
+                      right: 100,
+                    ),
+                    title: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: isCollapsed ? 1.0 : 0.0,
+                      child: AppText(
+                        restaurant.name,
+                        size: AppTextSize.s16,
+                        weight: AppTextWeight.bold,
+                        color: cs.onSurface,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    background: _buildFlexibleBackground(
+                      context,
+                      tok,
+                      tx,
+                      cs,
+                      restaurant,
+                      controller,
+                    ),
+                  );
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(tok.gap.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // --- Halal Summary Section ---
+                    _buildSectionHeader(tx, 'Halal summary'),
+                    SizedBox(height: tok.gap.md),
+                    AppText(
+                      restaurant.description,
+                      size: AppTextSize.s14,
+                      color: tx.subtle,
+                    ),
+                    SizedBox(height: tok.gap.md),
+                    Wrap(
+                      spacing: tok.gap.sm,
+                      children: restaurant.halalSummary.map((tag) {
+                        return _buildTag(cs, tx, tag);
+                      }).toList(),
+                    ),
+
+                    SizedBox(height: tok.gap.xl),
+
+                    // --- Photos Grid ---
+                    _buildSectionHeader(tx, 'Photos'),
+                    SizedBox(height: tok.gap.md),
+                    _buildPhotosGrid(tok, restaurant.photos),
+
+                    SizedBox(height: tok.gap.xl),
+
+                    // --- About this place ---
+                    _buildSectionHeader(tx, 'About this place'),
+                    SizedBox(height: tok.gap.md),
+                    AppText(
+                      restaurant.description,
+                      size: AppTextSize.s14,
+                      color: tx.subtle,
+                    ),
+                    SizedBox(height: tok.gap.md),
+                    _buildAmenitiesCard(tok, tx, cs, restaurant),
+
+                    SizedBox(height: tok.gap.xl),
+
+                    // --- Reviews Section ---
+                    _buildSectionHeader(tx, 'Reviews'),
+                    SizedBox(height: tok.gap.md),
+                    _buildReviewsList(
+                      tok,
+                      tx,
+                      cs,
+                      restaurant.reviews,
+                      controller,
+                    ),
+
+                    SizedBox(height: tok.gap.xl),
+
+                    // --- Connects Section ---
+                    _buildSectionHeader(tx, 'Connects'),
+                    SizedBox(height: tok.gap.md),
+                    _buildConnectsGrid(tok, tx, cs, restaurant.socialConnects),
+
+                    SizedBox(height: tok.gap.xl),
+
+                    // --- Footer ---
+                    _buildFooter(tok, tx, cs, context),
+                    SizedBox(height: tok.gap.xl),
+                  ],
+                ),
               ),
             ),
           ],
@@ -131,7 +210,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(
+  Widget _buildFlexibleBackground(
     BuildContext context,
     AppTokens tok,
     AppTextColors tx,
@@ -139,21 +218,19 @@ class RestaurantDetailsScreen extends StatelessWidget {
     RestaurantModel restaurant,
     RestaurantDetailsController controller,
   ) {
-    // Responsive height: 40% of screen height
-    final headerHeight = MediaQuery.of(context).size.height * 0.4;
-
     return Stack(
-      clipBehavior: Clip.none,
       children: [
-        // Rounded Image Container
-        ClipRRect(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(tok.radiusLg + 4), // Approx 20
-            bottomRight: Radius.circular(tok.radiusLg + 4),
-          ),
-          child: SizedBox(
-            height: headerHeight,
-            width: double.infinity,
+        // Rounded Image Container (stops 28px from bottom to leave space for floating buttons)
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 28,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(tok.radiusLg + 4),
+              bottomRight: Radius.circular(tok.radiusLg + 4),
+            ),
             child: Stack(
               children: [
                 // Background Image
@@ -176,54 +253,9 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Back Button & Actions
-                Positioned(
-                  top: 60,
-                  right: 20,
-                  left: 5,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(tok.gap.xxs),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.3),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: tx.inverse,
-                            size: tok.iconSm,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(tok.gap.xxs),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.3),
-                              shape: BoxShape.circle,
-                            ),
-                            child: SvgPicture.asset(
-                              AppSvg.shareIcon,
-
-                              width: tok.iconLg,
-                              height: tok.iconLg,
-                            ),
-                          ),
-                          SizedBox(width: tok.gap.xs),
-                          _buildRoundIcon(Iconsax.heart_outline, tx, tok),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
                 // Restaurant Info
                 Positioned(
-                  bottom: tok.gap.xl + 12, // Space for floating buttons
+                  bottom: tok.gap.xl + 4, // Space for floating buttons
                   left: tok.gap.lg,
                   right: tok.gap.lg,
                   child: Row(
@@ -263,18 +295,18 @@ class RestaurantDetailsScreen extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.check_circle,
-                                  color: const Color(
-                                    0xFF10B981,
-                                  ), // Keep brand color or use success token if available
+                                  color: const Color(0xFF10B981),
                                   size: 16,
                                 ),
                                 SizedBox(width: tok.gap.xxs / 2),
-                                AppText(
-                                  '${restaurant.status} | ${restaurant.openingHours}',
-                                  size: AppTextSize.s12,
-                                  color: tx.inverse,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                Expanded(
+                                  child: AppText(
+                                    '${restaurant.status} | ${restaurant.openingHours}',
+                                    size: AppTextSize.s12,
+                                    color: tx.inverse,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
@@ -290,7 +322,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                                 vertical: tok.gap.xxxs,
                               ),
                               decoration: const BoxDecoration(
-                                color: Color(0xFF047857), // Keep brand color
+                                color: Color(0xFF047857),
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(8),
                                   topRight: Radius.circular(8),
@@ -300,14 +332,13 @@ class RestaurantDetailsScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   AppText(
-                                    restaurant.rating.toStringAsFixed(0),
+                                    restaurant.rating.toStringAsFixed(1),
                                     size: AppTextSize.s14,
                                     weight: AppTextWeight.bold,
                                     color: tx.inverse,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  // SizedBox(width: tok.gap.xs),
                                   Icon(Icons.star, color: tx.inverse, size: 14),
                                 ],
                               ),
@@ -318,7 +349,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                                 vertical: tok.gap.xxxs,
                               ),
                               decoration: BoxDecoration(
-                                color: cs.surface,
+                                color: cs.surfaceContainerHighest,
                                 borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(8),
                                   bottomRight: Radius.circular(8),
@@ -352,7 +383,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
         ),
         // Floating Action Buttons
         Positioned(
-          bottom: -28,
+          bottom: 0, // Touches the bottom of the layout, overlapping the image
           left: tok.gap.lg,
           right: tok.gap.lg,
           child: Row(
@@ -440,17 +471,6 @@ class RestaurantDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildRoundIcon(IconData icon, AppTextColors tx, AppTokens tok) {
-    return Container(
-      padding: EdgeInsets.all(tok.gap.xxs),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(icon, color: tx.inverse, size: tok.iconSm),
     );
   }
 

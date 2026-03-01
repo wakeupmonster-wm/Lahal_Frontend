@@ -7,6 +7,7 @@ import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/components/textfields/app_text_field.dart';
+import 'package:lahal_application/utils/components/widgets/app_footer.dart';
 import '../../controller/add_restaurant_controller.dart';
 import '../widget/add_restaurant_widgets.dart';
 
@@ -77,16 +78,17 @@ class AddRestaurantScreen extends StatelessWidget {
                     hintText: "Hamza food court",
                     isOutline: true,
                   ),
-                  SizedBox(height: tok.gap.xs),
+                  SizedBox(height: tok.gap.md),
 
                   // Address
                   const FormLabel(label: "Address"),
+
                   AppTextField(
                     controller: controller.addressController,
                     hintText: "Full restaurant address",
                     isOutline: true,
                   ),
-                  SizedBox(height: tok.gap.xs),
+                  SizedBox(height: tok.gap.md),
 
                   // City
                   const FormLabel(label: "City"),
@@ -95,7 +97,7 @@ class AddRestaurantScreen extends StatelessWidget {
                     hintText: "City",
                     isOutline: true,
                   ),
-                  SizedBox(height: tok.gap.xs),
+                  SizedBox(height: tok.gap.md),
 
                   // Halal Status
                   const FormLabel(label: "Halal Status"),
@@ -115,6 +117,10 @@ class AddRestaurantScreen extends StatelessWidget {
                             if (value != null) controller.setHalalStatus(value);
                           },
                           contentPadding: EdgeInsets.zero,
+                          visualDensity: const VisualDensity(
+                            horizontal: 0,
+                            vertical: -1,
+                          ),
                           fillColor: MaterialStateProperty.resolveWith<Color>((
                             states,
                           ) {
@@ -128,10 +134,11 @@ class AddRestaurantScreen extends StatelessWidget {
                       }).toList(),
                     ),
                   ),
-                  SizedBox(height: tok.gap.xs),
+                  SizedBox(height: tok.gap.md),
 
                   // Add Restaurant Photos
                   const FormLabel(label: "Add restaurant photos"),
+                  SizedBox(height: tok.gap.xs),
                   Obx(
                     () => GridView.builder(
                       shrinkWrap: true,
@@ -165,6 +172,7 @@ class AddRestaurantScreen extends StatelessWidget {
 
                   // Additional Note
                   const FormLabel(label: "Additional Note"),
+                  SizedBox(height: tok.gap.xs),
                   AppTextField(
                     controller: controller.additionalNoteController,
                     hintText: "Any helpful detail",
@@ -227,13 +235,11 @@ class AddRestaurantScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: tok.gap.xxl), // Bottom padding for footer
-                  SizedBox(height: tok.gap.xxl),
-                  SizedBox(height: tok.gap.xxl),
-                  SizedBox(height: tok.gap.xxl),
                 ],
               ),
             ),
+            // Footer
+            const AppFooter(),
           ],
         ),
       ),

@@ -47,116 +47,123 @@ class MapScreen extends StatelessWidget {
           }),
 
           // 2. Top Section (Back Button, Location, Filters)
-          SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: tok.gap.xs,
-                    vertical: tok.gap.sm,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // Back Button
-                      GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Container(
-                          padding: EdgeInsets.all(tok.gap.xxs),
-
-                          child: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: cs.onSurface,
-                            size: tok.iconLg,
-                          ),
-                        ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.8),
+                    Colors.black.withOpacity(0.4),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: tok.gap.md,
+                        vertical: tok.gap.sm,
                       ),
-
-                      // Location Header
-                      Expanded(
-                        child: Container(
-                          // padding: EdgeInsets.symmetric(
-                          //   horizontal: tok.gap.md,
-                          //   vertical: tok.gap.sm,
-                          // ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: tx.primary,
-                                size: 25,
-                              ),
-                              SizedBox(width: tok.gap.xxs),
-                              Flexible(
-                                child: AppText(
-                                  "Melbourne, Victoria (VIC)",
-                                  size: AppTextSize.s24,
-                                  color: tx.primary,
-                                  weight: AppTextWeight.bold,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              SizedBox(width: tok.gap.xxxs),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                color: tx.primary,
+                      child: Row(
+                        children: [
+                          // Back Button
+                          GestureDetector(
+                            onTap: () => context.pop(),
+                            child: Container(
+                              padding: EdgeInsets.all(tok.gap.xxs),
+                              child: const Icon(
+                                Icons.arrow_back_ios_new,
+                                color: Colors.white,
                                 size: 18,
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          SizedBox(width: tok.gap.xs),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(width: tok.gap.xxs),
+                                Flexible(
+                                  child: AppText(
+                                    "Sector A, Sarvanand Nagar...",
+                                    size: AppTextSize.s16,
+                                    color: Colors.white,
+                                    weight: AppTextWeight.bold,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: tok.gap.xxs),
+                                const Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 34), // Balance back button width
-                    ],
-                  ),
-                ),
+                    ),
 
-                // Horizontal Filter List
-                SizedBox(
-                  height: 40,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.symmetric(horizontal: tok.gap.md),
-                    children: [
-                      _buildFilterChip(
-                        "Near you",
-                        Icons.location_on_outlined,
-                        controller,
-                        tok,
-                        cs,
-                        tx,
+                    // Horizontal Filter List
+                    SizedBox(
+                      height: 40,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: tok.gap.md),
+                        children: [
+                          _buildFilterChip(
+                            "Near you",
+                            Icons.location_on_outlined,
+                            controller,
+                            tok,
+                            cs,
+                            tx,
+                          ),
+                          _buildFilterChip(
+                            "Top rated",
+                            Icons.star,
+                            controller,
+                            tok,
+                            cs,
+                            tx,
+                          ),
+                          _buildFilterChip(
+                            "Open now",
+                            Icons.access_time,
+                            controller,
+                            tok,
+                            cs,
+                            tx,
+                          ),
+                          _buildFilterChip(
+                            "Certified",
+                            Icons.verified_outlined,
+                            controller,
+                            tok,
+                            cs,
+                            tx,
+                          ),
+                        ],
                       ),
-                      _buildFilterChip(
-                        "Top rated",
-                        Icons.star,
-                        controller,
-                        tok,
-                        cs,
-                        tx,
-                      ),
-                      _buildFilterChip(
-                        "Open now",
-                        Icons.access_time,
-                        controller,
-                        tok,
-                        cs,
-                        tx,
-                      ),
-                      _buildFilterChip(
-                        "Certified",
-                        Icons.verified_outlined,
-                        controller,
-                        tok,
-                        cs,
-                        tx,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
 
@@ -374,7 +381,7 @@ class MapScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: tok.gap.xxxs),
+            SizedBox(height: tok.gap.xs),
             Row(
               children: [
                 Expanded(

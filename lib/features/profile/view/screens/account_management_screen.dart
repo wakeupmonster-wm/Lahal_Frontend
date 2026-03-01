@@ -25,11 +25,12 @@ class AccountManagementScreen extends StatelessWidget {
       appBar: InternalAppBar(
         title: AppStrings.accountManagement,
         centerTitle: false,
+        backgroundColor: cs.surface,
       ),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
             Container(
               color: cs.surface, // Pure white/dark surface
               child: Column(
@@ -40,14 +41,14 @@ class AccountManagementScreen extends StatelessWidget {
                   //   onTap: () => context.push(AppRoutes.editProfileScreen),
                   //   showArrow: true,
                   // ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Divider(
-                      color: cs.outlineVariant.withValues(alpha: 0.5),
-                      thickness: 0.8,
-                      height: 1,
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Divider(
+                  //     color: cs.outlineVariant.withValues(alpha: 0.5),
+                  //     thickness: 0.8,
+                  //     height: 1,
+                  //   ),
+                  // ),
                   _buildItem(
                     context,
                     AppStrings.deleteYourAccount,
@@ -64,6 +65,14 @@ class AccountManagementScreen extends StatelessWidget {
                       );
                     },
                     showArrow: true,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Divider(
+                      color: cs.outlineVariant.withValues(alpha: 0.5),
+                      thickness: 0.8,
+                      height: 1,
+                    ),
                   ),
                 ],
               ),

@@ -18,7 +18,7 @@ class EditProfileController extends GetxController {
   final genderController = TextEditingController();
 
   final RxBool isLoading = false.obs;
-  final RxBool isPhoneEditable = false.obs;
+  // final RxBool isPhoneEditable = false.obs;
   final RxBool isEmailEditable = false.obs;
   final RxString selectedGender = ''.obs;
   final RxBool isGenderExpanded = false.obs;
@@ -54,7 +54,7 @@ class EditProfileController extends GetxController {
   }
 
   void togglePhoneEditable() {
-    isPhoneEditable.value = !isPhoneEditable.value;
+    // isPhoneEditable.value = !isPhoneEditable.value;
   }
 
   void toggleEmailEditable() {
