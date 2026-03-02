@@ -68,7 +68,7 @@ class AppButton extends StatelessWidget {
     // derive base size using tokens when available, otherwise sensible defaults
     final defaultHeight =
         heightOverride ??
-        (tok != null ? (56.0 * widthScale) : (56.0 * widthScale));
+        (tok != null ? (48.0 * widthScale) : (48.0 * widthScale));
     final horizontalPadding = tok != null
         ? (tok.inset.card * 0.9) * widthScale
         : 24.0 * widthScale;

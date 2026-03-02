@@ -32,12 +32,20 @@ class ChangeLocationController extends GetxController {
     }
   }
 
-  void useCurrentLocation(BuildContext context) {
+  void useCurrentLocation(BuildContext context) async {
     final globalController = Get.find<global.LocationController>();
-    globalController.fetchLocation(openSettings: true).then((_) {
-      // Get.back(); // Return to previous screen after fetching
-      // context.pop();
-    });
+    isLoading.value = true;
+    try {
+      await globalController.fetchLocation(openSettings: true);
+      if (globalController.currentAddress.value.isNotEmpty) {
+        // Populate the search field with the fetched address
+        searchController.text = globalController.currentAddress.value;
+        // Automatically search based on the fetched location
+        await searchLocations(searchController.text);
+      }
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void selectLocation(LocationModel location) {

@@ -94,14 +94,14 @@ class _AppTextFieldState extends State<AppTextField> {
     // text style (use your typography tokens)
     final textStyle = tp.style(
       context,
-      size: AppTextSize.s16,
+      size: AppTextSize.s14,
       weight: AppTextWeight.medium,
       color: textColor,
     );
 
     final hintStyle = tp.style(
       context,
-      size: AppTextSize.s16,
+      size: AppTextSize.s14,
       weight: AppTextWeight.medium,
       color: hintColor,
     );
@@ -113,8 +113,8 @@ class _AppTextFieldState extends State<AppTextField> {
     final inputDecoration = InputDecoration(
       isDense: true,
       contentPadding: EdgeInsets.symmetric(
-        horizontal: tok.inset.section,
-        vertical: tok.inset.section,
+        horizontal: tok.inset.fieldH,
+        vertical: tok.inset.fieldV,
       ),
       filled: true,
       fillColor: fillColor,

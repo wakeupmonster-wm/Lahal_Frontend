@@ -63,7 +63,7 @@ class PrayerTimeCard extends StatelessWidget {
       width: 100, // Fixed width for horizontal scroll
       margin: EdgeInsets.only(right: tok.gap.md),
       padding: EdgeInsets.symmetric(
-        vertical: tok.gap.md,
+        // vertical: tok.gap.md,
         horizontal: tok.gap.sm,
       ),
       decoration: BoxDecoration(
@@ -74,9 +74,9 @@ class PrayerTimeCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _getIconForPrayer(prayerTime.name),
-          const SizedBox(height: 6),
+          SizedBox(height: tok.gap.xxs),
           AppText(prayerTime.name, size: AppTextSize.s14, color: tx.neutral),
-          const SizedBox(height: 2),
+          SizedBox(height: tok.gap.xxs),
           AppText(
             prayerTime.time,
             size: AppTextSize.s16,

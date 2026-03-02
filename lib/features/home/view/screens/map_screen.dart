@@ -169,11 +169,11 @@ class MapScreen extends StatelessWidget {
 
           // 3. Bottom Carousel
           Positioned(
-            bottom: tok.gap.xxl,
+            bottom: tok.gap.xxl * 1,
             left: 0,
             right: 0,
             child: SizedBox(
-              height: 180, // Adjust height as per design card
+              height: 195, // Adjust height as per design card
               child: Obx(() {
                 if (controller.isLoading.value ||
                     controller.restaurants.isEmpty) {
@@ -294,6 +294,7 @@ class MapScreen extends StatelessWidget {
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // Image
                 ClipRRect(
@@ -320,18 +321,19 @@ class MapScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: AppText(
                               restaurant.name,
-                              size: AppTextSize.s16,
+                              size: AppTextSize.s14,
                               weight: AppTextWeight.bold,
                               color: tx.primary,
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          SizedBox(width: tok.gap.xs),
                           Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: tok.gap.xxs,
@@ -385,29 +387,33 @@ class MapScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.push(AppRoutes.restaurantDetails);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: cs.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.push(AppRoutes.restaurantDetails);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: cs.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 0),
+                        // minimumSize: Size(0, 36),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 0),
-                      // minimumSize: Size(0, 36),
-                    ),
-                    child: AppText(
-                      "View Restaurant",
-                      size: AppTextSize.s12,
-                      weight: AppTextWeight.bold,
-                      color: cs.onPrimary,
+                      child: AppText(
+                        "View Restaurant",
+                        size: AppTextSize.s10,
+                        weight: AppTextWeight.bold,
+                        color: cs.onPrimary,
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(width: tok.gap.sm),
+                SizedBox(width: tok.gap.xxxs),
                 _buildCircleButton(cs, tx, AppSvg.routingIcon, tok),
-                SizedBox(width: tok.gap.sm),
+                SizedBox(width: tok.gap.xxxs),
                 _buildCircleButton(cs, tx, AppSvg.callCallingIcon, tok),
               ],
             ),
@@ -425,7 +431,7 @@ class MapScreen extends StatelessWidget {
   ) {
     return Container(
       width: 54,
-      height: 34,
+      height: 40,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: cs.outlineVariant),

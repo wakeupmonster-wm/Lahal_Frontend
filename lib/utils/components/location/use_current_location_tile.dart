@@ -25,11 +25,14 @@ class UseCurrentLocationTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: tok.gap.md, vertical: 14),
+        padding: EdgeInsets.symmetric(
+          horizontal: tok.inset.fieldH,
+          vertical: tok.inset.fieldV,
+        ),
         decoration: BoxDecoration(
           color: cs.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: cs.outlineVariant.withOpacity(0.9)),
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.9)),
         ),
         child: Row(
           children: [
@@ -38,7 +41,7 @@ class UseCurrentLocationTile extends StatelessWidget {
             Expanded(
               child: AppText(
                 label,
-                size: AppTextSize.s16,
+                size: AppTextSize.s14,
                 weight: AppTextWeight.bold,
                 color: AppColor.primaryColor,
               ),

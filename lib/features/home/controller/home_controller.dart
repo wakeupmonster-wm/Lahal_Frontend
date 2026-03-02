@@ -32,9 +32,13 @@ class HomeController extends GetxController {
   }
 
   void onCategorySelected(String category) {
-    selectedCategory.value = category;
-    // For now, we just refresh all restaurants.
-    // In a real app, you'd filter by category here.
+    if (selectedCategory.value == category) {
+      // Toggle off if tapping the same category again
+      selectedCategory.value = '';
+    } else {
+      selectedCategory.value = category;
+    }
+    // Refresh all restaurants based on new category
     getBestRestaurants();
   }
 

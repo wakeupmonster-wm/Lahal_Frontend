@@ -8,6 +8,7 @@ import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
+import 'package:lahal_application/utils/constants/app_strings.dart';
 
 class PrayerScreen extends StatelessWidget {
   const PrayerScreen({super.key});
@@ -35,7 +36,7 @@ class PrayerScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
               child: AppText(
-                "Prayer Times",
+                AppStrings.prayerTimesTitle,
                 size: AppTextSize.s18,
                 weight: AppTextWeight.bold,
                 color: tx.primary,
@@ -63,8 +64,7 @@ class PrayerScreen extends StatelessWidget {
                 );
               }),
             ),
-
-            const SizedBox(height: 40),
+            SizedBox(height: tok.gap.lg * 6),
           ],
         ),
       ),

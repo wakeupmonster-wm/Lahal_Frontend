@@ -242,7 +242,7 @@ class _ConfirmationBottomSheetState extends State<ConfirmationBottomSheet>
               ),
             ),
           ),
-          SizedBox(height: tok.gap.lg),
+          SizedBox(height: tok.gap.sm),
         ],
       ),
     );

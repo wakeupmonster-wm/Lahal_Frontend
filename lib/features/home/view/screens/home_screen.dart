@@ -111,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            SizedBox(height: tok.gap.sm),
+                            SizedBox(height: tok.gap.xxs),
 
                             // Location Row
                             GestureDetector(
@@ -129,7 +129,7 @@ class HomeScreen extends StatelessWidget {
                                   //   color: tx.inverse,
                                   //   size: 18,
                                   // ),
-                                  SizedBox(width: tok.gap.xs),
+                                  SizedBox(width: tok.gap.xxs),
                                   Obx(
                                     () => AppText(
                                       locationController.isLocationLoading.value
@@ -140,6 +140,8 @@ class HomeScreen extends StatelessWidget {
                                       size: AppTextSize.s14,
                                       weight: AppTextWeight.medium,
                                       color: tx.inverse,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
                                   Icon(
@@ -204,7 +206,7 @@ class HomeScreen extends StatelessWidget {
                 backgroundColor: cs.surface,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: tok.gap.md,
+                    horizontal: tok.gap.xs,
                     // vertical: tok.gap.,
                   ),
                   child: Obx(
@@ -251,7 +253,7 @@ class HomeScreen extends StatelessWidget {
                           tok,
                           tx,
                           cs,
-                          'Top reviewed',
+                          'Top reviewe',
                           AppAssets.reviewIcon,
                           controller.selectedCategory.value == 'Top reviewed',
                           () => controller.onCategorySelected('Top reviewed'),
@@ -375,45 +377,54 @@ class HomeScreen extends StatelessWidget {
     bool isSelected,
     VoidCallback onTap,
   ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize:
-            MainAxisSize.min, // Important for layout inside row/column
-        children: [
-          Container(
-            padding: EdgeInsets.all(tok.gap.xs),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppColor.primaryColor.withOpacity(0.05)
-                  : cs.surfaceContainerHighest.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(tok.radiusMd),
-              border: Border.all(
-                color: isSelected ? AppColor.primaryColor : Colors.transparent,
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: cs.onSurface.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisSize:
+              MainAxisSize.min, // Important for layout inside row/column
+          children: [
+            Container(
+              padding: EdgeInsets.all(tok.gap.xs),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColor.primaryColor.withOpacity(0.05)
+                    : cs.surfaceContainerHighest.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(tok.radiusMd),
+                border: Border.all(
+                  color: isSelected
+                      ? AppColor.primaryColor
+                      : Colors.transparent,
+                  width: 1.5,
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: cs.onSurface.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Image.asset(
+                iconPath,
+                width: tok.gap.xxl,
+                height: tok.gap.xxl,
+              ),
             ),
-            child: Image.asset(
-              iconPath,
-              width: tok.gap.xxl,
-              height: tok.gap.xxl,
+            SizedBox(height: tok.gap.xs),
+            AppText(
+              label,
+              size:
+                  AppTextSize.s10, // Slightly smaller text to prevent clipping
+              weight: AppTextWeight.medium,
+              color: isSelected ? AppColor.primaryColor : tx.subtle,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow:
+                  TextOverflow.visible, // Ensures it matches parent bounds
             ),
-          ),
-          SizedBox(height: tok.gap.xs),
-          AppText(
-            label,
-            size: AppTextSize.s12,
-            weight: AppTextWeight.medium,
-            color: isSelected ? AppColor.primaryColor : tx.subtle,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

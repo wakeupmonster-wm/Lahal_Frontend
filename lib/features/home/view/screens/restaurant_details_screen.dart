@@ -58,7 +58,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     child: Icon(
                       Icons.arrow_back_ios_new,
                       color: tx.inverse,
-                      size: 18,
+                      size: 15,
                     ),
                   ),
                 ),
@@ -74,11 +74,11 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     child: Icon(
                       Iconsax.heart_outline,
                       color: tx.inverse,
-                      size: 20,
+                      size: 15,
                     ),
                   ),
                 ),
-                SizedBox(width: tok.gap.sm),
+                SizedBox(width: tok.gap.xxs),
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(right: tok.gap.lg),
@@ -89,8 +89,8 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     ),
                     child: SvgPicture.asset(
                       AppSvg.shareIcon,
-                      width: 20,
-                      height: 20,
+                      width: 15,
+                      height: 15,
                     ),
                   ),
                 ),
@@ -109,16 +109,20 @@ class RestaurantDetailsScreen extends StatelessWidget {
                       bottom: 16,
                       right: 100,
                     ),
-                    title: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 300),
-                      opacity: isCollapsed ? 1.0 : 0.0,
-                      child: AppText(
-                        restaurant.name,
-                        size: AppTextSize.s16,
-                        weight: AppTextWeight.bold,
-                        color: cs.onSurface,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                    title: Container(
+                      width: 180,
+                      // color: Colors.red,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 100),
+                        opacity: isCollapsed ? 1.0 : 0.0,
+                        child: AppText(
+                          restaurant.name,
+                          size: AppTextSize.s16,
+                          weight: AppTextWeight.bold,
+                          color: cs.onSurface,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                     background: _buildFlexibleBackground(
@@ -649,7 +653,15 @@ class RestaurantDetailsScreen extends StatelessWidget {
                 children: [
                   SvgPicture.asset(AppSvg.tickCircleIcon),
                   SizedBox(width: tok.gap.xxs),
-                  AppText(key, size: AppTextSize.s12, color: tx.subtle),
+                  Expanded(
+                    child: AppText(
+                      key,
+                      size: AppTextSize.s12,
+                      color: tx.subtle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               );
             },
@@ -735,7 +747,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
         for (int i = 0; i < items.length; i++) ...[
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(tok.gap.xs),
+              padding: EdgeInsets.all(tok.gap.xxs),
               decoration: BoxDecoration(
                 color: cs.surfaceContainerHighest.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(tok.radiusMd),
@@ -755,7 +767,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                   SizedBox(height: tok.gap.xs),
                   AppText(
                     items[i]['label'],
-                    size: AppTextSize.s12,
+                    size: AppTextSize.s10,
                     color: tx.subtle,
                     // align: TextAlign.center,
                   ),
@@ -763,7 +775,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
               ),
             ),
           ),
-          if (i < items.length - 1) SizedBox(width: tok.gap.sm),
+          if (i < items.length - 1) SizedBox(width: tok.gap.xs),
         ],
       ],
     );

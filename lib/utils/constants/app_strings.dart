@@ -75,6 +75,13 @@ class AppStrings {
   //----hint text
   static const enterPhoneNumber = "Enter phone number";
 
+  // ----------------------------
+  // 🕌 PRAYER
+  // ----------------------------
+  static const prayerTimesTitle = "Prayer Times";
+  static const upcomingPrayer = "Upcoming prayer";
+  static const timeRemaining = "Time remaining";
+
   //-------------------------------------------------------------old code -------------------------------------------------------------------
   static const continueText = "Continue";
   static const signIn = "Sign in";

@@ -5,6 +5,7 @@ import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
+import 'package:lahal_application/utils/constants/app_strings.dart';
 
 class UpcomingPrayerCard extends StatelessWidget {
   const UpcomingPrayerCard({super.key});
@@ -19,7 +20,10 @@ class UpcomingPrayerCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
       child: Container(
-        padding: EdgeInsets.all(tok.gap.lg),
+        padding: EdgeInsets.symmetric(
+          vertical: tok.gap.lg,
+          horizontal: tok.gap.lg,
+        ),
         decoration: BoxDecoration(
           color: cs.surface,
           borderRadius: BorderRadius.circular(tok.radiusLg),
@@ -34,43 +38,50 @@ class UpcomingPrayerCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(
-                  "Upcoming prayer",
-                  size: AppTextSize.s14,
-                  color: tx.subtle,
-                ),
-                const SizedBox(height: 4),
-                Obx(
-                  () => AppText(
-                    controller.upcomingPrayer.value?.name ?? "N/A",
-                    size: AppTextSize.s24,
-                    weight: AppTextWeight.bold,
-                    color: tx.primary,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                AppText(
-                  "Time remaining",
-                  size: AppTextSize.s12,
-                  color: tx.subtle,
-                ),
-                const SizedBox(height: 4),
-                Obx(
-                  () => AppText(
-                    controller.timeRemaining.value,
-                    size: AppTextSize.s24,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText(
+                    AppStrings.upcomingPrayer,
+                    size: AppTextSize.s12,
+                    color: tx.subtle,
                     weight: AppTextWeight.medium,
-                    color: tx.primary,
                   ),
-                ),
-              ],
+                  SizedBox(height: tok.gap.xxxs),
+                  Obx(
+                    () => AppText(
+                      controller.upcomingPrayer.value?.name ?? "N/A",
+                      size: AppTextSize.s18,
+                      weight: AppTextWeight.bold,
+                      color: tx.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: tok.gap.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AppText(
+                    AppStrings.timeRemaining,
+                    size: AppTextSize.s12,
+                    color: tx.subtle,
+                    weight: AppTextWeight.medium,
+                  ),
+                  SizedBox(height: tok.gap.xxxs),
+                  Obx(
+                    () => AppText(
+                      controller.timeRemaining.value,
+                      size: AppTextSize.s18,
+                      weight: AppTextWeight.medium,
+                      color: tx.primary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

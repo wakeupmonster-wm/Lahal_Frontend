@@ -48,7 +48,7 @@ class OtpVerificationScreen extends StatelessWidget {
               children: [
                 SizedBox(height: tok.gap.xs),
                 AppText(
-                  "${AppStrings.weHaveSentVerificationCodeTo} - ${data ?? ''}",
+                  "${AppStrings.weHaveSentVerificationCodeTo} - ${data ?? '991263552626266'}",
                   size: AppTextSize.s14,
                   weight: AppTextWeight.regular,
                   color: tx.subtle,
@@ -88,7 +88,7 @@ class OtpVerificationScreen extends StatelessWidget {
                           ctrl.remainingSeconds.value > 0
                               ? "${AppStrings.resendSms} ${ctrl.remainingSeconds.value}${AppStrings.secondsSuffix}"
                               : AppStrings.resendSms,
-                          size: AppTextSize.s14,
+                          size: AppTextSize.s12,
                           weight: AppTextWeight.bold,
                           color: ctrl.remainingSeconds.value > 0
                               ? tx.subtle
@@ -116,6 +116,7 @@ class OtpVerificationScreen extends StatelessWidget {
                     bottom: tok.gap.lg + mediaQuery.padding.bottom,
                   ),
                   child: SizedBox(
+                    height: 48,
                     width: double.infinity,
                     child: AppButton(
                       radiusOverride: tok.gap.xs,

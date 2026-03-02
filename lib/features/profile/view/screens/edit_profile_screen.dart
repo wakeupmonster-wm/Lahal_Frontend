@@ -147,8 +147,8 @@ class EditProfileScreen extends StatelessWidget {
                       onTap: controller.toggleGenderExpanded,
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: tok.gap.md,
-                          vertical: tok.gap.sm,
+                          horizontal: tok.gap.xs,
+                          vertical: tok.gap.xs,
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(

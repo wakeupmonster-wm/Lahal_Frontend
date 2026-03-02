@@ -77,12 +77,9 @@ class ChangeLocationScreen extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: controller.searchResults.length,
-                    separatorBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: tok.gap.md),
-                      child: Divider(
-                        color: cs.outlineVariant.withOpacity(0.3),
-                        height: 1,
-                      ),
+                    separatorBuilder: (context, index) => Divider(
+                      color: cs.outlineVariant.withOpacity(0.3),
+                      height: 1,
                     ),
                     itemBuilder: (context, index) {
                       final location = controller.searchResults[index];
@@ -117,17 +114,16 @@ class ChangeLocationScreen extends StatelessWidget {
     return ListTile(
       onTap: () => controller.selectLocation(location),
       contentPadding: EdgeInsets.symmetric(
-        horizontal: tok.gap.md,
-        vertical: tok.gap.xxs,
+        horizontal: tok.inset.fieldH,
+        vertical: tok.gap.xxxs,
       ),
       leading: Container(
-        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(color: cs.surface, shape: BoxShape.circle),
         child: SvgPicture.asset(AppSvg.locationIcon),
       ),
       title: AppText(
         location.title,
-        size: AppTextSize.s18,
+        size: AppTextSize.s14,
         weight: AppTextWeight.bold,
         color: tx.subtle,
       ),

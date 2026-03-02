@@ -67,6 +67,7 @@ class AppFooter extends StatelessWidget {
               ),
             ],
           ),
+          SizedBox(height: tok.gap.md),
         ],
       ),
     );
