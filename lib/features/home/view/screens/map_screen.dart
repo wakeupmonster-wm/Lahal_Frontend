@@ -89,30 +89,35 @@ class MapScreen extends StatelessWidget {
                           ),
                           SizedBox(width: tok.gap.xs),
                           Expanded(
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                SizedBox(width: tok.gap.xxs),
-                                Flexible(
-                                  child: AppText(
-                                    "Sector A, Sarvanand Nagar...",
-                                    size: AppTextSize.s16,
+                            child: GestureDetector(
+                              onTap: () {
+                                context.push(AppRoutes.changeLocationScreen);
+                              },
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on,
                                     color: Colors.white,
-                                    weight: AppTextWeight.bold,
-                                    overflow: TextOverflow.ellipsis,
+                                    size: 20,
                                   ),
-                                ),
-                                SizedBox(width: tok.gap.xxs),
-                                const Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ],
+                                  SizedBox(width: tok.gap.xxs),
+                                  Flexible(
+                                    child: AppText(
+                                      "Sector A, Sarvanand Nagar...",
+                                      size: AppTextSize.s16,
+                                      color: Colors.white,
+                                      weight: AppTextWeight.bold,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(width: tok.gap.xxs),
+                                  const Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -288,7 +293,7 @@ class MapScreen extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: tok.gap.sm,
-          vertical: tok.gap.md,
+          vertical: tok.gap.lg,
         ),
         child: Column(
           children: [

@@ -36,7 +36,7 @@ class ChangeLocationController extends GetxController {
     final globalController = Get.find<global.LocationController>();
     isLoading.value = true;
     try {
-      await globalController.fetchLocation(openSettings: true);
+      await globalController.fetchLocation();
       if (globalController.currentAddress.value.isNotEmpty) {
         // Populate the search field with the fetched address
         searchController.text = globalController.currentAddress.value;

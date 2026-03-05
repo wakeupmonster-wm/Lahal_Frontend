@@ -16,8 +16,7 @@ class AppAssets {
   // 🖼️ Images
   // ===============================================================
   // static const onboarding = '${_images}onboarding.png';
-  static const addResturentBackground =
-      '${_images}add_resturent_background.png';
+
   static const addResturentBanner = '${_images}add_resturent_banner.png';
 
   static const add_rest_bannner = '${_svgs}add_rest_bannner.svg';

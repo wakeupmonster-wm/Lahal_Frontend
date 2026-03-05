@@ -5,6 +5,7 @@ import 'package:lahal_application/features/profile/controller/change_location_co
 import 'package:lahal_application/features/profile/model/location_model.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
 import 'package:lahal_application/utils/components/textfields/app_search_text_field.dart';
+import 'package:lahal_application/utils/components/widgets/empty_state_widget.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
@@ -58,7 +59,10 @@ class ChangeLocationScreen extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (controller.searchResults.isEmpty) {
-                  return const SizedBox.shrink();
+                  return EmptyStateWidget(
+                    title: "No Locations Found",
+                    description: "We couldn't find any locations in your area.",
+                  );
                 }
                 return Container(
                   decoration: BoxDecoration(

@@ -36,7 +36,7 @@ class UseCurrentLocationTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.my_location, color: AppColor.primaryColor, size: 25),
+            Icon(Icons.my_location, color: AppColor.primaryColor, size: 20),
             SizedBox(width: tok.gap.md),
             Expanded(
               child: AppText(

@@ -64,6 +64,16 @@ class HomeController extends GetxController {
     }
   }
 
+  void toggleFavorite(String restaurantId) {
+    final index = bestRestaurants.indexWhere((r) => r.id == restaurantId);
+    if (index != -1) {
+      final restaurant = bestRestaurants[index];
+      bestRestaurants[index] = restaurant.copyWith(
+        isFavorite: !restaurant.isFavorite,
+      );
+    }
+  }
+
   void applyFilters() {
     // Logic to apply filters and fetch data
     getBestRestaurants();

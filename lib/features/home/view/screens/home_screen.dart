@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:lahal_application/features/home/controller/home_controller.dart';
 import 'package:lahal_application/features/home/controller/location_controller.dart';
 import 'package:lahal_application/features/home/view/widgets/category_header_delegate.dart';
 import 'package:lahal_application/utils/components/location/location_permission_sheet.dart';
 import 'package:lahal_application/utils/components/shimmer/restaurant_card_shimmer.dart';
-import 'package:lahal_application/utils/components/textfields/app_search_text_field.dart';
+import 'package:lahal_application/utils/components/textfields/app_animated_search_field.dart';
+import 'package:lahal_application/utils/components/buttons/app_shimmer_fab.dart';
 import 'package:lahal_application/utils/components/widgets/app_footer.dart';
 import 'package:lahal_application/utils/components/widgets/restaurant_card.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
-import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/components/widgets/empty_state_widget.dart';
 import 'package:lahal_application/utils/components/widgets/warning_dispaly.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
@@ -23,13 +24,50 @@ import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final HomeController controller;
+  late final LocationController locationController;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(HomeController());
+    locationController = Get.put(LocationController());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (locationController.shouldShowLocationPopup()) {
+        _showLocationPopup();
+      }
+    });
+  }
+
+  void _showLocationPopup() {
+    LocationPermissionSheet.show(
+      context,
+      onEnable: () async {
+        await locationController.markLocationPopupAsShown();
+
+        await locationController.enableLocation(context);
+      },
+      onManualSearch: () async {
+        await locationController.markLocationPopupAsShown();
+
+        if (mounted) {
+          context.push(AppRoutes.changeLocationScreen);
+        }
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(HomeController());
-    final locationController = Get.put(LocationController());
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
@@ -116,8 +154,7 @@ class HomeScreen extends StatelessWidget {
                             // Location Row
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
-                              onTap: () =>
-                                  context.push(AppRoutes.changeLocationScreen),
+                              onTap: _showLocationPopup,
                               child: Row(
                                 children: [
                                   SvgPicture.asset(
@@ -160,41 +197,8 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(
-                  35,
-                ), // Height of search bar area
-                child: Container(
-                  height: 100,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: tok.gap.lg,
-                    vertical: tok.gap.xs,
-                  ),
-                  alignment: Alignment.center,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: AppSearchField(
-                          controller: TextEditingController(),
-                          onChanged: (value) {},
-                          hintText: AppStrings.searchLocationHint,
-                        ),
-                      ),
-                      SizedBox(width: tok.gap.md),
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => FilterBottomSheet.show(context),
-                        child: Padding(
-                          padding: EdgeInsets.all(tok.gap.xs),
-                          child: SvgPicture.asset(
-                            AppSvg.filterIcon,
-                            // color: cs.surface,
-                            // clipBehavior: cs.surface,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                preferredSize: const Size.fromHeight(35),
+                child: _HomeSearchBar(tok: tok, cs: cs, tx: tx),
               ),
             ),
 
@@ -331,6 +335,9 @@ class HomeScreen extends StatelessWidget {
                       onTap: () {
                         context.push(AppRoutes.restaurantDetails);
                       },
+                      onFavoriteToggle: () {
+                        controller.toggleFavorite(restaurant.id);
+                      },
                     );
                   }, childCount: controller.bestRestaurants.length),
                 ),
@@ -343,24 +350,27 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: tok.gap.xxl * 2.8),
-        child: SizedBox(
-          height: 45,
-          child: FloatingActionButton.extended(
-            onPressed: () => context.push(AppRoutes.mapScreen),
-            backgroundColor: AppColor.primaryColor,
-            elevation: 4,
-            shape: StadiumBorder(side: BorderSide(color: cs.surface)),
-            icon: SvgPicture.asset(
-              AppSvg.mapIcon,
-              width: tok.iconSm,
-              height: tok.iconSm,
-            ),
-            label: AppText(
-              "Map",
-              size: AppTextSize.s16,
-              weight: AppTextWeight.bold,
-              color: Colors.white,
+        padding: EdgeInsets.only(bottom: tok.gap.xxl * 2.4),
+        child: AppShimmerFAB(
+          onPressed: () => context.push(AppRoutes.mapScreen),
+          child: SizedBox(
+            height: 45,
+            child: FloatingActionButton.extended(
+              onPressed: null, // Animation wrapper handles taps
+              backgroundColor: AppColor.primaryColor,
+              elevation: 4,
+              shape: StadiumBorder(side: BorderSide(color: cs.surface)),
+              icon: SvgPicture.asset(
+                AppSvg.mapIcon,
+                width: tok.iconSm,
+                height: tok.iconSm,
+              ),
+              label: AppText(
+                "Map",
+                size: AppTextSize.s16,
+                weight: AppTextWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -425,6 +435,58 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _HomeSearchBar extends StatelessWidget {
+  const _HomeSearchBar({required this.tok, required this.cs, required this.tx});
+
+  final AppTokens tok;
+  final ColorScheme cs;
+  final AppTextColors tx;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      padding: EdgeInsets.symmetric(
+        horizontal: tok.gap.md,
+        vertical: tok.gap.xs,
+      ),
+      alignment: Alignment.center,
+      child: Row(
+        children: [
+          Expanded(
+            child: AppAnimatedSearchField(
+              hints: const [
+                "Search for \"Pizza\"",
+                "Search for \"Biryani\"",
+                "Search for \"Burger\"",
+                "Search for \"Coffee\"",
+              ],
+              onChanged: (value) {},
+            ),
+          ),
+          SizedBox(width: tok.gap.md),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => FilterBottomSheet.show(context),
+            child: Container(
+              padding: EdgeInsets.all(tok.gap.xs),
+              decoration: BoxDecoration(
+                color: cs.surface,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Iconsax.setting_4_outline,
+                color: tx.neutral,
+                size: tok.iconSm,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

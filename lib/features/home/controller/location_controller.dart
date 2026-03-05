@@ -1,7 +1,11 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:lahal_application/data/services/location_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:lahal_application/data/services/location_service.dart';
 import 'package:lahal_application/utils/components/location/location_permission_sheet.dart';
 import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
@@ -9,52 +13,104 @@ import 'package:lahal_application/data/datasources/local/storage_utility.dart';
 
 class LocationController extends GetxController {
   final isLocationLoading = false.obs;
-  final currentAddress =
-      'Melbourne, Victoria (VIC)'.obs; // Default from HomeController
+
+  final currentAddress = 'Select your location'.obs;
+
   final latitude = 0.0.obs;
   final longitude = 0.0.obs;
 
+  /// Runs when controller is ready
   @override
-  void onReady() {
+  void onReady() async {
     super.onReady();
-    _checkFirstTimeLocationPopup();
-  }
 
-  Future<void> _checkFirstTimeLocationPopup() async {
-    final hasShown =
-        AppLocalStorage.instance().readData<bool>('has_shown_location_popup') ??
-        false;
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
 
-    if (!hasShown) {
-      // Mark as shown
-      await AppLocalStorage.instance().writeData(
-        'has_shown_location_popup',
-        true,
-      );
-
-      // Show the first-time popup
-      if (Get.context != null) {
-        LocationPermissionSheet.show(
-          Get.context!,
-          onEnable: () async {
-            await fetchLocation(openSettings: true);
-          },
-          onManualSearch: () {
-            Get.context!.push(AppRoutes.changeLocationScreen);
-          },
-        );
+      /// If already allowed → fetch silently
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        await fetchLocation();
       }
-    } else {
-      // Subsequent visits, fetch location silently but don't open settings by default
-      fetchLocation(openSettings: false);
+    } catch (e) {
+      log(e.toString());
     }
   }
 
-  Future<void> fetchLocation({bool openSettings = true}) async {
+  /// Check if popup should be shown (only first time)
+  bool shouldShowLocationPopup() {
+    return !(AppLocalStorage.instance().readData<bool>(
+          'has_shown_location_popup',
+        ) ??
+        false);
+  }
+
+  /// Save popup state
+  Future<void> markLocationPopupAsShown() async {
+    await AppLocalStorage.instance().writeData(
+      'has_shown_location_popup',
+      true,
+    );
+  }
+
+  /// Enable location from popup
+  Future<void> enableLocation(BuildContext context) async {
+    try {
+      isLocationLoading.value = true;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+
+      /// Ask permission
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      /// If denied again
+      if (permission == LocationPermission.denied) {
+        // AppSnackBar.showToast(message: "Location permission denied");
+        Fluttertoast.showToast(
+          msg: "Location permission denied",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        return;
+      }
+
+      /// If permanently denied → open settings
+      if (permission == LocationPermission.deniedForever) {
+        await LocationService.openAppSettings();
+        return;
+      }
+
+      /// Check GPS service
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!serviceEnabled) {
+        // AppSnackBar.showToast(message: "Please enable GPS");
+        Fluttertoast.showToast(
+          msg: "Please enable GPS",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        return;
+      }
+
+      /// Fetch location
+      await fetchLocation();
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      isLocationLoading.value = false;
+    }
+  }
+
+  /// Fetch device location
+  Future<void> fetchLocation() async {
     try {
       isLocationLoading.value = true;
 
       final position = await LocationService.getCurrentPosition();
+
       latitude.value = position.latitude;
       longitude.value = position.longitude;
 
@@ -62,32 +118,36 @@ class LocationController extends GetxController {
         position.latitude,
         position.longitude,
       );
-    } on LocationPermissionDeniedException catch (e) {
-      log(e.toString());
-      // Show bottom sheet instead of just a toast
-      if (Get.context != null) {
-        LocationPermissionSheet.show(
-          Get.context!,
-          onEnable: () async {
-            // Try to fetch again, which will trigger permission request or settings
-            await fetchLocation(openSettings: true);
-          },
-          onManualSearch: () {
-            Get.context!.push(AppRoutes.changeLocationScreen);
-          },
-        );
-      } else {
-        AppSnackBar.showToast(message: e.message);
-      }
-
-      // Open app settings so user can enable permission manually
-      if (openSettings) {
-        await LocationService.openAppSettings();
-      }
     } catch (e) {
       log(e.toString());
+      // AppSnackBar.showToast(message: "Unable to fetch location");
+      Fluttertoast.showToast(
+        msg: "Unable to fetch location",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
     } finally {
       isLocationLoading.value = false;
     }
+  }
+
+  /// Manual search navigation
+  void openManualSearch(BuildContext context) {
+    context.push(AppRoutes.changeLocationScreen);
+  }
+
+  /// Show permission sheet
+  void showLocationSheet(BuildContext context) {
+    LocationPermissionSheet.show(
+      context,
+      onEnable: () async {
+        await markLocationPopupAsShown();
+        await enableLocation(context);
+      },
+      onManualSearch: () async {
+        await markLocationPopupAsShown();
+        openManualSearch(context);
+      },
+    );
   }
 }

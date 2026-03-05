@@ -8,8 +8,14 @@ import 'package:lahal_application/utils/theme/text/app_typography.dart';
 class RestaurantCard extends StatelessWidget {
   final RestaurantModel restaurant;
   final VoidCallback? onTap;
+  final VoidCallback? onFavoriteToggle;
 
-  const RestaurantCard({super.key, required this.restaurant, this.onTap});
+  const RestaurantCard({
+    super.key,
+    required this.restaurant,
+    this.onTap,
+    this.onFavoriteToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +56,19 @@ class RestaurantCard extends StatelessWidget {
                   Positioned(
                     top: tok.gap.xs,
                     right: tok.gap.xs,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      // decoration: BoxDecoration(
-                      //   color: cs.surface,
-                      //   shape: BoxShape.circle,
-                      // ),
-                      child: Icon(
-                        Icons.favorite_border,
-                        size: 22,
-                        color: Colors.white,
+                    child: GestureDetector(
+                      onTap: onFavoriteToggle,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        child: Icon(
+                          (restaurant.isFavorite == true)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          size: 22,
+                          color: restaurant.isFavorite
+                              ? Colors.red
+                              : Colors.white,
+                        ),
                       ),
                     ),
                   ),
