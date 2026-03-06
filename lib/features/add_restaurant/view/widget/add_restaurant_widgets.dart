@@ -25,6 +25,8 @@ class ImagePickerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final cs = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final height = mediaQuery.size.height;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -33,7 +35,7 @@ class ImagePickerTile extends StatelessWidget {
           onTap: onTap,
           child: Container(
             width: double.infinity,
-            height: 100,
+            height: height * 0.107,
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(tok.radiusMd),

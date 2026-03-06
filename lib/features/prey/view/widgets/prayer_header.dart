@@ -17,6 +17,9 @@ class PrayerHeader extends StatelessWidget {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
 
     return Container(
       width: double.infinity,
@@ -82,8 +85,8 @@ class PrayerHeader extends StatelessWidget {
 
             SvgPicture.asset(
               AppSvg.mosqueImage,
-              width: 400,
-              height: 200,
+              width: width * 0.100,
+              height: height * 0.235,
               fit: BoxFit.fitHeight,
               alignment: Alignment.bottomCenter,
             ),

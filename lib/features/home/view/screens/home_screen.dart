@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lahal_application/features/home/controller/home_controller.dart';
 import 'package:lahal_application/features/home/controller/location_controller.dart';
+import 'package:lahal_application/features/bottomNavigationBar/controller/bottom_navigationbar_controller.dart';
 import 'package:lahal_application/features/home/view/widgets/category_header_delegate.dart';
 import 'package:lahal_application/utils/components/location/location_permission_sheet.dart';
 import 'package:lahal_application/utils/components/shimmer/restaurant_card_shimmer.dart';
@@ -34,12 +36,25 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final HomeController controller;
   late final LocationController locationController;
+  late final ScrollController scrollController;
 
   @override
   void initState() {
     super.initState();
     controller = Get.put(HomeController());
     locationController = Get.put(LocationController());
+    scrollController = ScrollController();
+
+    scrollController.addListener(() {
+      final bottomNavController = Get.find<BottomNavController>();
+      if (scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        bottomNavController.setNavBarVisible(false);
+      } else if (scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        bottomNavController.setNavBarVisible(true);
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (locationController.shouldShowLocationPopup()) {
@@ -67,13 +82,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
 
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+
     // Responsive heights
-    final expandedHeight = 220.0;
+    final expandedHeight = height * 0.256;
     final collapsedHeight = kToolbarHeight + 20; // Search bar + padding
 
     return Scaffold(
@@ -81,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: RefreshIndicator(
         onRefresh: () => controller.getBestRestaurants(),
         child: CustomScrollView(
+          controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             // --- 1. Expandable Header with Search Bar ---
@@ -111,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: tok.gap.lg,
-                          vertical: tok.gap.sm,
+                          vertical: tok.gap.xs,
                         ),
                         child: Column(
                           children: [
@@ -206,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverPersistentHeader(
               pinned: true,
               delegate: CategoryHeaderDelegate(
-                height: 110, // Height for category row + padding
+                height: height * 0.145, // Height for category row + padding
                 backgroundColor: cs.surface,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -349,32 +375,41 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: tok.gap.xxl * 2.4),
-        child: AppShimmerFAB(
-          onPressed: () => context.push(AppRoutes.mapScreen),
-          child: SizedBox(
-            height: 45,
-            child: FloatingActionButton.extended(
-              onPressed: null, // Animation wrapper handles taps
-              backgroundColor: AppColor.primaryColor,
-              elevation: 4,
-              shape: StadiumBorder(side: BorderSide(color: cs.surface)),
-              icon: SvgPicture.asset(
-                AppSvg.mapIcon,
-                width: tok.iconSm,
-                height: tok.iconSm,
-              ),
-              label: AppText(
-                "Map",
-                size: AppTextSize.s16,
-                weight: AppTextWeight.bold,
-                color: Colors.white,
+      floatingActionButton: Obx(() {
+        final bottomNavController = Get.find<BottomNavController>();
+        return AnimatedPadding(
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+          padding: EdgeInsets.only(
+            bottom: bottomNavController.isNavBarVisible.value
+                ? tok.gap.xxl * 2.4
+                : tok.gap.md,
+          ),
+          child: AppShimmerFAB(
+            onPressed: () => context.push(AppRoutes.mapScreen),
+            child: SizedBox(
+              height: height * 0.054,
+              child: FloatingActionButton.extended(
+                onPressed: null, // Animation wrapper handles taps
+                backgroundColor: AppColor.primaryColor,
+                elevation: 4,
+                shape: StadiumBorder(side: BorderSide(color: cs.surface)),
+                icon: SvgPicture.asset(
+                  AppSvg.mapIcon,
+                  width: tok.iconSm,
+                  height: tok.iconSm,
+                ),
+                label: AppText(
+                  "Map",
+                  size: AppTextSize.s16,
+                  weight: AppTextWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -450,10 +485,10 @@ class _HomeSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      height: MediaQuery.of(context).size.height * 0.109,
       padding: EdgeInsets.symmetric(
         horizontal: tok.gap.md,
-        vertical: tok.gap.xs,
+        vertical: tok.gap.xxs,
       ),
       alignment: Alignment.center,
       child: Row(

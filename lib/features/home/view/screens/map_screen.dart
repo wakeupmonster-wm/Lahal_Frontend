@@ -22,6 +22,8 @@ class MapScreen extends StatelessWidget {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final height = mediaQuery.size.height;
 
     return Scaffold(
       body: Stack(
@@ -126,7 +128,7 @@ class MapScreen extends StatelessWidget {
 
                     // Horizontal Filter List
                     SizedBox(
-                      height: 40,
+                      height: height * 0.043,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         padding: EdgeInsets.symmetric(horizontal: tok.gap.md),
@@ -178,7 +180,7 @@ class MapScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: SizedBox(
-              height: 195, // Adjust height as per design card
+              height: height * 0.23, // Adjust height as per design card
               child: Obx(() {
                 if (controller.isLoading.value ||
                     controller.restaurants.isEmpty) {
@@ -273,6 +275,9 @@ class MapScreen extends StatelessWidget {
     ColorScheme cs,
     AppTextColors tx,
   ) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: tok.gap.xxxs,
@@ -306,12 +311,12 @@ class MapScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(tok.radiusSm),
                   child: Image.network(
                     restaurant.imageUrl,
-                    width: 80,
-                    height: 80,
+                    width: width * 0.186,
+                    height: height * 0.086,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      width: 80,
-                      height: 80,
+                      width: width * 0.186,
+                      height: height * 0.086,
                       color: Colors.grey[800],
                       child: Icon(Icons.restaurant, color: Colors.white),
                     ),
@@ -394,7 +399,7 @@ class MapScreen extends StatelessWidget {
                 Expanded(
                   child: SizedBox(
                     width: double.infinity,
-                    height: 40,
+                    height: height * 0.043,
                     child: ElevatedButton(
                       onPressed: () {
                         context.push(AppRoutes.restaurantDetails);
@@ -417,9 +422,23 @@ class MapScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: tok.gap.xxxs),
-                _buildCircleButton(cs, tx, AppSvg.routingIcon, tok),
+                _buildCircleButton(
+                  cs,
+                  tx,
+                  AppSvg.routingIcon,
+                  tok,
+                  width,
+                  height,
+                ),
                 SizedBox(width: tok.gap.xxxs),
-                _buildCircleButton(cs, tx, AppSvg.callCallingIcon, tok),
+                _buildCircleButton(
+                  cs,
+                  tx,
+                  AppSvg.callCallingIcon,
+                  tok,
+                  width,
+                  height,
+                ),
               ],
             ),
           ],
@@ -432,11 +451,13 @@ class MapScreen extends StatelessWidget {
     ColorScheme cs,
     AppTextColors tx,
     String iconPath,
-    tok,
+    AppTokens tok,
+    double width,
+    double height,
   ) {
     return Container(
-      width: 54,
-      height: 40,
+      width: width * 0.125,
+      height: height * 0.043,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: cs.outlineVariant),

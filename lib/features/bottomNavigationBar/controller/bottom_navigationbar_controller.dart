@@ -8,9 +8,16 @@ import '../../home/view/screens/home_screen.dart';
 
 class BottomNavController extends GetxController {
   RxInt selectedIndex = 0.obs;
+  RxBool isNavBarVisible = true.obs;
 
   void updateIndex(int index) {
     selectedIndex.value = index;
+  }
+
+  void setNavBarVisible(bool visible) {
+    if (isNavBarVisible.value != visible) {
+      isNavBarVisible.value = visible;
+    }
   }
 
   // UNSELECTED + SELECTED ICONS

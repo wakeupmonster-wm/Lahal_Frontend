@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lahal_application/features/home/controller/report_error_controller.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
-import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
@@ -18,6 +17,9 @@ class ReportErrorScreen extends StatelessWidget {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -44,12 +46,12 @@ class ReportErrorScreen extends StatelessWidget {
                               entry.value,
                               (val) {
                                 controller.toggleOption(entry.key);
-                                // Trigger update manually since we are mutating the map value directly in the controller
-                                // controller.options.refresh();
                               },
                               tok,
                               tx,
                               cs,
+                              width,
+                              height,
                             );
                           }).toList(),
                         ),
@@ -99,6 +101,7 @@ class ReportErrorScreen extends StatelessWidget {
               Obx(() {
                 final isEnabled = controller.isSubmitEnabled;
                 return SizedBox(
+                  height: height * 0.06,
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: isEnabled
@@ -111,7 +114,7 @@ class ReportErrorScreen extends StatelessWidget {
                                 .transparent, // Disabled color handled by theme usually, but explicit request
                       disabledBackgroundColor: Colors.transparent,
                       foregroundColor: isEnabled ? Colors.white : tx.subtle,
-                      padding: EdgeInsets.symmetric(vertical: tok.gap.md),
+                      // padding: EdgeInsets.symmetric(vertical: tok.gap.md),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(tok.radiusMd),
                         side: BorderSide(
@@ -146,6 +149,8 @@ class ReportErrorScreen extends StatelessWidget {
     AppTokens tok,
     AppTextColors tx,
     ColorScheme cs,
+    double width,
+    double height,
   ) {
     return Padding(
       padding: EdgeInsets.only(bottom: tok.gap.md),
@@ -154,8 +159,8 @@ class ReportErrorScreen extends StatelessWidget {
         child: Row(
           children: [
             SizedBox(
-              height: 24,
-              width: 24,
+              height: height * 0.025,
+              width: width * 0.055,
               child: Checkbox(
                 value: isSelected,
                 onChanged: onChanged,

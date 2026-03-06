@@ -26,10 +26,8 @@ class OtpVerificationScreen extends StatelessWidget {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final cs = Theme.of(context).colorScheme;
     final mediaQuery = MediaQuery.of(context);
-
-    final availableWidth =
-        mediaQuery.size.width - (tok.gap.lg * 2); // padding horizontal
-    final double boxW = (availableWidth / 6) - 10;
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
 
     return Scaffold(
       appBar: InternalAppBar(
@@ -59,7 +57,7 @@ class OtpVerificationScreen extends StatelessWidget {
                 Center(
                   child: OtpField(
                     length: 6,
-                    boxWidth: boxW,
+                    boxWidth: width * 0.12,
                     onCompleted: (code) {
                       ctrl.setOtp(code, context);
                     },
@@ -116,7 +114,7 @@ class OtpVerificationScreen extends StatelessWidget {
                     bottom: tok.gap.lg + mediaQuery.padding.bottom,
                   ),
                   child: SizedBox(
-                    height: 48,
+                    height: height * 0.0515,
                     width: double.infinity,
                     child: AppButton(
                       radiusOverride: tok.gap.xs,

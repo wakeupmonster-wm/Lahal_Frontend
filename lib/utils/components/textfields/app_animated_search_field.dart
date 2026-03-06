@@ -13,7 +13,7 @@ class AppAnimatedSearchField extends StatefulWidget {
     this.controller,
     this.onChanged,
     this.onSubmitted,
-    this.duration = const Duration(seconds: 10),
+    this.duration = const Duration(seconds: 5),
   });
 
   final List<String> hints;
@@ -141,7 +141,7 @@ class _AppAnimatedSearchFieldState extends State<AppAnimatedSearchField> {
             // right: tok.inset.fieldH,
             child: IgnorePointer(
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 800),
+                duration: const Duration(milliseconds: 300),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return FadeTransition(
                     opacity: animation,
@@ -151,17 +151,11 @@ class _AppAnimatedSearchFieldState extends State<AppAnimatedSearchField> {
                       //   end: Offset.zero,
                       // ).animate(animation),
                       // child: FadeTransition(opacity: animation, child: child),
-                      position:
-                          Tween<Offset>(
-                            begin: const Offset(0, 0.9),
-                            end: Offset.zero,
-                          ).animate(
-                            CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeOut,
-                            ),
-                          ),
-                      child: child,
+                      position: Tween<Offset>(
+                        begin: const Offset(0.0, 1.0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: FadeTransition(opacity: animation, child: child),
                     ),
                   );
                 },
@@ -170,6 +164,7 @@ class _AppAnimatedSearchFieldState extends State<AppAnimatedSearchField> {
                   key: ValueKey<String>(widget.hints[_currentIndex]),
                   style: hintStyle,
                   maxLines: 1,
+
                   overflow: TextOverflow.visible,
                 ),
               ),

@@ -22,6 +22,9 @@ class RestaurantDetailsScreen extends StatelessWidget {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -132,6 +135,8 @@ class RestaurantDetailsScreen extends StatelessWidget {
                       cs,
                       restaurant,
                       controller,
+                      width,
+                      height,
                     ),
                   );
                 },
@@ -164,7 +169,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     // --- Photos Grid ---
                     _buildSectionHeader(tx, 'Photos'),
                     SizedBox(height: tok.gap.md),
-                    _buildPhotosGrid(tok, restaurant.photos),
+                    _buildPhotosGrid(tok, restaurant.photos, width, height),
 
                     SizedBox(height: tok.gap.xl),
 
@@ -190,6 +195,8 @@ class RestaurantDetailsScreen extends StatelessWidget {
                       cs,
                       restaurant.reviews,
                       controller,
+                      width,
+                      height,
                     ),
 
                     SizedBox(height: tok.gap.xl),
@@ -221,6 +228,8 @@ class RestaurantDetailsScreen extends StatelessWidget {
     ColorScheme cs,
     RestaurantModel restaurant,
     RestaurantDetailsController controller,
+    double width,
+    double height,
   ) {
     return Stack(
       children: [
@@ -229,7 +238,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
           top: 0,
           left: 0,
           right: 0,
-          bottom: 28,
+          bottom: height * 0.03,
           child: ClipRRect(
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(tok.radiusLg + 4),
@@ -506,7 +515,12 @@ class RestaurantDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPhotosGrid(AppTokens tok, List<String> photos) {
+  Widget _buildPhotosGrid(
+    AppTokens tok,
+    List<String> photos,
+    double width,
+    double height,
+  ) {
     if (photos.isEmpty) return const SizedBox.shrink();
 
     // Helper to build a single photo item
@@ -529,7 +543,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
         // Top Row (Indices 0, 1, 2)
         if (photos.isNotEmpty)
           SizedBox(
-            height: 250,
+            height: height * 0.268,
             child: Row(
               children: [
                 // Big Image (Index 0)
@@ -557,7 +571,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
         if (photos.length > 3) ...[
           SizedBox(height: tok.gap.sm),
           SizedBox(
-            height: 120,
+            height: height * 0.128,
             child: Row(
               children: [
                 Expanded(child: buildPhotoItem(photos[3])),
@@ -698,11 +712,15 @@ class RestaurantDetailsScreen extends StatelessWidget {
     ColorScheme cs,
     List<ReviewModel> reviews,
     RestaurantDetailsController controller,
+    double width,
+    double height,
   ) {
     return Obx(() {
       final isAnyExpanded = controller.expandedReviewIndices.isNotEmpty;
       return SizedBox(
-        height: isAnyExpanded ? 200 : 140, // Dynamic height
+        height: isAnyExpanded
+            ? height * 0.215
+            : height * 0.15, // Dynamic height
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: reviews.length,

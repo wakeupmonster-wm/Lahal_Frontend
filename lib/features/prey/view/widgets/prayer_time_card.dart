@@ -58,12 +58,16 @@ class PrayerTimeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
 
     return Container(
-      width: 100, // Fixed width for horizontal scroll
+      // height: height * 0.145,
+      width: width * 0.25, // Fixed width for horizontal scroll
       margin: EdgeInsets.only(right: tok.gap.md),
       padding: EdgeInsets.symmetric(
-        // vertical: tok.gap.md,
+        // vertical: tok.gap.xxs,
         horizontal: tok.gap.sm,
       ),
       decoration: BoxDecoration(

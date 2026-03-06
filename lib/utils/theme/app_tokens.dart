@@ -191,7 +191,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
       section: s(20),
       listItem: s(16),
       fieldH: s(16), // TextField content padding
-      fieldV: s(14),
+      fieldV: s(16),
     );
 
     return AppTokens(

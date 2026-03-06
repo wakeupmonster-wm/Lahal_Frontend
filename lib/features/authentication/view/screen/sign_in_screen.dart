@@ -17,6 +17,8 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(SignInController());
     final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
@@ -27,7 +29,7 @@ class SignInScreen extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 400,
+              height: height * 0.43,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -36,7 +38,7 @@ class SignInScreen extends StatelessWidget {
                     bottom: -1, // cover any sub-pixel seam
                     left: 0,
                     right: 0,
-                    height: 80,
+                    height: height * 0.086,
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -66,7 +68,7 @@ class SignInScreen extends StatelessWidget {
               width: double.infinity,
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
+                  constraints: BoxConstraints(maxWidth: width * 1.16),
                   child: Padding(
                     padding: EdgeInsets.only(
                       left: tok.gap.sm,
@@ -158,7 +160,7 @@ class SignInScreen extends StatelessWidget {
 
                         SizedBox(
                           width: double.infinity,
-                          height: 48,
+                          height: height * 0.05150,
                           child: ElevatedButton(
                             onPressed: () => controller.onGetStarted(context),
                             style: ElevatedButton.styleFrom(

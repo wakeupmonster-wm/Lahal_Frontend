@@ -21,6 +21,8 @@ class PrayerScreen extends StatelessWidget {
     final tx = Theme.of(context).extension<AppTextColors>()!;
 
     final cs = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final height = mediaQuery.size.height;
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -47,7 +49,7 @@ class PrayerScreen extends StatelessWidget {
 
             // 4. Horizontal Prayer Times List
             SizedBox(
-              height: 120,
+              height: height * 0.148,
               child: Obx(() {
                 if (controller.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
