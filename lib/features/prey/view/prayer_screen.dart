@@ -31,7 +31,7 @@ class PrayerScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const PrayerHeader(),
-
+            SizedBox(height: tok.gap.sm),
             const UpcomingPrayerCard(),
             // 3. Prayer Times Title
             SizedBox(height: tok.gap.xxl),

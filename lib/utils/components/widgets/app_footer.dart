@@ -42,7 +42,7 @@ class AppFooter extends StatelessWidget {
               ),
               SizedBox(width: tok.gap.xs),
               AppText(
-                'Lahal',
+                'Lalah',
                 size: AppTextSize.s24,
                 weight: AppTextWeight.bold,
                 color: tx.subtle.withOpacity(0.5),

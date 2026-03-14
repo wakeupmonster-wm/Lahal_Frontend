@@ -18,7 +18,7 @@ class MapController extends GetxController {
   final RxBool isLoading = true.obs;
 
   // Filter State
-  final RxString selectedFilter = "Near you".obs;
+  final RxList<String> selectedFilters = <String>[].obs;
 
   // Carousel Controller
   late PageController pageController;
@@ -109,8 +109,10 @@ class MapController extends GetxController {
   }
 
   void updateFilter(String filter) {
-    selectedFilter.value = filter;
-    // Implement filter logic here if needed
-    // For now just updating UI selection
+    if (selectedFilters.contains(filter)) {
+      selectedFilters.remove(filter);
+    } else {
+      selectedFilters.add(filter);
+    }
   }
 }

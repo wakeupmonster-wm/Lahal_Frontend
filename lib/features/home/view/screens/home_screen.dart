@@ -98,9 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final height = mediaQuery.size.height;
 
     // Responsive heights
-    final expandedHeight = height * 0.256;
-    final collapsedHeight = kToolbarHeight + 20; // Search bar + padding
-
+    final expandedHeight = height * 0.225;
+    final collapsedHeight = kToolbarHeight + 20; // Search bar + paddin
     return Scaffold(
       backgroundColor: cs.surface,
       body: RefreshIndicator(
@@ -169,13 +168,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onTap: () {
                                     context.push(AppRoutes.notificationScreen);
                                   },
-                                  child: SvgPicture.asset(
-                                    AppSvg.notificaitonIcon,
+                                  child: Container(
+                                    padding: EdgeInsets.all(tok.gap.xs),
+                                    decoration: BoxDecoration(
+                                      color: cs.surface,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      AppSvg.notificaitonNobackgroundIcon,
+                                      width: tok.iconSm,
+                                      height: tok.iconSm,
+                                      colorFilter: ColorFilter.mode(
+                                        tx.neutral,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: tok.gap.xxs),
+                            SizedBox(height: tok.gap.md),
 
                             // Location Row
                             GestureDetector(
@@ -223,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(35),
+                preferredSize: const Size.fromHeight(22),
                 child: _HomeSearchBar(tok: tok, cs: cs, tx: tx),
               ),
             ),
@@ -232,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverPersistentHeader(
               pinned: true,
               delegate: CategoryHeaderDelegate(
-                height: height * 0.145, // Height for category row + padding
+                height: height * 0.130, // Height for category row + padding
                 backgroundColor: cs.surface,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -485,10 +497,10 @@ class _HomeSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.109,
+      height: MediaQuery.of(context).size.height * 0.100,
       padding: EdgeInsets.symmetric(
-        horizontal: tok.gap.md,
-        vertical: tok.gap.xxs,
+        horizontal: tok.gap.lg,
+        // vertical: tok.gap.xxs,
       ),
       alignment: Alignment.center,
       child: Row(
@@ -517,7 +529,7 @@ class _HomeSearchBar extends StatelessWidget {
               child: Icon(
                 Iconsax.setting_4_outline,
                 color: tx.neutral,
-                size: tok.iconSm,
+                size: tok.iconLg,
               ),
             ),
           ),

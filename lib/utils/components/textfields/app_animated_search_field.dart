@@ -13,7 +13,7 @@ class AppAnimatedSearchField extends StatefulWidget {
     this.controller,
     this.onChanged,
     this.onSubmitted,
-    this.duration = const Duration(seconds: 5),
+    this.duration = const Duration(seconds: 3),
   });
 
   final List<String> hints;
@@ -101,6 +101,7 @@ class _AppAnimatedSearchFieldState extends State<AppAnimatedSearchField> {
         TextField(
           controller: _internalController,
           style: textStyle,
+          textAlignVertical: TextAlignVertical.center,
           onChanged: widget.onChanged,
           onSubmitted: widget.onSubmitted,
           textInputAction: TextInputAction.search,
@@ -136,36 +137,57 @@ class _AppAnimatedSearchFieldState extends State<AppAnimatedSearchField> {
           ),
         ),
         if (_showHint)
-          Positioned(
-            left: tok.iconLg + tok.gap.lg,
-            // right: tok.inset.fieldH,
+          Positioned.fill(
             child: IgnorePointer(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: SlideTransition(
-                      // position: Tween(
-                      //   begin: const Offset(0, 0.3),
-                      //   end: Offset.zero,
-                      // ).animate(animation),
-                      // child: FadeTransition(opacity: animation, child: child),
-                      position: Tween<Offset>(
-                        begin: const Offset(0.0, 1.0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: FadeTransition(opacity: animation, child: child),
-                    ),
-                  );
-                },
-                child: Text(
-                  widget.hints[_currentIndex],
-                  key: ValueKey<String>(widget.hints[_currentIndex]),
-                  style: hintStyle,
-                  maxLines: 1,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: tok.iconSm + tok.gap.md + tok.gap.sm,
+                  ),
+                  child: ClipRect(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                            final inAnimation = Tween<Offset>(
+                              begin: const Offset(0.0, 1.0),
+                              end: Offset.zero,
+                            ).animate(animation);
 
-                  overflow: TextOverflow.visible,
+                            final outAnimation = Tween<Offset>(
+                              begin: const Offset(0.0, -1.0),
+                              end: Offset.zero,
+                            ).animate(animation);
+
+                            return SlideTransition(
+                              position:
+                                  child.key ==
+                                      ValueKey<String>(
+                                        widget.hints[_currentIndex],
+                                      )
+                                  ? inAnimation
+                                  : outAnimation,
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            );
+                          },
+                      child: Container(
+                        key: ValueKey<String>(widget.hints[_currentIndex]),
+                        height: 48,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          widget.hints[_currentIndex],
+                          style: hintStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.visible,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

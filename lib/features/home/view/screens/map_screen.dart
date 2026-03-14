@@ -180,7 +180,7 @@ class MapScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: SizedBox(
-              height: height * 0.23, // Adjust height as per design card
+              height: height * 0.20, // Adjust height as per design card
               child: Obx(() {
                 if (controller.isLoading.value ||
                     controller.restaurants.isEmpty) {
@@ -218,7 +218,7 @@ class MapScreen extends StatelessWidget {
     AppTextColors tx,
   ) {
     return Obx(() {
-      final isSelected = controller.selectedFilter.value == label;
+      final isSelected = controller.selectedFilters.contains(label);
       return GestureDetector(
         onTap: () => controller.updateFilter(label),
         child: Container(
@@ -261,6 +261,11 @@ class MapScreen extends StatelessWidget {
                 color: isSelected ? cs.onPrimary : tx.subtle,
                 weight: isSelected ? AppTextWeight.bold : AppTextWeight.regular,
               ),
+              if (isSelected)
+                Padding(
+                  padding: EdgeInsets.only(left: tok.gap.xs),
+                  child: Icon(Icons.close, size: 14, color: cs.onPrimary),
+                ),
             ],
           ),
         ),
@@ -298,31 +303,39 @@ class MapScreen extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: tok.gap.sm,
-          vertical: tok.gap.lg,
+          vertical:
+              tok.gap.md, // Slightly more vertical space for better balance
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment
+              .spaceBetween, // Pins content to top and buttons to bottom
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Image
+                // Image - Carefully sized
                 ClipRRect(
                   borderRadius: BorderRadius.circular(tok.radiusSm),
                   child: Image.network(
                     restaurant.imageUrl,
-                    width: width * 0.186,
-                    height: height * 0.086,
+                    width: width * 0.18,
+                    height: height * 0.075,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      width: width * 0.186,
-                      height: height * 0.086,
+                      width: width * 0.18,
+                      height: height * 0.075,
                       color: Colors.grey[800],
-                      child: Icon(Icons.restaurant, color: Colors.white),
+                      child: const Icon(
+                        Icons.restaurant,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(width: tok.gap.md),
+                SizedBox(width: tok.gap.sm),
 
                 // Content
                 Expanded(
@@ -339,67 +352,63 @@ class MapScreen extends StatelessWidget {
                               size: AppTextSize.s14,
                               weight: AppTextWeight.bold,
                               color: tx.primary,
-                              maxLines: 2,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          SizedBox(width: tok.gap.xs),
+                          SizedBox(width: tok.gap.xxs),
                           Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: tok.gap.xxs,
-                              vertical: tok.gap.xxxs,
+                              vertical: tok.gap.xxs,
                             ),
                             decoration: BoxDecoration(
-                              color: cs.primary, // Primary Green
+                              color: cs.primary,
                               borderRadius: BorderRadius.circular(tok.radiusSm),
                             ),
                             child: Row(
                               children: [
                                 AppText(
                                   "${restaurant.rating}",
-                                  size: AppTextSize.s12,
+                                  size: AppTextSize.s10,
                                   weight: AppTextWeight.bold,
                                   color: cs.onPrimary,
                                 ),
-                                SizedBox(width: 2),
-                                Icon(Icons.star, color: cs.onPrimary, size: 13),
+                                SizedBox(width: tok.gap.xxs),
+                                Icon(Icons.star, color: cs.onPrimary, size: 10),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: tok.gap.xxxs),
                       AppText(
                         restaurant.category,
-                        size: AppTextSize.s12,
-                        weight: AppTextWeight.bold,
+                        size: AppTextSize.s10,
+                        weight: AppTextWeight.medium,
                         color: tx.subtle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: tok.gap.xxxs),
                       AppText(
                         restaurant.distance,
-                        size: AppTextSize.s12,
-                        weight: AppTextWeight.bold,
+                        size: AppTextSize.s10,
+                        weight: AppTextWeight.medium,
                         color: tx.subtle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-
-                      // Buttons
                     ],
                   ),
                 ),
               ],
             ),
-            SizedBox(height: tok.gap.xs),
             Row(
               children: [
                 Expanded(
                   child: SizedBox(
-                    width: double.infinity,
-                    height: height * 0.043,
+                    height:
+                        height *
+                        0.043, // Dynamic height (approx 36px on standard screen)
                     child: ElevatedButton(
                       onPressed: () {
                         context.push(AppRoutes.restaurantDetails);
@@ -407,38 +416,23 @@ class MapScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: cs.primary,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        padding: EdgeInsets.symmetric(vertical: 0),
-                        // minimumSize: Size(0, 36),
+                        padding: EdgeInsets.zero,
                       ),
                       child: AppText(
                         "View Restaurant",
-                        size: AppTextSize.s10,
+                        size: AppTextSize.s12,
                         weight: AppTextWeight.bold,
                         color: cs.onPrimary,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: tok.gap.xxxs),
-                _buildCircleButton(
-                  cs,
-                  tx,
-                  AppSvg.routingIcon,
-                  tok,
-                  width,
-                  height,
-                ),
-                SizedBox(width: tok.gap.xxxs),
-                _buildCircleButton(
-                  cs,
-                  tx,
-                  AppSvg.callCallingIcon,
-                  tok,
-                  width,
-                  height,
-                ),
+                SizedBox(width: width * 0.02), // Dynamic gap
+                _buildCompactButton(cs, AppSvg.routingIcon, width, height),
+                SizedBox(width: width * 0.01), // Dynamic gap
+                _buildCompactButton(cs, AppSvg.callCallingIcon, width, height),
               ],
             ),
           ],
@@ -447,32 +441,27 @@ class MapScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCircleButton(
+  Widget _buildCompactButton(
     ColorScheme cs,
-    AppTextColors tx,
     String iconPath,
-    AppTokens tok,
     double width,
     double height,
   ) {
     return Container(
-      width: width * 0.125,
-      height: height * 0.043,
+      width: width * 0.11, // Dynamic width (approx 40px)
+      height: height * 0.043, // Dynamic height (approx 36px)
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cs.outlineVariant),
-        color: Colors.transparent,
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(50),
+        border: Border.all(color: cs.outlineVariant.withOpacity(0.5)),
       ),
       alignment: Alignment.center,
       child: SvgPicture.asset(
         iconPath,
-        width: 18,
-        height: 18,
+        width: width * 0.045, // Proportional icon size
+        height: width * 0.045,
         fit: BoxFit.contain,
-        colorFilter: const ColorFilter.mode(
-          Color(0xFF047857), // Keep brand color
-          BlendMode.srcIn,
-        ),
+        colorFilter: const ColorFilter.mode(Color(0xFF047857), BlendMode.srcIn),
       ),
     );
   }
