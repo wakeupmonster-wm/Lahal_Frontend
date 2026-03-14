@@ -26,10 +26,8 @@ class OtpVerificationScreen extends StatelessWidget {
     final tok = Theme.of(context).extension<AppTokens>()!;
     final cs = Theme.of(context).colorScheme;
     final mediaQuery = MediaQuery.of(context);
-
-    final availableWidth =
-        mediaQuery.size.width - (tok.gap.lg * 2); // padding horizontal
-    final double boxW = (availableWidth / 6) - 10;
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
 
     return Scaffold(
       appBar: InternalAppBar(
@@ -48,7 +46,7 @@ class OtpVerificationScreen extends StatelessWidget {
               children: [
                 SizedBox(height: tok.gap.xs),
                 AppText(
-                  "${AppStrings.weHaveSentVerificationCodeTo} - ${data ?? ''}",
+                  "${AppStrings.weHaveSentVerificationCodeTo} - ${data ?? '991263552626266'}",
                   size: AppTextSize.s14,
                   weight: AppTextWeight.regular,
                   color: tx.subtle,
@@ -59,7 +57,7 @@ class OtpVerificationScreen extends StatelessWidget {
                 Center(
                   child: OtpField(
                     length: 6,
-                    boxWidth: boxW,
+                    boxWidth: width * 0.12,
                     onCompleted: (code) {
                       ctrl.setOtp(code, context);
                     },
@@ -88,7 +86,7 @@ class OtpVerificationScreen extends StatelessWidget {
                           ctrl.remainingSeconds.value > 0
                               ? "${AppStrings.resendSms} ${ctrl.remainingSeconds.value}${AppStrings.secondsSuffix}"
                               : AppStrings.resendSms,
-                          size: AppTextSize.s14,
+                          size: AppTextSize.s12,
                           weight: AppTextWeight.bold,
                           color: ctrl.remainingSeconds.value > 0
                               ? tx.subtle
@@ -101,15 +99,14 @@ class OtpVerificationScreen extends StatelessWidget {
 
                 SizedBox(height: tok.gap.md),
 
-                Center(
-                  child: AppText(
-                    AppStrings.checkTextMessages,
-                    size: AppTextSize.s14,
-                    weight: AppTextWeight.medium,
-                    color: tx.subtle,
-                  ),
-                ),
-
+                // Center(
+                //   child: AppText(
+                //     AppStrings.checkTextMessages,
+                //     size: AppTextSize.s14,
+                //     weight: AppTextWeight.medium,
+                //     color: tx.subtle,
+                //   ),
+                // ),
                 const Spacer(),
 
                 Padding(
@@ -117,6 +114,7 @@ class OtpVerificationScreen extends StatelessWidget {
                     bottom: tok.gap.lg + mediaQuery.padding.bottom,
                   ),
                   child: SizedBox(
+                    height: height * 0.0515,
                     width: double.infinity,
                     child: AppButton(
                       radiusOverride: tok.gap.xs,

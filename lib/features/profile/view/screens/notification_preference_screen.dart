@@ -19,10 +19,11 @@ class NotificationPreferenceScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: cs.surfaceContainerHighest.withValues(alpha: 3),
       appBar: InternalAppBar(
         title: AppStrings.notificationPreferences,
         centerTitle: false,
+        backgroundColor: cs.surface,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -31,7 +32,7 @@ class NotificationPreferenceScreen extends StatelessWidget {
 
         return Column(
           children: [
-            SizedBox(height: tok.gap.md),
+            // SizedBox(height: tok.gap.md),
             _buildPreferenceItem(
               context,
               AppStrings.offersAndPromotions,
@@ -52,7 +53,7 @@ class NotificationPreferenceScreen extends StatelessWidget {
               controller.reviewUpdatesEnabled.value,
               controller.toggleReviewUpdates,
             ),
-            _buildDivider(cs),
+            // _buildDivider(cs),
           ],
         );
       }),
@@ -69,36 +70,45 @@ class NotificationPreferenceScreen extends StatelessWidget {
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: tok.gap.lg,
-        vertical: tok.gap.sm,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: AppText(
-              title,
-              size: AppTextSize.s16,
-              weight: AppTextWeight.medium,
-              color: tx.primary,
+    return Container(
+      color: cs.surface,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: tok.gap.lg,
+          vertical: tok.gap.xxs,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: AppText(
+                title,
+                size: AppTextSize.s16,
+                weight: AppTextWeight.medium,
+                color: tx.primary,
+              ),
             ),
-          ),
-          Switch.adaptive(
-            value: value,
-            onChanged: onChanged,
-            activeColor: cs.primary,
-          ),
-        ],
+            Switch.adaptive(
+              value: value,
+              onChanged: onChanged,
+              activeColor: cs.primary,
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildDivider(ColorScheme cs) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Divider(color: cs.outlineVariant.withOpacity(0.5), thickness: 0.8),
+    return Container(
+      color: cs.surface,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Divider(
+          color: cs.outlineVariant.withOpacity(0.5),
+          thickness: 0.8,
+        ),
+      ),
     );
   }
 }

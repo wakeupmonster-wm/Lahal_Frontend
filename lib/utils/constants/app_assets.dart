@@ -17,9 +17,15 @@ class AppAssets {
   // ===============================================================
   // static const onboarding = '${_images}onboarding.png';
 
+  static const addResturentBanner = '${_images}add_resturent_banner.png';
+
+  static const add_rest_bannner = '${_svgs}add_rest_bannner.svg';
+
   //----------------------new code----------------------
   static const biryaniImage = '${_images}briyani_image.png';
   static const emptyStateImage = '${_images}empty_state_image.png';
+  static const locationPermissionImage =
+      '${_images}location_permission_image.png';
 
   // ===============================================================
   // 🧭 Icons (PNG)

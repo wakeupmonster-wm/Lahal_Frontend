@@ -20,31 +20,29 @@ class AboutScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: cs.surface,
-      appBar: InternalAppBar(title: AppStrings.about, centerTitle: false),
+      backgroundColor: cs.surfaceContainerHighest.withValues(alpha: 3),
+      appBar: InternalAppBar(
+        title: AppStrings.about,
+        centerTitle: false,
+        backgroundColor: cs.surface,
+      ),
       body: Column(
         children: [
-          SizedBox(height: tok.gap.md),
+          // SizedBox(height: tok.gap.md),
           _buildItem(
             context,
             AppStrings.termsOfService,
             onTap: () => context.push(AppRoutes.termsScreen),
             showArrow: true,
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-            child: Divider(color: cs.outlineVariant, thickness: 0.8),
-          ),
+          _buildDivider(cs),
           _buildItem(
             context,
             AppStrings.privacyPolicy,
             onTap: () => context.push(AppRoutes.privacyScreen),
             showArrow: true,
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-            child: Divider(color: cs.outlineVariant, thickness: 0.8),
-          ),
+          _buildDivider(cs),
           _buildItem(
             context,
             AppStrings.appVersion,
@@ -59,6 +57,19 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildDivider(ColorScheme cs) {
+    return Container(
+      color: cs.surface,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Divider(
+          color: cs.outlineVariant.withOpacity(0.5),
+          thickness: 0.8,
+        ),
+      ),
+    );
+  }
+
   Widget _buildItem(
     BuildContext context,
     String title, {
@@ -68,27 +79,32 @@ class AboutScreen extends StatelessWidget {
   }) {
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final tok = Theme.of(context).extension<AppTokens>()!;
+    final cs = Theme.of(context).colorScheme;
 
     return InkWell(
       onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: tok.gap.lg,
-          vertical: tok.gap.md,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            AppText(
-              title,
-              size: AppTextSize.s16,
-              color: tx.primary,
-              weight: AppTextWeight.semibold,
-            ),
-            if (trailing != null) trailing,
-            if (showArrow)
-              SvgPicture.asset(AppSvg.rightArrowIcon, color: tx.primary),
-          ],
+
+      child: Container(
+        color: cs.surface,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: tok.gap.lg,
+            vertical: tok.gap.md,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AppText(
+                title,
+                size: AppTextSize.s16,
+                color: tx.primary,
+                weight: AppTextWeight.semibold,
+              ),
+              if (trailing != null) trailing,
+              if (showArrow)
+                SvgPicture.asset(AppSvg.rightArrowIcon, color: tx.primary),
+            ],
+          ),
         ),
       ),
     );

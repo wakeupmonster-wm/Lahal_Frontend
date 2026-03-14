@@ -17,236 +17,220 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(SignInController());
     final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: height,
-          child: Stack(
-            children: [
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: height * 0.45,
-                child: Image.asset(AppAssets.biryaniImage, fit: BoxFit.cover),
+      backgroundColor: cs.surface,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: height * 0.43,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(AppAssets.biryaniImage, fit: BoxFit.cover),
+                  Positioned(
+                    bottom: -1, // cover any sub-pixel seam
+                    left: 0,
+                    right: 0,
+                    height: height * 0.086,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            cs.surface.withValues(alpha: 0.0),
+                            cs.surface.withValues(alpha: 0.6),
+                            // cs.surface,
+                            // // cs.surface,
+                            // cs.surface,
+                            cs.surface,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Positioned(
-                top: height * 0.35,
-                left: 0,
-                right: 0,
-                height: height * 0.25,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+            ),
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            fillOverscroll: true,
+            child: Container(
+              color: cs.surface,
+              width: double.infinity,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: width * 1.16),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: tok.gap.sm,
+                      right: tok.gap.sm,
+                      bottom: tok.gap.xxs + mediaQuery.padding.bottom,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(height: tok.gap.xxs),
+                        AppText(
+                          AppStrings.findFoodThatAligns,
+                          textAlign: TextAlign.center,
+                          size: AppTextSize.s24,
+                          weight: AppTextWeight.bold,
+                          color: cs.onSurface,
+                        ),
 
-                      colors: [
-                        cs.surface.withOpacity(0.0),
-                        cs.surface.withOpacity(0.6),
-                        cs.surface,
-                        cs.surface,
-                        cs.surface,
-                        cs.surface,
+                        SizedBox(height: tok.gap.md),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Divider(color: cs.outline, thickness: 0.8),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: tok.gap.xs,
+                              ),
+                              child: AppText(
+                                AppStrings.loginOrSignup,
+                                size: AppTextSize.s14,
+                                weight: AppTextWeight.medium,
+                                color: cs.onSurfaceVariant,
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(color: cs.outline, thickness: 0.8),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: tok.gap.md),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Form(
+                                key: controller.formKey,
+                                child: AppTextField(
+                                  hintText: AppStrings.enterPhoneNumber,
+                                  prefix: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: tok.gap.xxs,
+                                        ),
+                                        child: AppText(
+                                          'AU (+61)',
+                                          size: AppTextSize.s12,
+                                          weight: AppTextWeight.semibold,
+                                          color: tx.neutral,
+                                        ),
+                                      ),
+                                      SizedBox(width: tok.gap.xxs),
+                                      Container(
+                                        width: 1,
+                                        height: tok.gap.lg,
+                                        color: cs.outline,
+                                      ),
+                                    ],
+                                  ),
+                                  maxLength: 10,
+                                  controller: controller.phoneNumberController,
+                                  keyboardType: TextInputType.phone,
+                                  // validator: Validator.validateContactNo,
+                                  onChanged: (s) {},
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: tok.gap.xs),
+
+                        SizedBox(height: tok.gap.md),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: height * 0.05150,
+                          child: ElevatedButton(
+                            onPressed: () => controller.onGetStarted(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: cs.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  tok.radiusMd,
+                                ),
+                              ),
+                            ),
+                            child: AppText(
+                              color: cs.onPrimary,
+                              AppStrings.getStarted,
+                              size: AppTextSize.s16,
+                              weight: AppTextWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: tok.gap.md),
+
+                        const SocialLoginRow(),
+
+                        SizedBox(height: tok.gap.md),
+
+                        Column(
+                          children: [
+                            AppText(
+                              AppStrings.byContinuingYouAgreeToOur,
+                              size: AppTextSize.s10,
+                              weight: AppTextWeight.medium,
+                              color: tx.subtle,
+                              textAlign: TextAlign.center,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: tok.gap.xxs),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AppText(
+                                    "${AppStrings.termsOfService}  ",
+                                    size: AppTextSize.s10,
+                                    weight: AppTextWeight.medium,
+                                    color: tx.subtle,
+                                  ),
+                                  AppText(
+                                    "${AppStrings.privacyPolicy}  ",
+                                    size: AppTextSize.s10,
+                                    weight: AppTextWeight.medium,
+                                    color: tx.subtle,
+                                  ),
+                                  AppText(
+                                    AppStrings.contentPolicy,
+                                    size: AppTextSize.s10,
+                                    weight: AppTextWeight.medium,
+                                    color: tx.subtle,
+                                    textDecoration: TextDecoration.underline,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: EdgeInsets.only(
-                    left: tok.gap.md,
-                    right: tok.gap.md,
-                    bottom: tok.gap.xxs + mediaQuery.padding.bottom,
-                  ),
-                  color: cs.surface,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AppText(
-                        AppStrings.findFoodThatAligns,
-                        textAlign: TextAlign.center,
-                        size: AppTextSize.s24,
-                        weight: AppTextWeight.bold,
-                        color: cs.onSurface,
-                      ),
-
-                      SizedBox(height: tok.gap.md),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Divider(color: cs.outline, thickness: 0.8),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: tok.gap.xs,
-                            ),
-                            child: AppText(
-                              AppStrings.loginOrSignup,
-                              size: AppTextSize.s14,
-                              weight: AppTextWeight.medium,
-                              color: cs.onSurfaceVariant,
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(color: cs.outline, thickness: 0.8),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: tok.gap.md),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Form(
-                              key: controller.formKey,
-                              child: AppTextField(
-                                hintText: AppStrings.enterPhoneNumber,
-                                prefix: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: tok.gap.xxs,
-                                      ),
-                                      child: AppText(
-                                        'AU (+61)',
-                                        size: AppTextSize.s14,
-                                        weight: AppTextWeight.semibold,
-                                        color: tx.neutral,
-                                      ),
-                                    ),
-                                    SizedBox(width: tok.gap.xxs),
-                                    Container(
-                                      width: 1,
-                                      height: tok.gap.lg,
-                                      color: cs.outline,
-                                    ),
-                                  ],
-                                ),
-                                maxLength: 10,
-                                controller: controller.phoneNumberController,
-                                keyboardType: TextInputType.phone,
-                                // validator: Validator.validateContactNo,
-                                onChanged: (s) {},
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: tok.gap.xs),
-
-                      Row(
-                        children: [
-                          Obx(
-                            () => SizedBox(
-                              width: tok.iconLg,
-                              height: tok.iconLg,
-                              child: Checkbox(
-                                value: controller.rememberMe.value,
-                                onChanged: controller.toggleRememberMe,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                side: BorderSide(color: cs.outlineVariant),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: tok.gap.xs),
-                          AppText(
-                            AppStrings.rememberMyLogin,
-                            size: AppTextSize.s12,
-                            weight: AppTextWeight.medium,
-                            color: tx.subtle,
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: tok.gap.md),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: tok.appBarHeight,
-                        child: ElevatedButton(
-                          onPressed: () => controller.onGetStarted(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: cs.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(tok.radiusMd),
-                            ),
-                          ),
-                          child: AppText(
-                            color: cs.onPrimary,
-                            AppStrings.getStarted,
-                            size: AppTextSize.s16,
-                            weight: AppTextWeight.bold,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: tok.gap.md),
-
-                      const SocialLoginRow(),
-
-                      SizedBox(height: tok.gap.md),
-
-                      Column(
-                        children: [
-                          AppText(
-                            AppStrings.byContinuingYouAgreeToOur,
-                            size: AppTextSize.s10,
-                            weight: AppTextWeight.medium,
-                            color: tx.subtle,
-                            textAlign: TextAlign.center,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AppText(
-                                  "${AppStrings.termsOfService}  ",
-                                  size: AppTextSize.s10,
-                                  weight: AppTextWeight.medium,
-                                  color: tx.subtle,
-                                ),
-                                AppText(
-                                  "${AppStrings.privacyPolicy}  ",
-                                  size: AppTextSize.s10,
-                                  weight: AppTextWeight.medium,
-                                  color: tx.subtle,
-                                ),
-                                AppText(
-                                  AppStrings.contentPolicy,
-                                  size: AppTextSize.s10,
-                                  weight: AppTextWeight.medium,
-                                  color: tx.subtle,
-                                  textDecoration: TextDecoration.underline,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

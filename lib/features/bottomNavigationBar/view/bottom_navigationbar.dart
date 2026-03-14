@@ -25,11 +25,15 @@ class BottomNavigationbar extends StatelessWidget {
               index: controller.selectedIndex.value,
               children: controller.screens,
             ),
-            Positioned(
-              bottom: sizer.h(0),
-              left: 0,
-              right: 0,
-              child: BottomNavigationWidget(),
+            Obx(
+              () => AnimatedPositioned(
+                duration: const Duration(milliseconds: 600),
+                curve: Curves.easeInOut,
+                bottom: controller.isNavBarVisible.value ? 0 : -sizer.h(100),
+                left: 0,
+                right: 0,
+                child: BottomNavigationWidget(),
+              ),
             ),
           ],
         ),

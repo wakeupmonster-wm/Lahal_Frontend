@@ -8,8 +8,14 @@ import 'package:lahal_application/utils/theme/text/app_typography.dart';
 class RestaurantCard extends StatelessWidget {
   final RestaurantModel restaurant;
   final VoidCallback? onTap;
+  final VoidCallback? onFavoriteToggle;
 
-  const RestaurantCard({super.key, required this.restaurant, this.onTap});
+  const RestaurantCard({
+    super.key,
+    required this.restaurant,
+    this.onTap,
+    this.onFavoriteToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +56,19 @@ class RestaurantCard extends StatelessWidget {
                   Positioned(
                     top: tok.gap.xs,
                     right: tok.gap.xs,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: cs.surface,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.favorite_border,
-                        size: 20,
-                        color: tx.subtle,
+                    child: GestureDetector(
+                      onTap: onFavoriteToggle,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        child: Icon(
+                          (restaurant.isFavorite == true)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          size: 22,
+                          color: restaurant.isFavorite
+                              ? Colors.red
+                              : Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -72,7 +81,16 @@ class RestaurantCard extends StatelessWidget {
                         horizontal: tok.gap.xs,
                         vertical: tok.gap.xxs,
                       ),
-                      color: Colors.black.withOpacity(0.3),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            cs.primary.withOpacity(0.7),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
                       child: AppText(
                         restaurant.category,
                         size: AppTextSize.s12,
@@ -85,65 +103,78 @@ class RestaurantCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(tok.gap.xs),
+              padding: EdgeInsets.all(tok.gap.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: AppText(
-                          restaurant.name,
-                          size: AppTextSize.s16,
-                          weight: AppTextWeight.bold,
-                          color: tx.neutral,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: tok.gap.xxs,
-                          vertical: tok.gap.xxs / 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: cs.primary,
-                          borderRadius: BorderRadius.circular(tok.radiusSm),
-                        ),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              restaurant.rating.toString(),
-                              size: AppTextSize.s12,
+                              restaurant.name,
+                              size: AppTextSize.s16,
                               weight: AppTextWeight.bold,
-                              color: tx.inverse,
+                              color: tx.neutral,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            SizedBox(width: tok.gap.xxs / 2),
-                            Icon(Icons.star, color: tx.inverse, size: 14),
+                            SizedBox(height: tok.gap.xxs),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                AppText(
+                                  restaurant.address,
+                                  size: AppTextSize.s12,
+                                  color: tx.subtle,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: tok.gap.xxs),
+                            AppText(
+                              '${restaurant.distance} away • \$\$',
+                              size: AppTextSize.s12,
+                              color: tx.subtle,
+                            ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                  AppText(
-                    restaurant.address,
-                    size: AppTextSize.s12,
-                    color: tx.subtle,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: tok.gap.xxs),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AppText(
-                        '${restaurant.distance} away • \$\$',
-                        size: AppTextSize.s12,
-                        color: tx.subtle,
-                      ),
-                      AppText(
-                        'by ${restaurant.reviewCount}',
-                        size: AppTextSize.s10,
-                        color: tx.muted,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: tok.gap.xxs,
+                              vertical: tok.gap.xxs / 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: cs.primary,
+                              borderRadius: BorderRadius.circular(tok.radiusSm),
+                            ),
+                            child: Row(
+                              children: [
+                                AppText(
+                                  restaurant.rating.toString(),
+                                  size: AppTextSize.s12,
+                                  weight: AppTextWeight.bold,
+                                  color: tx.inverse,
+                                ),
+                                SizedBox(width: tok.gap.xxs / 2),
+                                Icon(Icons.star, color: tx.inverse, size: 14),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: tok.gap.xxs),
+                          AppText(
+                            'by ${restaurant.reviewCount}',
+                            size: AppTextSize.s12,
+                            color: tx.subtle,
+                          ),
+                        ],
                       ),
                     ],
                   ),

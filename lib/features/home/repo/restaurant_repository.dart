@@ -48,7 +48,7 @@ class RestaurantRepository {
           date: '1 year ago',
           rating: 5.0,
           comment:
-              'First of all, most importantly the food cooked and delivered is delicious. they put in their b...more',
+              'First of all, most importantly the food cooked and delivered is delicious. they put in their b...moreus.dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdfsdfdsfdsfsdfsdfsdfdsfdsfdsfdsfsdfsdfdsffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         ),
         ReviewModel(
           userName: 'Johan Doe',
@@ -57,7 +57,7 @@ class RestaurantRepository {
           date: '1 year ago',
           rating: 5.0,
           comment:
-              'First of all, most importantly the food cooked and delivered is delicious.',
+              'First of all, most importantly the food cooked and delivered is delicious.dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdfsdfdsfdsfsdfsdfsdfdsfdsfdsfdsfsdfsdfdsffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         ),
       ],
       socialConnects: SocialConnects(
@@ -66,6 +66,8 @@ class RestaurantRepository {
         email: 'rose@example.com',
         twitter: 'https://twitter.com',
       ),
+      latitude: -37.802,
+      longitude: 144.96,
     );
   }
 }

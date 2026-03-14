@@ -74,7 +74,12 @@ dependencies:
   fluttertoast: ^9.0.0   # Toast messages
   go_router: ^17.0.1     # Declarative routing
   flutter_lints: ^6.0.0
-  device_preview: ^1.0.0 # Device preview
+  device_preview: ^1.0.0 # Device preview 
+  geolocator: ^10.1.0
+  permission_handler: ^11.0.0 
+  geocoding: ^4.0.0
+  google_maps_flutter: ^2.14.2
+  flutter_dotenv: ^5.1.0
 
 
 
@@ -109,6 +114,7 @@ flutter:
     - assets/images/
     - assets/svgs/
     - assets/animations/
+    - .env
 
 
   # To add assets to your application, add an assets section, like this:

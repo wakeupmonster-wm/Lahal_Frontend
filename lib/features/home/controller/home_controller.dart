@@ -12,10 +12,33 @@ class HomeController extends GetxController {
   // --- Filter State ---
   final RxDouble distanceRange = 200.0.obs;
   final RxInt rating = 0.obs;
+  final RxString selectedCategory = 'Near you'.obs;
+
+  // Cuisine filters
+  final RxList<String> allCuisines = <String>[
+    'Italian 🍝',
+    'Indian 🍛',
+    'Chinese 🥢',
+    'Mexican 🌮',
+    'Thai 🍜',
+    'Vegetarian 🥗',
+  ].obs;
+  final RxList<String> selectedCuisines = <String>[].obs;
 
   @override
   void onInit() {
     super.onInit();
+    getBestRestaurants();
+  }
+
+  void onCategorySelected(String category) {
+    if (selectedCategory.value == category) {
+      // Toggle off if tapping the same category again
+      selectedCategory.value = '';
+    } else {
+      selectedCategory.value = category;
+    }
+    // Refresh all restaurants based on new category
     getBestRestaurants();
   }
 
@@ -30,6 +53,25 @@ class HomeController extends GetxController {
   void clearFilters() {
     distanceRange.value = 200.0;
     rating.value = 0;
+    selectedCuisines.clear();
+  }
+
+  void toggleCuisine(String cuisine) {
+    if (selectedCuisines.contains(cuisine)) {
+      selectedCuisines.remove(cuisine);
+    } else {
+      selectedCuisines.add(cuisine);
+    }
+  }
+
+  void toggleFavorite(String restaurantId) {
+    final index = bestRestaurants.indexWhere((r) => r.id == restaurantId);
+    if (index != -1) {
+      final restaurant = bestRestaurants[index];
+      bestRestaurants[index] = restaurant.copyWith(
+        isFavorite: !restaurant.isFavorite,
+      );
+    }
   }
 
   void applyFilters() {
@@ -42,7 +84,20 @@ class HomeController extends GetxController {
       isLoading.value = true;
       errorMessage.value = "";
       final result = await _repository.fetchBestRestaurants();
-      bestRestaurants.assignAll(result);
+
+      if (selectedCategory.value == 'Near you') {
+        bestRestaurants.assignAll(result);
+      } else if (selectedCategory.value == 'Open now') {
+        bestRestaurants.assignAll(
+          result.where((r) => r.status == 'Open now').toList(),
+        );
+      } else if (selectedCategory.value == 'Top rated') {
+        bestRestaurants.assignAll(
+          result.where((r) => r.rating >= 4.5).toList(),
+        );
+      } else {
+        bestRestaurants.assignAll(result);
+      }
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

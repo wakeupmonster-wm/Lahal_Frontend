@@ -6,13 +6,17 @@ import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/theme/app_theme.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await AppLocalStorage.init("user_pref");
-  SystemChrome.setPreferredOrientations([
+  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  // Lock orientation to Portrait
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);

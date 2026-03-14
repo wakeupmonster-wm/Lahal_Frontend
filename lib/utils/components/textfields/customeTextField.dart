@@ -1,4 +1,6 @@
 import 'package:lahal_application/utils/constants/app_colors.dart';
+import 'package:lahal_application/utils/theme/text/app_text_color.dart';
+import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/validators/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,6 +55,16 @@ class _MyTextFeildState extends State<MyTextFeild> {
 
   @override
   Widget build(BuildContext context) {
+    final tc = Theme.of(context).extension<AppTextColors>()!;
+    final cs = Theme.of(context).colorScheme;
+    final tp = Theme.of(context).extension<AppTypography>()!;
+    final Color textColor = tc.neutral; // main text color
+    final textStyle = tp.style(
+      context,
+      size: AppTextSize.s12,
+      weight: AppTextWeight.medium,
+      color: textColor,
+    );
     final height = MediaQuery.sizeOf(context).height;
     final width = MediaQuery.sizeOf(context).width;
     String inputText = widget.controller!.text;
@@ -64,6 +76,7 @@ class _MyTextFeildState extends State<MyTextFeild> {
         SizedBox(
           // height: textFieldHeight ?? height * 0.05,
           child: TextFormField(
+            style: textStyle,
             enabled: widget.typingEnabled ?? true,
             keyboardType: widget.keyboardType,
             maxLength: widget.maxLength,
@@ -301,145 +314,145 @@ class _MyTextFeildState extends State<MyTextFeild> {
   }
 }
 
-class NewMyTextFeild extends StatefulWidget {
-  final TextEditingController? controller;
-  final String hintText;
-  final Color? hintTextColor;
-  final Color? fillColor;
-  final int? maxLines;
-  final int? maxLength;
-  final Widget? suffix;
-  final Widget? prefix;
-  final double? textFieldHeight;
-  final FocusNode? focusNode;
-  final Function(String)? onChange;
-  final Function(String)? onSubmit;
-  final TextInputType? keyboardType; // New parameter
-  final String? Function(String?)? validator;
-  final bool? typingEnabled;
-  final String? heightFormat;
-  final bool? isPasswordField;
+// class NewMyTextFeild extends StatefulWidget {
+//   final TextEditingController? controller;
+//   final String hintText;
+//   final Color? hintTextColor;
+//   final Color? fillColor;
+//   final int? maxLines;
+//   final int? maxLength;
+//   final Widget? suffix;
+//   final Widget? prefix;
+//   final double? textFieldHeight;
+//   final FocusNode? focusNode;
+//   final Function(String)? onChange;
+//   final Function(String)? onSubmit;
+//   final TextInputType? keyboardType; // New parameter
+//   final String? Function(String?)? validator;
+//   final bool? typingEnabled;
+//   final String? heightFormat;
+//   final bool? isPasswordField;
 
-  const NewMyTextFeild({
-    super.key,
-    this.controller,
-    required this.hintText,
-    this.onChange,
-    this.textFieldHeight,
-    this.suffix,
-    this.fillColor,
-    this.validator,
-    this.focusNode,
-    this.onSubmit,
-    this.maxLines,
-    this.maxLength,
-    this.hintTextColor,
-    this.keyboardType,
-    this.typingEnabled,
-    this.prefix,
-    this.heightFormat,
-    this.isPasswordField,
-  });
+//   const NewMyTextFeild({
+//     super.key,
+//     this.controller,
+//     required this.hintText,
+//     this.onChange,
+//     this.textFieldHeight,
+//     this.suffix,
+//     this.fillColor,
+//     this.validator,
+//     this.focusNode,
+//     this.onSubmit,
+//     this.maxLines,
+//     this.maxLength,
+//     this.hintTextColor,
+//     this.keyboardType,
+//     this.typingEnabled,
+//     this.prefix,
+//     this.heightFormat,
+//     this.isPasswordField,
+//   });
 
-  @override
-  State<NewMyTextFeild> createState() => _NewMyTextFeildState();
-}
+//   @override
+//   State<NewMyTextFeild> createState() => _NewMyTextFeildState();
+// }
 
-class _NewMyTextFeildState extends State<NewMyTextFeild> {
-  bool observeTextField = true;
+// class _NewMyTextFeildState extends State<NewMyTextFeild> {
+//   bool observeTextField = true;
 
-  @override
-  Widget build(BuildContext context) {
-    final height = MediaQuery.sizeOf(context).height;
-    final width = MediaQuery.sizeOf(context).width;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          // height: textFieldHeight ?? height * 0.05,
-          child: TextFormField(
-            enabled: widget.typingEnabled ?? true,
-            keyboardType: widget.keyboardType,
-            maxLength: widget.maxLength,
-            onChanged: widget.onChange,
-            onTapOutside: (event) => FocusScope.of(context).unfocus(),
-            controller: widget.controller,
-            cursorColor: AppColor.primaryColor1,
-            maxLines: widget.maxLines ?? 1,
-            obscureText: widget.isPasswordField ?? false
-                ? observeTextField
-                : false,
-            decoration: InputDecoration(
-              suffixIcon: widget.isPasswordField ?? false
-                  ? IconButton(
-                      onPressed: () {
-                        setState(() {
-                          observeTextField = !observeTextField;
-                        });
-                      },
-                      icon: Icon(
-                        observeTextField
-                            ? Icons.remove_red_eye_outlined
-                            : Icons.remove_red_eye,
-                        color: AppColor.primaryColor1,
-                        size: width * 0.06,
-                      ),
-                    )
-                  : widget.suffix ?? const SizedBox(),
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              hintText: widget.hintText,
-              hintStyle: GoogleFonts.manrope(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                fontSize: width * 0.03,
-                fontWeight: FontWeight.w700,
-              ),
-              contentPadding: EdgeInsets.only(top: 0, left: width * 0.035),
-              hoverColor: Theme.of(context).colorScheme.primary,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 1.4,
-                ),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
-                  width: 1.4,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 1.4,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 1.4,
-                ),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error,
-                  width: 1.4,
-                ),
-              ),
-              fillColor: widget.fillColor ?? Colors.transparent,
-              filled: true,
-              focusColor: Theme.of(context).colorScheme.primary,
-            ),
-            validator: widget.validator,
-            focusNode: widget.focusNode,
-            onFieldSubmitted: widget.onSubmit,
-          ),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final height = MediaQuery.sizeOf(context).height;
+//     final width = MediaQuery.sizeOf(context).width;
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         SizedBox(
+//           // height: textFieldHeight ?? height * 0.05,
+//           child: TextFormField(
+//             enabled: widget.typingEnabled ?? true,
+//             keyboardType: widget.keyboardType,
+//             maxLength: widget.maxLength,
+//             onChanged: widget.onChange,
+//             onTapOutside: (event) => FocusScope.of(context).unfocus(),
+//             controller: widget.controller,
+//             cursorColor: AppColor.primaryColor1,
+//             maxLines: widget.maxLines ?? 1,
+//             obscureText: widget.isPasswordField ?? false
+//                 ? observeTextField
+//                 : false,
+//             decoration: InputDecoration(
+//               suffixIcon: widget.isPasswordField ?? false
+//                   ? IconButton(
+//                       onPressed: () {
+//                         setState(() {
+//                           observeTextField = !observeTextField;
+//                         });
+//                       },
+//                       icon: Icon(
+//                         observeTextField
+//                             ? Icons.remove_red_eye_outlined
+//                             : Icons.remove_red_eye,
+//                         color: AppColor.primaryColor1,
+//                         size: width * 0.06,
+//                       ),
+//                     )
+//                   : widget.suffix ?? const SizedBox(),
+//               floatingLabelBehavior: FloatingLabelBehavior.never,
+//               hintText: widget.hintText,
+//               hintStyle: GoogleFonts.manrope(
+//                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+//                 fontSize: width * 0.03,
+//                 fontWeight: FontWeight.w700,
+//               ),
+//               contentPadding: EdgeInsets.only(top: 0, left: width * 0.035),
+//               hoverColor: Theme.of(context).colorScheme.primary,
+//               border: OutlineInputBorder(
+//                 borderRadius: BorderRadius.circular(10),
+//                 borderSide: BorderSide(
+//                   color: Theme.of(context).colorScheme.outline,
+//                   width: 1.4,
+//                 ),
+//               ),
+//               disabledBorder: OutlineInputBorder(
+//                 borderRadius: BorderRadius.circular(10),
+//                 borderSide: BorderSide(
+//                   color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+//                   width: 1.4,
+//                 ),
+//               ),
+//               enabledBorder: OutlineInputBorder(
+//                 borderRadius: BorderRadius.circular(10),
+//                 borderSide: BorderSide(
+//                   color: Theme.of(context).colorScheme.outline,
+//                   width: 1.4,
+//                 ),
+//               ),
+//               focusedBorder: OutlineInputBorder(
+//                 borderRadius: BorderRadius.circular(10),
+//                 borderSide: BorderSide(
+//                   color: Theme.of(context).colorScheme.primary,
+//                   width: 1.4,
+//                 ),
+//               ),
+//               errorBorder: OutlineInputBorder(
+//                 borderRadius: BorderRadius.circular(10),
+//                 borderSide: BorderSide(
+//                   color: Theme.of(context).colorScheme.error,
+//                   width: 1.4,
+//                 ),
+//               ),
+//               fillColor: widget.fillColor ?? Colors.transparent,
+//               filled: true,
+//               focusColor: Theme.of(context).colorScheme.primary,
+//             ),
+//             validator: widget.validator,
+//             focusNode: widget.focusNode,
+//             onFieldSubmitted: widget.onSubmit,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

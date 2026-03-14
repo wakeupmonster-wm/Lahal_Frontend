@@ -8,6 +8,8 @@ class AppSvg {
   static const String downArrowIcon = "assets/svgs/down_arrow_icon.svg";
   static const String rewardIcon = "assets/svgs/reward_icon.svg";
   static const String notificaitonIcon = "assets/svgs/notificaiton_icon.svg";
+  static const String notificaitonNobackgroundIcon =
+      "assets/svgs/notificaiton_nobackground.svg";
   static const String logoIcon = "assets/svgs/Logo_icon.svg";
   static const String filterIcon = "assets/svgs/filter_icon.svg";
 
@@ -26,6 +28,21 @@ class AppSvg {
   static const String galleryIcon = "assets/svgs/gallery_icon.svg";
   static const String deleteIcon = "assets/svgs/delete_icon.svg";
   static const String shareIcon = "assets/svgs/share_icon.svg";
+
+  //=======resturent details screen icons
+  static const String dishIcon = "assets/svgs/dish_icon.svg";
+  static const String tickCircleIcon = "assets/svgs/tick-circle.svg";
+  static const String twitterIcon = "assets/svgs/twitter.svg";
+  static const String warning1Icon = "assets/svgs/warning-1.svg";
+  static const String warning2Icon = "assets/svgs/warning-2.svg";
+  static const String callCallingIcon = "assets/svgs/call-calling.svg";
+  static const String routingIcon = "assets/svgs/routing.svg";
+  static const String locationNobcakgroundIcon =
+      "assets/svgs/location_nobcakground.svg";
+
+  static const String galleryAddIcon = "assets/svgs/gallery-add.svg";
+  static const String mapIcon = "assets/svgs/map.svg";
+  static const String mosqueImage = "assets/svgs/mosque_image.svg";
 
   //=======bottombar icons
   static const String greyMapIcon = "assets/svgs/Grey_map_icon.svg";

@@ -18,13 +18,13 @@ class EditProfileController extends GetxController {
   final genderController = TextEditingController();
 
   final RxBool isLoading = false.obs;
-  final RxBool isPhoneEditable = false.obs;
+  // final RxBool isPhoneEditable = false.obs;
   final RxBool isEmailEditable = false.obs;
   final RxString selectedGender = ''.obs;
   final RxBool isGenderExpanded = false.obs;
   final Rx<File?> pickedImage = Rx<File?>(null);
 
-  final genderOptions = ['Male', 'Female'];
+  final genderOptions = ['Male', 'Female', 'Other'];
 
   @override
   void onInit() {
@@ -54,7 +54,7 @@ class EditProfileController extends GetxController {
   }
 
   void togglePhoneEditable() {
-    isPhoneEditable.value = !isPhoneEditable.value;
+    // isPhoneEditable.value = !isPhoneEditable.value;
   }
 
   void toggleEmailEditable() {

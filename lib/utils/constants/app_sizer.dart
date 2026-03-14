@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 
-class SizeConfig{
+class SizeConfig {
   static late double width;
   static late double height;
 
-
-  SizeConfig(BuildContext context){
+  SizeConfig(BuildContext context) {
     width = MediaQuery.sizeOf(context).width;
     height = MediaQuery.sizeOf(context).height;
   }
-  double w(double inputWidth) =>
-      width * (inputWidth / 430);
+  double w(double inputWidth) => width * (inputWidth / 430);
 
-  double h(double inputHeight) =>
-      height * (inputHeight / 932);
+  double h(double inputHeight) => height * (inputHeight / 932);
 }
-
-
-
 
 class AppRes {
   late BuildContext context;

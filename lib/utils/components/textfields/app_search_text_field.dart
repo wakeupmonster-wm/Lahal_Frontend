@@ -40,14 +40,14 @@ class AppSearchField extends StatelessWidget {
 
     final textStyle = tp.style(
       context,
-      size: AppTextSize.s16,
+      size: AppTextSize.s12,
       weight: AppTextWeight.medium,
       color: textColor,
     );
 
     final hintStyle = tp.style(
       context,
-      size: AppTextSize.s16,
+      size: AppTextSize.s12,
       weight: AppTextWeight.medium,
       color: hintColor,
     );
@@ -62,8 +62,8 @@ class AppSearchField extends StatelessWidget {
       decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.symmetric(
-          horizontal: tok.inset.section,
-          vertical: tok.inset.section,
+          horizontal: tok.inset.fieldH,
+          vertical: tok.inset.fieldV,
         ),
         hintText: hintText,
         hintStyle: hintStyle,

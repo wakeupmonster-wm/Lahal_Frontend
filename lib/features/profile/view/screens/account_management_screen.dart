@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
-
+import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
@@ -16,53 +16,66 @@ class AccountManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tok = Theme.of(context).extension<AppTokens>()!;
-    final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: cs.surfaceContainerHighest.withValues(
+        alpha: 3,
+      ), // Light fade effect
       appBar: InternalAppBar(
         title: AppStrings.accountManagement,
         centerTitle: false,
+        backgroundColor: cs.surface,
       ),
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-              child: Divider(color: cs.outline, thickness: 0.6),
-            ),
-            // _buildItem(
-            //   context,
-            //   AppStrings.editProfile,
-            //   onTap: () => context.push(AppRoutes.editProfileScreen),
-            //   showArrow: true,
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-            //   child: Divider(color: cs.outlineVariant, thickness: 0.8),
-            // ),
-            _buildItem(
-              context,
-              AppStrings.deleteYourAccount,
-              onTap: () {
-                ConfirmationBottomSheet.show(
-                  context,
-                  title: AppStrings.wantToDeleteAccount,
-                  subtitle: AppStrings.deleteAccountConfirmation,
-                  confirmLabel: AppStrings.delete,
-                  onConfirm: () {
-                    // Logic to delete account
-                    context.pop();
-                  },
-                );
-              },
-              showArrow: false,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-              child: Divider(color: cs.outline, thickness: 0.6),
+            // const SizedBox(height: 20),
+            Container(
+              color: cs.surface, // Pure white/dark surface
+              child: Column(
+                children: [
+                  // _buildItem(
+                  //   context,
+                  //   AppStrings.editProfile,
+                  //   onTap: () => context.push(AppRoutes.editProfileScreen),
+                  //   showArrow: true,
+                  // ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Divider(
+                  //     color: cs.outlineVariant.withValues(alpha: 0.5),
+                  //     thickness: 0.8,
+                  //     height: 1,
+                  //   ),
+                  // ),
+                  _buildItem(
+                    context,
+                    AppStrings.deleteYourAccount,
+                    onTap: () {
+                      ConfirmationBottomSheet.show(
+                        context,
+                        title: AppStrings.wantToDeleteAccount,
+                        subtitle: AppStrings.deleteAccountConfirmation,
+                        confirmLabel: AppStrings.delete,
+                        onConfirm: () {
+                          // Logic to delete account
+                          context.pop();
+                        },
+                      );
+                    },
+                    showArrow: true,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Divider(
+                      color: cs.outlineVariant.withValues(alpha: 0.5),
+                      thickness: 0.8,
+                      height: 1,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -98,7 +111,10 @@ class AccountManagementScreen extends StatelessWidget {
             ),
             if (trailing != null) trailing,
             if (showArrow)
-              SvgPicture.asset(AppSvg.rightArrowIcon, color: tx.primary),
+              SvgPicture.asset(
+                AppSvg.rightArrowIcon,
+                colorFilter: ColorFilter.mode(tx.primary, BlendMode.srcIn),
+              ),
           ],
         ),
       ),

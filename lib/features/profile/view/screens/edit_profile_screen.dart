@@ -94,24 +94,10 @@ class EditProfileScreen extends StatelessWidget {
 
               // Phone Number Field
               _buildLabel(AppStrings.phoneNumberLabelSmall, tx, tok),
-              Obx(
-                () => MyTextFeild(
-                  controller: controller.phoneController,
-                  hintText: AppStrings.phoneNumberLabelSmall,
-                  typingEnabled: controller.isPhoneEditable.value,
-                  suffix: Padding(
-                    padding: EdgeInsets.only(right: tok.gap.xs),
-                    child: TextButton(
-                      onPressed: controller.togglePhoneEditable,
-                      child: AppText(
-                        AppStrings.change,
-                        size: AppTextSize.s12,
-                        weight: AppTextWeight.bold,
-                        color: AppColor.primaryColor,
-                      ),
-                    ),
-                  ),
-                ),
+              MyTextFeild(
+                controller: controller.phoneController,
+                hintText: AppStrings.phoneNumberLabelSmall,
+                keyboardType: TextInputType.phone,
               ),
               SizedBox(height: tok.gap.md),
 
@@ -124,15 +110,15 @@ class EditProfileScreen extends StatelessWidget {
                   typingEnabled: controller.isEmailEditable.value,
                   suffix: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: TextButton(
-                      onPressed: controller.toggleEmailEditable,
-                      child: AppText(
-                        AppStrings.change,
-                        size: AppTextSize.s12,
-                        weight: AppTextWeight.bold,
-                        color: AppColor.primaryColor,
-                      ),
-                    ),
+                    // child: TextButton(
+                    //   onPressed: controller.toggleEmailEditable,
+                    //   child: AppText(
+                    //     AppStrings.change,
+                    //     size: AppTextSize.s12,
+                    //     weight: AppTextWeight.bold,
+                    //     color: AppColor.primaryColor,
+                    //   ),
+                    // ),
                   ),
                 ),
               ),
@@ -161,8 +147,8 @@ class EditProfileScreen extends StatelessWidget {
                       onTap: controller.toggleGenderExpanded,
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: tok.gap.md,
-                          vertical: tok.gap.sm,
+                          horizontal: tok.gap.xs,
+                          vertical: tok.gap.xs,
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(
@@ -217,6 +203,7 @@ class EditProfileScreen extends StatelessWidget {
               // Save Button
               Obx(
                 () => AppButton(
+                  radiusOverride: 12,
                   onPressed: controller.isLoading.value
                       ? null
                       : () => controller.saveProfile(context),

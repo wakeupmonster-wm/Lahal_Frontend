@@ -85,7 +85,8 @@ class _AppTextFieldState extends State<AppTextField> {
     // Colors according to your request
     final Color textColor = tc.neutral; // main text color
     const Color hintColor = AppPalette.textMuted; // muted/hint color
-    final Color fillColor = cs.surfaceContainerHighest; // background
+    final Color fillColor =
+        cs.surfaceContainerHighest; // background  onSecondary
     final Color outlineColor = cs.outline; // normal border
     final Color focusColor = cs.primary; // focused border
     final Color disabledColor = cs.onSurface.withOpacity(0.12);
@@ -93,14 +94,14 @@ class _AppTextFieldState extends State<AppTextField> {
     // text style (use your typography tokens)
     final textStyle = tp.style(
       context,
-      size: AppTextSize.s16,
+      size: AppTextSize.s14,
       weight: AppTextWeight.medium,
       color: textColor,
     );
 
     final hintStyle = tp.style(
       context,
-      size: AppTextSize.s16,
+      size: AppTextSize.s14,
       weight: AppTextWeight.medium,
       color: hintColor,
     );
@@ -112,8 +113,8 @@ class _AppTextFieldState extends State<AppTextField> {
     final inputDecoration = InputDecoration(
       isDense: true,
       contentPadding: EdgeInsets.symmetric(
-        horizontal: tok.inset.section,
-        vertical: tok.inset.section,
+        horizontal: tok.inset.fieldH,
+        vertical: tok.inset.fieldV,
       ),
       filled: true,
       fillColor: fillColor,

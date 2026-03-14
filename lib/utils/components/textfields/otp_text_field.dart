@@ -147,7 +147,9 @@ class _OtpFieldState extends State<OtpField> {
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
 
-    final boxW = widget.boxWidth ?? (tok.iconLg * 2 + tok.gap.md);
+    // Use a fixed 48x48 box size by default (or override via widget.boxWidth)
+    final double boxSize = widget.boxWidth ?? 49.0;
+
     final textStyle = TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.w600,
@@ -155,61 +157,68 @@ class _OtpFieldState extends State<OtpField> {
       letterSpacing: 1.2,
     );
 
-    return AutofillGroup(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: List.generate(widget.length, (i) {
-          return SizedBox(
-            width: boxW,
-            child: KeyboardListener(
-              focusNode: FocusNode(skipTraversal: true),
-              onKeyEvent: (ev) => _onKey(ev, i),
-              child: TextField(
-                controller: _controllers[i],
-                focusNode: _focusNodes[i],
-                enabled: widget.enabled,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                style: textStyle,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(1),
-                ],
-                onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                decoration: InputDecoration(
-                  isDense: true,
-                  filled: true,
-                  fillColor: cs.surfaceContainerHighest,
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: tok.inset.fieldV / 0.8,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 360),
+      child: AutofillGroup(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(widget.length, (i) {
+            return SizedBox(
+              width: boxSize,
+              height: boxSize, // Perfectly square bounding box
+              child: KeyboardListener(
+                focusNode: FocusNode(skipTraversal: true),
+                onKeyEvent: (ev) => _onKey(ev, i),
+                child: TextField(
+                  controller: _controllers[i],
+                  focusNode: _focusNodes[i],
+                  enabled: widget.enabled,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  textAlignVertical:
+                      TextAlignVertical.center, // Centering text vertically
+                  cursorHeight: 24, // Fix cursor taking up full height
+                  style: textStyle,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(1),
+                  ],
+                  onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: cs.surface, // Plain white background, not grey
+                    contentPadding: EdgeInsets
+                        .zero, // Zero padding for fixed height vertical alignment
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(tok.radiusMd),
+                      borderSide: BorderSide(color: cs.outlineVariant),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(tok.radiusMd),
+                      borderSide: BorderSide(color: cs.primary, width: 1.6),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(tok.radiusMd),
+                      borderSide: BorderSide(
+                        color: cs.outlineVariant,
+                      ), // Always visible border outline
+                    ),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(tok.radiusMd),
-                    borderSide: BorderSide(color: cs.outline),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(tok.radiusMd),
-                    borderSide: BorderSide(color: cs.primary, width: 1.6),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(tok.radiusMd),
-                    borderSide: const BorderSide(color: Colors.transparent),
-                  ),
+                  // important: handle change manually to auto-advance
+                  onChanged: (v) => _onChanged(v, i),
+                  // support autofill for sms codes — on iOS/Android platforms that support it
+                  autofillHints: const [AutofillHints.oneTimeCode],
+                  textInputAction: i == widget.length - 1
+                      ? TextInputAction.done
+                      : TextInputAction.next,
+                  onSubmitted: (_) {
+                    if (i == widget.length - 1) _checkComplete();
+                  },
                 ),
-                // important: handle change manually to auto-advance
-                onChanged: (v) => _onChanged(v, i),
-                // support autofill for sms codes — on iOS/Android platforms that support it
-                autofillHints: const [AutofillHints.oneTimeCode],
-                textInputAction: i == widget.length - 1
-                    ? TextInputAction.done
-                    : TextInputAction.next,
-                onSubmitted: (_) {
-                  if (i == widget.length - 1) _checkComplete();
-                },
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

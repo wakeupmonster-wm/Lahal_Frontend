@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-enum AppTextSize { s24, s18, s16, s14, s12, s10 }
+enum AppTextSize { s64, s48, s24, s18, s16, s14, s12, s10 }
 
 enum AppTextWeight { regular, medium, semibold, bold, extraBold }
 
@@ -26,6 +26,8 @@ FontWeight _mapWeight(AppTextWeight w) {
 }
 
 class AppTypography extends ThemeExtension<AppTypography> {
+  final TextStyle s64;
+  final TextStyle s48;
   final TextStyle s24;
   final TextStyle s18;
   final TextStyle s16;
@@ -34,6 +36,8 @@ class AppTypography extends ThemeExtension<AppTypography> {
   final TextStyle s10;
 
   const AppTypography({
+    required this.s64,
+    required this.s48,
     required this.s24,
     required this.s18,
     required this.s16,
@@ -43,6 +47,8 @@ class AppTypography extends ThemeExtension<AppTypography> {
   });
 
   factory AppTypography.fromTextTheme(TextTheme t) => AppTypography(
+    s64: const TextStyle(fontSize: 64),
+    s48: const TextStyle(fontSize: 48),
     s24: t.headlineSmall ?? const TextStyle(fontSize: 24),
     s18: t.titleMedium ?? const TextStyle(fontSize: 18),
     s16: t.bodyLarge ?? const TextStyle(fontSize: 16),
@@ -69,6 +75,10 @@ class AppTypography extends ThemeExtension<AppTypography> {
 
   TextStyle _baseFor(AppTextSize size) {
     switch (size) {
+      case AppTextSize.s64:
+        return s64;
+      case AppTextSize.s48:
+        return s48;
       case AppTextSize.s24:
         return s24;
       case AppTextSize.s18:
@@ -87,6 +97,8 @@ class AppTypography extends ThemeExtension<AppTypography> {
 
   @override
   AppTypography copyWith({
+    TextStyle? s64,
+    TextStyle? s48,
     TextStyle? s24,
     TextStyle? s18,
     TextStyle? s16,
@@ -94,6 +106,8 @@ class AppTypography extends ThemeExtension<AppTypography> {
     TextStyle? s12,
     TextStyle? s10,
   }) => AppTypography(
+    s64: s64 ?? this.s64,
+    s48: s48 ?? this.s48,
     s24: s24 ?? this.s24,
     s18: s18 ?? this.s18,
     s16: s16 ?? this.s16,
@@ -106,6 +120,8 @@ class AppTypography extends ThemeExtension<AppTypography> {
   AppTypography lerp(ThemeExtension<AppTypography>? other, double t) {
     if (other is! AppTypography) return this;
     return AppTypography(
+      s64: TextStyle.lerp(s64, other.s64, t)!,
+      s48: TextStyle.lerp(s48, other.s48, t)!,
       s24: TextStyle.lerp(s24, other.s24, t)!,
       s18: TextStyle.lerp(s18, other.s18, t)!,
       s16: TextStyle.lerp(s16, other.s16, t)!,
