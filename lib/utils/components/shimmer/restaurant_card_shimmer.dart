@@ -25,6 +25,7 @@ class RestaurantCardShimmer extends StatelessWidget {
             width: double.infinity,
             radius: tok.radiusLg,
           ),
+
           Padding(
             padding: EdgeInsets.all(tok.gap.xs),
             child: Column(

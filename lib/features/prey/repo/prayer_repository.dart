@@ -1,20 +1,67 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:lahal_application/features/prey/model/prayer_time_model.dart';
+import 'package:lahal_application/utils/constants/app_urls.dart';
+import 'package:lahal_application/utils/services/helper/app_logger.dart';
 
 class PrayerRepository {
-  Future<List<PrayerTimeModel>> fetchPrayerTimes() async {
-    // Mocking data for now as per image: Fajr, Sunrise, Dhuhr, Asr, Magrib, Isha
-    // In a real app, this would call an API or use a plugin like 'adhan'
-    await Future.delayed(
-      const Duration(milliseconds: 500),
-    ); // Simulate network lag
+  /// Fetches prayer times from Aladhan API using Coordinates.
+  /// Bypasses NetworkApiServices because Aladhan does not return "success: true" structure.
+  Future<List<PrayerTimeModel>> fetchPrayerTimes({
+    required double lat,
+    required double lng,
+    required String dateStr,
+  }) async {
+    try {
+      final uri = Uri.parse(
+        '${AppUrls.aladhanBaseUrl}/timings/$dateStr',
+      ).replace(
+        queryParameters: {
+          'latitude': lat.toString(),
+          'longitude': lng.toString(),
+          'method': '2', // ISNA method
+        },
+      );
 
-    return [
-      PrayerTimeModel(name: "Fajr", time: "05:19"),
-      PrayerTimeModel(name: "Sunrise", time: "05:19"),
-      PrayerTimeModel(name: "Dhuhr", time: "05:19"),
-      PrayerTimeModel(name: "Asr", time: "05:19"),
-      PrayerTimeModel(name: "Magrib", time: "05:19", isUpcoming: true),
-      PrayerTimeModel(name: "Isha", time: "05:19"),
-    ];
+      AppLogger.i('PrayerRepository', 'Fetching prayer times: $uri');
+
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        final data = body['data'];
+        final timings = data['timings'] as Map<String, dynamic>;
+
+        // The specific prayers we want to display, in order
+        final requiredPrayers = [
+          'Fajr',
+          'Sunrise',
+          'Dhuhr',
+          'Asr',
+          'Maghrib',
+          'Isha',
+        ];
+
+        final List<PrayerTimeModel> result = [];
+        for (var name in requiredPrayers) {
+          if (timings.containsKey(name)) {
+            result.add(
+              PrayerTimeModel(
+                name: name,
+                time: timings[name],
+                // isUpcoming will be calculated securely in Controller
+              ),
+            );
+          }
+        }
+        return result;
+      } else {
+        AppLogger.e('PrayerRepository', 'Failed to fetch: ${response.body}');
+        return [];
+      }
+    } catch (e, stack) {
+      AppLogger.e('PrayerRepository', 'Error fetching prayer times', e, stack);
+      return [];
+    }
   }
 }

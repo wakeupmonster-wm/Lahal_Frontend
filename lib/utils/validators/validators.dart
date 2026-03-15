@@ -57,4 +57,35 @@ class Validator {
     }
     return null;
   }
+
+  /// Validates phone number input
+  /// Defaults to true if length is 10 and all digits.
+  static String? validatePhoneNumber(
+    String? value, {
+    String countryCode = '+91',
+  }) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your phone number';
+    }
+
+    final String numericValue = value.replaceAll(RegExp(r'\D'), '');
+
+    // Current support handles India validation (10 digits) easily scalable to Australia
+    if (countryCode == '+91') {
+      if (numericValue.length != 10) {
+        return 'Please enter a valid phone number (10 digits)';
+      }
+    } else if (countryCode == '+61') {
+      if (numericValue.length < 9 || numericValue.length > 10) {
+        return 'Please enter a valid Australian phone number';
+      }
+    } else {
+      // Generic validation
+      if (numericValue.length < 5) {
+        return 'Please enter a valid phone number';
+      }
+    }
+
+    return null;
+  }
 }

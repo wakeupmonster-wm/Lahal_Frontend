@@ -19,7 +19,10 @@ class _FadingListViewState extends State<FadingListView> {
       onNotification: (scrollNotification) {
         setState(() {
           _stopStart = scrollNotification.metrics.pixels / 10;
-          _stopEnd = (scrollNotification.metrics.maxScrollExtent - scrollNotification.metrics.pixels) / 10;
+          _stopEnd =
+              (scrollNotification.metrics.maxScrollExtent -
+                  scrollNotification.metrics.pixels) /
+              10;
 
           _stopStart = _stopStart.clamp(0.0, 1.0);
           _stopEnd = _stopEnd.clamp(0.0, 1.0);
@@ -29,8 +32,12 @@ class _FadingListViewState extends State<FadingListView> {
       child: ShaderMask(
         shaderCallback: (Rect rect) {
           return LinearGradient(
-            begin: widget.child.scrollDirection == Axis.horizontal ? Alignment.centerLeft : Alignment.topCenter,
-            end: widget.child.scrollDirection == Axis.horizontal ? Alignment.centerRight : Alignment.bottomCenter,
+            begin: widget.child.scrollDirection == Axis.horizontal
+                ? Alignment.centerLeft
+                : Alignment.topCenter,
+            end: widget.child.scrollDirection == Axis.horizontal
+                ? Alignment.centerRight
+                : Alignment.bottomCenter,
             colors: const [
               Colors.black,
               Colors.transparent,

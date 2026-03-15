@@ -3,37 +3,44 @@ class AppList {
     {
       'key': 'dating',
       'title': 'Dating 👩‍❤️‍👨',
-      'subtitle': 'Seeking love and meaningful connections? Choose dating for genuine relationships.',
+      'subtitle':
+          'Seeking love and meaningful connections? Choose dating for genuine relationships.',
     },
     {
       'key': 'friendship',
       'title': 'Friendship 🙌',
-      'subtitle': 'Expand your social circle and make new friends. Opt for friendship today.',
+      'subtitle':
+          'Expand your social circle and make new friends. Opt for friendship today.',
     },
     {
       'key': 'casual',
       'title': 'Casual 😄',
-      'subtitle': 'Looking for fun and relaxed encounters? Select casual for carefree connections.',
+      'subtitle':
+          'Looking for fun and relaxed encounters? Select casual for carefree connections.',
     },
     {
       'key': 'serious',
       'title': 'Serious Relationship 💍',
-      'subtitle': 'Ready for commitment and a lasting partnership? Pick serious relationship.',
+      'subtitle':
+          'Ready for commitment and a lasting partnership? Pick serious relationship.',
     },
     {
       'key': 'open',
       'title': 'Open to Options 🌟',
-      'subtitle': 'Explore various connections and keep your options open with this choice.',
+      'subtitle':
+          'Explore various connections and keep your options open with this choice.',
     },
     {
       'key': 'networking',
       'title': 'Networking 🤝',
-      'subtitle': 'Connect professionally and expand your network. Choose networking now.',
+      'subtitle':
+          'Connect professionally and expand your network. Choose networking now.',
     },
     {
       'key': 'exploration',
       'title': 'Exploration 🌍',
-      'subtitle': 'Embark on a journey of discovery. Select exploration for new experiences.',
+      'subtitle':
+          'Embark on a journey of discovery. Select exploration for new experiences.',
     },
   ];
 
@@ -367,13 +374,7 @@ class AppList {
     "Straight Shooter",
     "Storyteller",
   ];
-  static final List<String> bloodType = [
-    "A",
-    "B",
-    "AB",
-    "O",
-    "Other",
-  ];
+  static final List<String> bloodType = ["A", "B", "AB", "O", "Other"];
 
   static final List<String> socialMediaPresence = [
     "Active on All",

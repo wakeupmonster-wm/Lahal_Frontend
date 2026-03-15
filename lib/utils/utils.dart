@@ -9,7 +9,9 @@ class Utils {
     // Split seconds into integer and fractional parts
     List<String> secondsParts = parts[2].split('.');
     int seconds = int.parse(secondsParts[0]);
-    int milliseconds = secondsParts.length > 1 ? int.parse(secondsParts[1].padRight(3, '0').substring(0, 3)) : 0;
+    int milliseconds = secondsParts.length > 1
+        ? int.parse(secondsParts[1].padRight(3, '0').substring(0, 3))
+        : 0;
 
     return Duration(
       hours: hours,

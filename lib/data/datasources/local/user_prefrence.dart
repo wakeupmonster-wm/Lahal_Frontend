@@ -1,22 +1,39 @@
+import 'dart:convert';
+import 'package:lahal_application/features/authentication/models/user_model.dart';
 import 'storage_utility.dart';
 
 class UserPreferences {
   final AppLocalStorage _storage = AppLocalStorage.instance();
 
-  // -- Set token (auth token)
+  // -- Set access token
   Future<void> setToken(String authToken) async {
     await _storage.writeData('x-auth-token', authToken);
-    print("Token Saved --> $authToken");
+    print("AccessToken Saved --> $authToken");
   }
 
-  // -- Get token (auth token)
+  // -- Get access token
   Future<String?> getToken() async {
+    print("AccessToken Retrieved --> ${_storage.readData<String>('x-auth-token')}");
     return _storage.readData<String>('x-auth-token');
   }
 
-  // -- Remove token (auth token)
+  // -- Set refresh token
+  Future<void> setRefreshToken(String refreshToken) async {
+    await _storage.writeData('x-refresh-token', refreshToken);
+    print("RefreshToken Saved --> $refreshToken");
+  }
+
+  // -- Get refresh token
+  Future<String?> getRefreshToken() async {
+    final token = await _storage.readData<String>('x-refresh-token');
+    print("RefreshToken Retrieved --> $token");
+    return token;
+  }
+
+  // -- Remove tokens
   Future<void> removeToken() async {
     await _storage.removeData('x-auth-token');
+    await _storage.removeData('x-refresh-token');
   }
 
   // -- Print token (auth token)
@@ -35,6 +52,33 @@ class UserPreferences {
   // -- Get user-id
   Future<String> getUserId() async {
     return _storage.readData<String>("user_id") ?? "";
+  }
+
+  // -- Set User Model
+  Future<void> setUser(UserModel user) async {
+    await _storage.writeData('user_model', jsonEncode(user.toJson()));
+    await setUserId(user.id);
+  }
+
+  // -- Get User Model
+  Future<UserModel?> getUser() async {
+    final userJsonStr = _storage.readData<String>('user_model');
+    if (userJsonStr != null && userJsonStr.isNotEmpty) {
+      try {
+        final Map<String, dynamic> userMap = jsonDecode(userJsonStr);
+        return UserModel.fromJson(userMap);
+      } catch (e) {
+        print("Error decoding User Model: $e");
+        return null;
+      }
+    }
+    return null;
+  }
+
+  // -- Remove User Model
+  Future<void> removeUser() async {
+    await _storage.removeData('user_model');
+    await _storage.removeData('user_id');
   }
 
   // -- Set device token
@@ -76,26 +120,26 @@ class UserPreferences {
     await _storage.clearAll();
   }
 }
- 
- // -- Not in Use for this app but can be used in future
-  // // -- Set isFirstTime
-  // Future<void> setIsFirstTime(bool isFirstTime) async {
-  //   await _storage.writeData('isFirstTime', isFirstTime);
-  // }
 
-  // // -- isFirstTime if Null
-  // Future<void> setIsFirstTimeIfNull() async {
-  //   await _storage.writeDataIfNull('isFirstTime', true);
-  // }
+// -- Not in Use for this app but can be used in future
+// // -- Set isFirstTime
+// Future<void> setIsFirstTime(bool isFirstTime) async {
+//   await _storage.writeData('isFirstTime', isFirstTime);
+// }
 
-  // // -- Get isFirstTime
-  // Future<bool> getIsFirstTime() async {
-  //   return _storage.readData<bool>('isFirstTime') ?? true;
-  // }
+// // -- isFirstTime if Null
+// Future<void> setIsFirstTimeIfNull() async {
+//   await _storage.writeDataIfNull('isFirstTime', true);
+// }
 
-   // -- Clear all data
-  // Future<void> clearAll() async {
-  //   final bool isFirstTime = await getIsFirstTime();
-  //   await _storage.clearAll();
-  //   setIsFirstTime(isFirstTime);
-  // }
+// // -- Get isFirstTime
+// Future<bool> getIsFirstTime() async {
+//   return _storage.readData<bool>('isFirstTime') ?? true;
+// }
+
+// -- Clear all data
+// Future<void> clearAll() async {
+//   final bool isFirstTime = await getIsFirstTime();
+//   await _storage.clearAll();
+//   setIsFirstTime(isFirstTime);
+// }

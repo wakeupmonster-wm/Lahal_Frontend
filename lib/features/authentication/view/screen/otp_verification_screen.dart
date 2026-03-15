@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pinput/pinput.dart';
 import 'package:lahal_application/features/authentication/controller/otp_controller.dart';
+import 'package:lahal_application/features/authentication/services/auth_state_service.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
-import 'package:lahal_application/utils/components/textfields/otp_text_field.dart';
+import 'package:lahal_application/utils/components/widgets/full_screen_stack_loading.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/constants/enum.dart';
@@ -20,7 +22,14 @@ class OtpVerificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OtpController ctrl = Get.put(OtpController(length: 6));
+    // Always delete any stale instance so we get a fresh controller with the
+    // phone number baked in (avoids empty-phone bug on second visit).
+    if (Get.isRegistered<OtpController>()) {
+      Get.delete<OtpController>(force: true);
+    }
+
+    final phone = data ?? '';
+    final OtpController ctrl = Get.put(OtpController(length: 6, phone: phone));
 
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final tok = Theme.of(context).extension<AppTokens>()!;
@@ -28,6 +37,34 @@ class OtpVerificationScreen extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
+
+    // --- Pinput theme ---
+    final defaultPinTheme = PinTheme(
+      width: width * 0.13,
+      height: width * 0.13,
+      textStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: cs.onSurface,
+      ),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(tok.radiusMd),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration!.copyWith(
+        border: Border.all(color: cs.primary, width: 1.6),
+      ),
+    );
+
+    final filledPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration!.copyWith(
+        border: Border.all(color: cs.outline),
+      ),
+    );
 
     return Scaffold(
       appBar: InternalAppBar(
@@ -46,7 +83,7 @@ class OtpVerificationScreen extends StatelessWidget {
               children: [
                 SizedBox(height: tok.gap.xs),
                 AppText(
-                  "${AppStrings.weHaveSentVerificationCodeTo} - ${data ?? '991263552626266'}",
+                  "${AppStrings.weHaveSentVerificationCodeTo} - ${phone.isNotEmpty ? phone : '—'}",
                   size: AppTextSize.s14,
                   weight: AppTextWeight.regular,
                   color: tx.subtle,
@@ -55,9 +92,18 @@ class OtpVerificationScreen extends StatelessWidget {
                 SizedBox(height: tok.gap.xxl),
 
                 Center(
-                  child: OtpField(
+                  child: Pinput(
                     length: 6,
-                    boxWidth: width * 0.12,
+                    controller: ctrl.pinputController,
+                    defaultPinTheme: defaultPinTheme,
+                    focusedPinTheme: focusedPinTheme,
+                    submittedPinTheme: filledPinTheme,
+                    keyboardType: TextInputType.number,
+                    autofocus: true,
+                    // Paste support is built-in to Pinput
+                    onChanged: (value) {
+                      ctrl.otp.value = value;
+                    },
                     onCompleted: (code) {
                       ctrl.setOtp(code, context);
                     },
@@ -81,7 +127,7 @@ class OtpVerificationScreen extends StatelessWidget {
                             ctrl.remainingSeconds.value > 0 ||
                                 ctrl.isLoading.value
                             ? null
-                            : () => ctrl.resendOtp(),
+                            : () => ctrl.resendOtp(context),
                         child: AppText(
                           ctrl.remainingSeconds.value > 0
                               ? "${AppStrings.resendSms} ${ctrl.remainingSeconds.value}${AppStrings.secondsSuffix}"
@@ -133,13 +179,9 @@ class OtpVerificationScreen extends StatelessWidget {
           ),
           // Loading Overlay
           Obx(() {
-            if (ctrl.isLoading.value) {
-              return Container(
-                color: tx.neutral.withOpacity(0.1),
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            }
-            return const SizedBox.shrink();
+            final isBusy = ctrl.isLoading.value || 
+                           Get.find<AuthStateService>().isAuthenticating.value;
+            return StackLaoding(isLoading: isBusy);
           }),
         ],
       ),

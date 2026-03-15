@@ -1,174 +1,246 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:lahal_application/utils/constants/enum.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import '../local/user_prefrence.dart';
-
-import '../../exceptions/app_exception.dart';
-import '../../../utils/extensions/extensions.dart';
-
-typedef MapSS = Map<String, String>;
-typedef MapSD = Map<String, dynamic>;
+import 'package:lahal_application/data/datasources/local/user_prefrence.dart';
+import 'package:lahal_application/data/exceptions/app_exception.dart';
+import 'package:lahal_application/data/models/api_response.dart';
+import 'package:lahal_application/utils/constants/enum.dart';
+import 'package:lahal_application/utils/services/helper/app_logger.dart';
 
 class NetworkApiServices {
-  // Public method to send HTTP requests
-  Future<MapSD> sendHttpRequest({
-    required Uri url,
-    required HttpMethod method,
-    MapSS? body,
-    MapSS? queryParams,
-    Map<String, XFile>? files,
-    String? id,
-    bool includeHeaders = true,
+  final UserPreferences _prefs = UserPreferences();
+
+  // ---- Headers ----
+
+  Future<Map<String, String>> _getHeaders({
+    bool useRefreshToken = false,
   }) async {
-    // Process URL with ID and query parameters
-    final processedUrl = _buildUrl(url, id, queryParams);
+    final token = await _prefs
+        .getToken(); // Modify if separating refresh token logic
 
-    try {
-      if (files != null && files.isNotEmpty) {
-        // Handle file upload requests
-        return await _sendMultipartRequest(
-          url: processedUrl,
-          method: method,
-          body: body,
-          files: files,
-          includeHeaders: includeHeaders,
-        );
-      } else {
-        // Handle regular requests
-        return await _sendRegularRequest(
-          url: processedUrl,
-          method: method,
-          body: body,
-          includeHeaders: includeHeaders,
-        );
-      }
-    } on SocketException {
-      throw FetchDataException("No Internet Connection");
-    } on TimeoutException {
-      throw FetchDataException("Request timed out. Please try again later.");
-    }
-  }
-
-  // Private helper to build URL with ID and query parameters
-  Uri _buildUrl(Uri url, String? id, MapSS? queryParams) {
-    if (id != null && id.isNotEmpty) {
-      final pathWithId = '${url.path}/$id';
-      url = url.replace(path: pathWithId);
-    }
-    return queryParams != null
-        ? Uri.https(url.authority, url.path, queryParams)
-        : url;
-  }
-
-  // Private method to send regular HTTP requests
-  Future<MapSD> _sendRegularRequest({
-    required Uri url,
-    required HttpMethod method,
-    MapSS? body,
-    bool includeHeaders = true,
-  }) async {
-    final request = _createRequest(url, method, body);
-    if (includeHeaders) {
-      final headers = await UserPreferences().getHeader();
-      request.headers.addAll(headers);
+    if (useRefreshToken) {
+      return {
+        'Accept': 'application/json',
+        if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+      };
     } else {
-      request.headers.addAll({'Accept': 'application/json'});
+      return {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+      };
     }
-
-    request.headers.log("Headers");
-    final response = await _sendAndHandleRequest(request);
-    return handleApiResponse(response);
   }
 
-  // Private method to send multipart requests
-  Future<MapSD> _sendMultipartRequest({
+  // ---- Main Request Method ----
+
+  Future<ApiResponse<T>> sendRequest<T>({
     required Uri url,
     required HttpMethod method,
-    MapSS? body,
-    required Map<String, XFile> files,
-    bool includeHeaders = true,
+    Map<String, dynamic>? body,
+    Map<String, String>? customHeaders,
+    bool useRefreshToken = false,
+    bool includeHeaders = true, // Added for backward compatibility
+    T Function(dynamic json)? fromJsonT,
+    Duration timeout = const Duration(seconds: 30),
   }) async {
-    final request = http.MultipartRequest(method.name.toUpperCase(), url);
+    final headers =
+        customHeaders ??
+        (includeHeaders
+            ? await _getHeaders(useRefreshToken: useRefreshToken)
+            : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              });
 
-    // Add fields to the request
-    if (body != null) {
-      request.fields.addAll(body);
-    }
-
-    // Add files to the request
-    for (var entry in files.entries) {
-      final file = entry.value;
-      final fileStream = http.ByteStream(file.openRead());
-      final fileLength = await file.length();
-      final multipartFile = http.MultipartFile(
-        entry.key,
-        fileStream,
-        fileLength,
-        filename: file.path.split('/').last,
-      );
-      request.files.add(multipartFile);
-    }
-
-    // Add headers
-    if (includeHeaders) {
-      final headers = await UserPreferences().getHeader();
-      request.headers.addAll(headers);
-    } else {
-      request.headers.addAll({'Accept': 'application/json'});
-    }
-
-    final response = await _sendAndHandleRequest(request);
-    return handleApiResponse(response);
-  }
-
-  // Private helper to create a request for regular HTTP methods
-  http.Request _createRequest(Uri url, HttpMethod method, MapSS? body) {
-    final request = http.Request(method.name.toUpperCase(), url);
-    if (body != null) {
-      if (method == HttpMethod.post || method == HttpMethod.delete) {
-        request.bodyFields = body;
-      } else if (method == HttpMethod.put) {
-        request.body = json.encode(body);
-      }
-    }
-    return request;
-  }
-
-  // Private helper to send the request and handle streaming
-  Future<http.Response> _sendAndHandleRequest(http.BaseRequest request) async {
-    final streamedResponse = await request.send().timeout(
-      const Duration(seconds: 30),
+    AppLogger.apiRequest(
+      method.name.toUpperCase(),
+      url.path.toString(),
+      headers,
     );
-    return await http.Response.fromStream(streamedResponse);
+
+    try {
+      final http.Response response;
+
+      switch (method) {
+        case HttpMethod.get:
+          response = await http.get(url, headers: headers).timeout(timeout);
+        case HttpMethod.post:
+          response = await http
+              .post(
+                url,
+                headers: headers,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(timeout);
+        case HttpMethod.put:
+          response = await http
+              .put(
+                url,
+                headers: headers,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(timeout);
+        case HttpMethod.patch:
+          response = await http
+              .patch(
+                url,
+                headers: headers,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(timeout);
+        case HttpMethod.delete:
+          response = await http
+              .delete(
+                url,
+                headers: headers,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(timeout);
+      }
+
+      AppLogger.apiResponse(
+        method.name.toUpperCase(),
+        url.path.toString(),
+        response.statusCode,
+        response.body,
+      );
+      return _processResponse<T>(response, fromJsonT: fromJsonT);
+    } on SocketException {
+      throw const NetworkException();
+    } on TimeoutException {
+      throw const TimeoutException();
+    } on AppException {
+      rethrow;
+    } on http.ClientException catch (e) {
+      throw NetworkException('Connection error: ${e.message}');
+    } catch (e) {
+      throw NetworkException('Unexpected error: $e');
+    }
   }
 
-  // Public method to handle API responses
-  MapSD handleApiResponse(http.Response response) {
-    try {
-      final statusCode = response.statusCode;
-      final responseJson = statusCode != 500 ? jsonDecode(response.body) : null;
+  // ---- Multipart Request ----
 
-      if (statusCode >= 200 && statusCode < 300) {
-        return responseJson;
-      } else if (statusCode >= 400 && statusCode < 500) {
-        if (responseJson != null && responseJson['message'] != null) {
-          throw ApiException(responseJson['message']);
-        } else {
-          throw ApiException("An error occurred. Status code: $statusCode");
-        }
-      } else if (statusCode == 500) {
-        throw InternalSeverException(
-          "Internal server error. Please try again.",
+  Future<ApiResponse<T>> multipartRequest<T>({
+    required Uri url,
+    required HttpMethod method,
+    required List<File> files,
+    String fileFieldName = 'photos',
+    Map<String, String>? fields,
+    bool includeHeaders = true, // Added for backward compatibility
+    T Function(dynamic json)? fromJsonT,
+    Duration timeout = const Duration(seconds: 60),
+  }) async {
+    final headers = includeHeaders
+        ? await _getHeaders()
+        : {'Accept': 'application/json'};
+    headers.remove('Content-Type'); // Let multipart set its own
+
+    AppLogger.apiRequest(
+      'MULTIPART ${method.name.toUpperCase()}',
+      url.path.toString(),
+      headers,
+    );
+
+    try {
+      final request = http.MultipartRequest(
+        method == HttpMethod.post ? 'POST' : 'PUT',
+        url,
+      );
+
+      request.headers.addAll(headers);
+      if (fields != null) request.fields.addAll(fields);
+
+      for (final file in files) {
+        request.files.add(
+          await http.MultipartFile.fromPath(fileFieldName, file.path),
         );
-      } else {
-        throw Exception("Unexpected error. Status code: $statusCode");
       }
+
+      final streamed = await request.send().timeout(timeout);
+      final response = await http.Response.fromStream(streamed);
+
+      AppLogger.apiResponse('MULTIPART', url.toString(), response.statusCode);
+      return _processResponse<T>(response, fromJsonT: fromJsonT);
+    } on SocketException {
+      throw const NetworkException();
+    } on TimeoutException {
+      throw const TimeoutException('Upload timed out');
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw FetchDataException("Failed to process response: ${e.toString()}");
+      throw NetworkException('Upload error: $e');
+    }
+  }
+
+  // ---- Response Processing ----
+
+  ApiResponse<T> _processResponse<T>(
+    http.Response response, {
+    T Function(dynamic json)? fromJsonT,
+  }) {
+    final Map<String, dynamic> body;
+
+    try {
+      body = jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
+      // Response is not valid JSON
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return ApiResponse<T>(status: true, message: 'Success', data: null);
+      }
+      _throwForStatusCode(response.statusCode, response.body);
+    }
+
+    // Check HTTP status code first
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final message = body['message']?.toString() ?? 'Request failed';
+      _throwForStatusCode(response.statusCode, message, body);
+    }
+
+    // HTTP is 200-299, now check API status field
+    final apiStatus = body['status'] == 'success' || body['success'] == true;
+    if (!apiStatus) {
+      final message = body['message']?.toString() ?? 'Operation failed';
+      throw ApiStatusFalseException(message);
+    } // modified to support typical standard or "status: success" convention
+
+    // Success — parse with wrapper
+    final res = ApiResponse<T>.fromJson(body, fromJsonT: fromJsonT);
+    return res;
+  }
+
+  Never _throwForStatusCode(
+    int statusCode,
+    dynamic message, [
+    Map<String, dynamic>? body,
+  ]) {
+    final msg = message is String ? message : 'Request failed';
+
+    switch (statusCode) {
+      case 400:
+        throw BadRequestException(msg, rawBody: body);
+      case 401:
+        throw UnauthorizedException(msg);
+      case 403:
+        throw ForbiddenException(msg);
+      case 404:
+        throw NotFoundException(msg);
+      case 409:
+        throw ConflictException(msg, rawBody: body);
+      case 422:
+        throw ValidationException(
+          msg,
+          errors: body?['errors'] as Map<String, dynamic>?,
+          rawBody: body,
+        );
+      case 429:
+        throw const RateLimitException();
+      default:
+        if (statusCode >= 500) {
+          throw ServerException(msg);
+        }
+        throw ServerException('Request failed with status $statusCode: $msg');
     }
   }
 }

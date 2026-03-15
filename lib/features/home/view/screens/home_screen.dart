@@ -20,6 +20,7 @@ import 'package:lahal_application/utils/components/widgets/empty_state_widget.da
 import 'package:lahal_application/utils/components/widgets/warning_dispaly.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
+import 'package:lahal_application/features/home/view/widgets/no_location_widget.dart';
 import 'package:lahal_application/features/home/view/widgets/filter_bottom_sheet.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
@@ -68,17 +69,21 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       onEnable: () async {
         await locationController.markLocationPopupAsShown();
-
         await locationController.enableLocation(context);
       },
       onManualSearch: () async {
         await locationController.markLocationPopupAsShown();
-
         if (mounted) {
           context.push(AppRoutes.changeLocationScreen);
         }
       },
-    );
+    ).then((_) {
+      // User dismissed the sheet without taking action — mark as denied
+      if (!locationController.hasLocation.value &&
+          !locationController.isLocationLoading.value) {
+        locationController.locationDenied.value = true;
+      }
+    });
   }
 
   @override
@@ -135,10 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // Content over background (Logo, Location)
                     SafeArea(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: tok.gap.lg,
-                          vertical: tok.gap.xs,
-                        ),
+                        padding: EdgeInsets.all(tok.gap.xs),
                         child: Column(
                           children: [
                             // Top Bar: Logo & Notification
@@ -228,92 +230,28 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // --- 2. Sticky Categories ---
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: CategoryHeaderDelegate(
-                height: height * 0.145, // Height for category row + padding
-                backgroundColor: cs.surface,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: tok.gap.xs,
-                    // vertical: tok.gap.,
-                  ),
-                  child: Obx(
-                    () => Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildCategoryItem(
-                          tok,
-                          tx,
-                          cs,
-                          'Near you',
-                          AppAssets.mapIcon,
-                          controller.selectedCategory.value == 'Near you',
-                          () => controller.onCategorySelected('Near you'),
-                        ),
-                        _buildCategoryItem(
-                          tok,
-                          tx,
-                          cs,
-                          'Top rated',
-                          AppAssets.thumbIcon,
-                          controller.selectedCategory.value == 'Top rated',
-                          () => controller.onCategorySelected('Top rated'),
-                        ),
-                        _buildCategoryItem(
-                          tok,
-                          tx,
-                          cs,
-                          'Open now',
-                          AppAssets.clockIcon,
-                          controller.selectedCategory.value == 'Open now',
-                          () => controller.onCategorySelected('Open now'),
-                        ),
-                        _buildCategoryItem(
-                          tok,
-                          tx,
-                          cs,
-                          'Certified',
-                          AppAssets.certifiedIcon,
-                          controller.selectedCategory.value == 'Certified',
-                          () => controller.onCategorySelected('Certified'),
-                        ),
-                        _buildCategoryItem(
-                          tok,
-                          tx,
-                          cs,
-                          'Top reviewe',
-                          AppAssets.reviewIcon,
-                          controller.selectedCategory.value == 'Top reviewed',
-                          () => controller.onCategorySelected('Top reviewed'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // --- 3. Best Restaurants Title ---
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: tok.gap.lg,
-                  vertical: tok.gap.md,
-                ),
-                child: AppText(
-                  'Best restaurants',
-                  size: AppTextSize.s18,
-                  weight: AppTextWeight.bold,
-                  color: tx.neutral,
-                ),
-              ),
-            ),
-
-            // --- 4. Restaurant List ---
+            // --- 2. Sticky Categories + Restaurant List (only when location is available) ---
             Obx(() {
-              if (controller.isLoading.value) {
+              // Show NoLocationWidget when: location is denied OR popup was shown but no location yet
+              final bool popupWasShown = !locationController
+                  .shouldShowLocationPopup();
+              final bool noLocation =
+                  !locationController.hasLocation.value &&
+                  !locationController.isLocationLoading.value &&
+                  (locationController.locationDenied.value || popupWasShown);
+
+              if (noLocation) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: NoLocationWidget(
+                    locationController: locationController,
+                  ),
+                );
+              }
+
+              // Show shimmer while initial location is loading
+              if (locationController.isLocationLoading.value &&
+                  !locationController.hasLocation.value) {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => Padding(
@@ -328,50 +266,162 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              if (controller.errorMessage.isNotEmpty &&
-                  controller.bestRestaurants.isEmpty) {
-                return SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: WarningDisplay(
-                    warningMessage: "Something went wrong",
-                    subWarningMessage: controller.errorMessage.value,
-                    onRetry: () => controller.getBestRestaurants(),
+              return SliverMainAxisGroup(
+                slivers: [
+                  // --- Sticky Categories ---
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: CategoryHeaderDelegate(
+                      height: height * 0.145,
+                      backgroundColor: cs.surface,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: tok.gap.xs,
+                          // vertical: tok.gap.,
+                        ),
+                        child: Obx(
+                          () => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildCategoryItem(
+                                tok,
+                                tx,
+                                cs,
+                                'Near you',
+                                AppAssets.mapIcon,
+                                controller.selectedCategory.value == 'Near you',
+                                () => controller.onCategorySelected('Near you'),
+                              ),
+                              _buildCategoryItem(
+                                tok,
+                                tx,
+                                cs,
+                                'Top rated',
+                                AppAssets.thumbIcon,
+                                controller.selectedCategory.value ==
+                                    'Top rated',
+                                () =>
+                                    controller.onCategorySelected('Top rated'),
+                              ),
+                              _buildCategoryItem(
+                                tok,
+                                tx,
+                                cs,
+                                'Open now',
+                                AppAssets.clockIcon,
+                                controller.selectedCategory.value == 'Open now',
+                                () => controller.onCategorySelected('Open now'),
+                              ),
+                              _buildCategoryItem(
+                                tok,
+                                tx,
+                                cs,
+                                'Certified',
+                                AppAssets.certifiedIcon,
+                                controller.selectedCategory.value ==
+                                    'Certified',
+                                () =>
+                                    controller.onCategorySelected('Certified'),
+                              ),
+                              _buildCategoryItem(
+                                tok,
+                                tx,
+                                cs,
+                                'Top reviewe',
+                                AppAssets.reviewIcon,
+                                controller.selectedCategory.value ==
+                                    'Top reviewed',
+                                () => controller.onCategorySelected(
+                                  'Top reviewed',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              }
 
-              if (controller.bestRestaurants.isEmpty) {
-                return const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: EmptyStateWidget(
-                    title: "No Restaurants Found",
-                    description:
-                        "We couldn't find any restaurants in your area.",
+                  // --- Best Restaurants Title ---
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: tok.gap.lg,
+                        vertical: tok.gap.md,
+                      ),
+                      child: AppText(
+                        'Best restaurants',
+                        size: AppTextSize.s18,
+                        weight: AppTextWeight.bold,
+                        color: tx.neutral,
+                      ),
+                    ),
                   ),
-                );
-              }
 
-              return SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final restaurant = controller.bestRestaurants[index];
-                    return RestaurantCard(
-                      restaurant: restaurant,
-                      onTap: () {
-                        context.push(AppRoutes.restaurantDetails);
-                      },
-                      onFavoriteToggle: () {
-                        controller.toggleFavorite(restaurant.id);
-                      },
+                  // --- Restaurant List ---
+                  Obx(() {
+                    if (controller.isLoading.value) {
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) => Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: tok.gap.lg,
+                              vertical: tok.gap.xs,
+                            ),
+                            child: const RestaurantCardShimmer(),
+                          ),
+                          childCount: 3,
+                        ),
+                      );
+                    }
+
+                    if (controller.errorMessage.isNotEmpty &&
+                        controller.bestRestaurants.isEmpty) {
+                      return SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: WarningDisplay(
+                          warningMessage: "Something went wrong",
+                          subWarningMessage: controller.errorMessage.value,
+                          onRetry: () => controller.getBestRestaurants(),
+                        ),
+                      );
+                    }
+
+                    if (controller.bestRestaurants.isEmpty) {
+                      return const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: EmptyStateWidget(
+                          title: "No Restaurants Found",
+                          description:
+                              "We couldn't find any restaurants in your area.",
+                        ),
+                      );
+                    }
+
+                    return SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final restaurant = controller.bestRestaurants[index];
+                          return RestaurantCard(
+                            restaurant: restaurant,
+                            onTap: () {
+                              context.push(AppRoutes.restaurantDetails);
+                            },
+                            onFavoriteToggle: () {
+                              controller.toggleFavorite(restaurant.id);
+                            },
+                          );
+                        }, childCount: controller.bestRestaurants.length),
+                      ),
                     );
-                  }, childCount: controller.bestRestaurants.length),
-                ),
+                  }),
+
+                  // --- Footer ---
+                  SliverToBoxAdapter(child: AppFooter()),
+                ],
               );
             }),
-
-            // --- 5. Footer ---
-            SliverToBoxAdapter(child: AppFooter()),
           ],
         ),
       ),
