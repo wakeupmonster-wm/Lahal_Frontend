@@ -8,6 +8,8 @@ class AppSvg {
   static const String downArrowIcon = "assets/svgs/down_arrow_icon.svg";
   static const String rewardIcon = "assets/svgs/reward_icon.svg";
   static const String notificaitonIcon = "assets/svgs/notificaiton_icon.svg";
+  static const String notificaitonNobackgroundIcon =
+      "assets/svgs/notificaiton_nobackground.svg";
   static const String logoIcon = "assets/svgs/Logo_icon.svg";
   static const String filterIcon = "assets/svgs/filter_icon.svg";
 

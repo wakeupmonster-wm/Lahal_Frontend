@@ -27,32 +27,32 @@ class FaqController extends GetxController {
   void fetchFaqs() async {
     isLoading.value = true;
     try {
-      // Dummy data as per image for now
+      // Dummy data relevant to the Lahal restaurant finder app
       final dummyFaqs = [
         FaqModel(
-          question: "What is Match At First Swipe?",
+          question: "What is Lalah?",
           answer:
-              "Match At First Swipe is a dating app designed to help you meet new people, make meaningful connections, and find potential matches based on your interests and preferences.",
+              "Lalah is a premium restaurant finder and food delivery app designed to help you discover the best dining spots around you, explore menus, and order food easily.",
         ),
         FaqModel(
-          question: "How do I create a Match At First Swipe account?",
+          question: "How do I search for a specific restaurant or cuisine?",
           answer:
-              "To create an account, download the app, open it, and follow the registration steps using your phone number or social login options.",
+              "Use the search bar on the Home Screen to type in the name of a restaurant or a dish (e.g., 'Pizza', 'Burger', 'Biryani'). You can also use the Filter option to narrow down by cuisine, rating, and distance.",
         ),
         FaqModel(
-          question: "Is Match At First Swipe free to use?",
+          question: "How does the filter feature work?",
           answer:
-              "Yes, the basic version of the app is free to use. We also offer premium features for a better experience.",
+              "Tap the filter icon next to the search bar. You can adjust the distance range, select a minimum star rating, and choose specific cuisines to find exactly what you're craving.",
         ),
         FaqModel(
-          question: "How does matching work on Match At First Swipe?",
+          question: "How can I save my favorite restaurants?",
           answer:
-              "Matching works by analyzing your profile and preferences to show you compatible users. Swipe right to like and left to pass.",
+              "Simply tap the heart icon on any restaurant card. It will be added to your Favorites list, which you can easily access from your profile section.",
         ),
         FaqModel(
-          question: "Can I change my location on Match At First Swipe?",
+          question: "Can I see where a restaurant is located?",
           answer:
-              "Yes, you can change your location in the profile settings section of the app.",
+              "Yes! You can view restaurants on the interactive Map Screen to see their exact location relative to you and plan your visit accordingly.",
         ),
       ];
 

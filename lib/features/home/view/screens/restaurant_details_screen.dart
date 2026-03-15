@@ -82,21 +82,21 @@ class RestaurantDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: tok.gap.xxs),
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.only(right: tok.gap.lg),
-                    padding: EdgeInsets.all(tok.gap.xs),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(
-                      AppSvg.shareIcon,
-                      width: 15,
-                      height: 15,
-                    ),
-                  ),
-                ),
+                // Center(
+                //   child: Container(
+                //     margin: EdgeInsets.only(right: tok.gap.lg),
+                //     padding: EdgeInsets.all(tok.gap.xs),
+                //     decoration: BoxDecoration(
+                //       color: Colors.black.withOpacity(0.3),
+                //       shape: BoxShape.circle,
+                //     ),
+                //     child: SvgPicture.asset(
+                //       AppSvg.shareIcon,
+                //       width: 15,
+                //       height: 15,
+                //     ),
+                //   ),
+                // ),
               ],
               flexibleSpace: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
@@ -107,13 +107,13 @@ class RestaurantDetailsScreen extends StatelessWidget {
 
                   return FlexibleSpaceBar(
                     centerTitle: true,
-                    titlePadding: EdgeInsets.only(
-                      left: 60,
-                      bottom: 16,
-                      right: 100,
-                    ),
+                    // titlePadding: EdgeInsets.only(
+                    //   left: 60,
+                    //   bottom: 16,
+                    //   right: 100,
+                    // ),
                     title: Container(
-                      width: 180,
+                      width: 190,
                       // color: Colors.red,
                       child: AnimatedOpacity(
                         duration: const Duration(milliseconds: 100),

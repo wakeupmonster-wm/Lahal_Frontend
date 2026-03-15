@@ -258,14 +258,29 @@ class _ActionButtons extends StatelessWidget {
         SizedBox(width: tok.gap.md),
         Expanded(
           flex: 2,
-          child: AppButton(
-            radiusOverride: tok.radiusMd,
-            label: AppStrings.reset,
-            onPressed: () {
-              controller.applyFilters();
-              context.pop();
-            },
-          ),
+          child: Obx(() {
+            final hasFiltersChanged =
+                controller.distanceRange.value != 200.0 ||
+                controller.rating.value != 0 ||
+                controller.selectedCuisines.isNotEmpty;
+
+            return AppButton(
+              radiusOverride: tok.radiusMd,
+              label: "Show results",
+              bgColorOverride: hasFiltersChanged
+                  ? null
+                  : cs.surfaceContainerHighest,
+              fgColorOverride: hasFiltersChanged
+                  ? null
+                  : cs.onSurface.withOpacity(0.5),
+              onPressed: hasFiltersChanged
+                  ? () {
+                      controller.applyFilters();
+                      context.pop();
+                    }
+                  : null, // Disables button when false
+            );
+          }),
         ),
       ],
     );
