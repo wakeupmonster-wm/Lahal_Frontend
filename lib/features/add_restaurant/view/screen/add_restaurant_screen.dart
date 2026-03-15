@@ -249,22 +249,7 @@ class AddRestaurantScreen extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //--------------this is an scroll down bottm bar code 
+// //--------------this is an scroll down bottm bar code
 // import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
 // import 'package:get/get.dart';

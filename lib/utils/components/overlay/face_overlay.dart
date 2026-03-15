@@ -52,7 +52,8 @@ class FaceOverlayPainterRect extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final overlay = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final overlay = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     final rrect = RRect.fromRectAndRadius(
       holeRect,
@@ -62,11 +63,7 @@ class FaceOverlayPainterRect extends CustomPainter {
     final hole = Path()..addRRect(rrect);
 
     // Remove the rectangular window from overlay
-    final combined = Path.combine(
-      PathOperation.difference,
-      overlay,
-      hole,
-    );
+    final combined = Path.combine(PathOperation.difference, overlay, hole);
 
     // Draw semi-transparent dark overlay
     canvas.drawPath(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/controller/location_controller.dart'
     as global;
 import '../model/location_model.dart';

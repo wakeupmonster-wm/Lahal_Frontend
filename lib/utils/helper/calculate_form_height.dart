@@ -15,7 +15,9 @@ class CalulateFormHeight {
     double extraHeight,
   ) async {
     await Future.delayed(const Duration(milliseconds: 100), () {
-      double height = keys.map(_getFieldHeight).reduce((value, element) => value + element);
+      double height = keys
+          .map(_getFieldHeight)
+          .reduce((value, element) => value + element);
       totalHeight.value = height + extraHeight;
     });
   }

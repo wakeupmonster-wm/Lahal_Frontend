@@ -39,9 +39,19 @@ class AppGoRouter {
       // ** Auth
       _createRoute('/', const SplashScreen()),
       _createRoute(AppRoutes.signInScreen, const SignInScreen()),
-      _createRoute(
-        AppRoutes.otpVerify,
-        const OtpVerificationScreen(mode: AuthEntryMode.phone, data: ""),
+      // OTP route — reads phone from extras set by AuthService
+      GoRoute(
+        path: AppRoutes.otpVerify,
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final mode = extra?['mode'] as AuthEntryMode? ?? AuthEntryMode.phone;
+          final phone = extra?['data'] as String? ?? '';
+          return _buildTransitionPage(
+            context,
+            state,
+            OtpVerificationScreen(mode: mode, data: phone),
+          );
+        },
       ),
       _createRoute(AppRoutes.bottomNavigationBar, BottomNavigationbar()),
 

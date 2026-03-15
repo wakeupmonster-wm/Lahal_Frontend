@@ -1,25 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+import 'package:smart_auth/smart_auth.dart';
 import 'package:lahal_application/features/authentication/repo/auth_repositories.dart';
-import 'package:lahal_application/utils/constants/enum.dart';
-import 'package:lahal_application/utils/routes/app_pages.dart';
-// import 'package:lahal_application/data/datasources/remote/api_call_handler.dart';
+import 'package:lahal_application/features/authentication/services/auth_api_service.dart';
+import 'package:lahal_application/features/authentication/services/auth_service.dart';
+import 'package:lahal_application/features/authentication/services/auth_state_service.dart';
+import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
+import 'package:lahal_application/utils/validators/validators.dart';
 
 class SignInController extends GetxController {
   //------------------------var / controllers----------------
   final phoneNumberController = TextEditingController();
   final countryCodeController = TextEditingController(
-    text: "+61",
+    text: "+91" /*text: "+61"*/,
   ); // Default AU
   final RxBool rememberMe = false.obs;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final _authRepo = AuthRepositories();
-  final RxBool isLoading = false.obs;
-  final RxString errorMessage = ''.obs;
+  late final AuthStateService stateService;
 
-  //------------------------helper functions----------------
+  final _smartAuth = SmartAuth.instance;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Inject MAFS standard dependencies manually if not handled by a feature orchestrator
+    if (!Get.isRegistered<AuthRepositories>()) Get.put(AuthRepositories());
+    if (!Get.isRegistered<AuthApiService>()) Get.put(AuthApiService());
+    if (!Get.isRegistered<AuthStateService>()) Get.put(AuthStateService());
+    if (!Get.isRegistered<AuthService>()) Get.put(AuthService());
+
+    stateService = Get.find<AuthStateService>();
+
+    // Android only: prompt user to pick their SIM phone number automatically
+    _requestPhoneHint();
+  }
+
+  void _requestPhoneHint() async {
+    try {
+      final res = await _smartAuth.requestPhoneNumberHint();
+      if (res.hasData) {
+        final fullPhone = res.requireData; // e.g. "+918349020828"
+        // Strip the country code prefix and fill both fields
+        if (fullPhone.startsWith('+91')) {
+          countryCodeController.text = '+91';
+          phoneNumberController.text = fullPhone.substring(3);
+        } else if (fullPhone.startsWith('+61')) {
+          countryCodeController.text = '+61';
+          phoneNumberController.text = fullPhone.substring(3);
+        } else {
+          // Generic fallback: put the whole thing in phone field
+          phoneNumberController.text = fullPhone;
+        }
+      }
+    } catch (e) {
+      // Phone hint is a nice-to-have — silently ignore errors
+      debugPrint('PhoneHint error: $e');
+    }
+  }
 
   @override
   void onClose() {
@@ -37,38 +76,25 @@ class SignInController extends GetxController {
   //-----------------------------Api call---------------------
   void onGetStarted(BuildContext context) {
     if (formKey.currentState!.validate()) {
-      // NOTE: API is not complete yet, so these codes are commented out as per instructions.
-      // Uncomment and adjust when API is ready.
-
-      /*
-      ApiCallHandler().apiHandler(
-        context: context,
-        apiCall: () => _authRepo.signIn({
-          'country_code': countryCodeController.text,
-          'phone_number': phoneNumberController.text,
-        }),
-        isLoading: isLoading,
-        errorMessage: errorMessage,
-        onSuccess: (result) {
-          // Handle success response, e.g., save tokens if any
-          context.push(
-            AppRoutes.otpVerify,
-            extra: {
-              'mode': AuthEntryMode.phone,
-              'data': "${countryCodeController.text} ${phoneNumberController.text}",
-            },
-          );
-        },
+      // Manual Validation
+      final phoneError = Validator.validatePhoneNumber(
+        phoneNumberController.text,
+        countryCode: countryCodeController.text,
       );
-      */
 
-      // Temporary navigation for testing UI flow
-      context.push(
-        AppRoutes.otpVerify,
-        extra: {
-          'mode': AuthEntryMode.phone,
-          'data': "${countryCodeController.text} ${phoneNumberController.text}",
+      if (phoneError != null) {
+        stateService.errorMessage.value = phoneError;
+        AppSnackBar.showToast(message: phoneError);
+        return;
+      }
+
+      final authService = Get.find<AuthService>();
+
+      authService.handleSendOtp(
+        payload: {
+          'phone': "${countryCodeController.text}${phoneNumberController.text}",
         },
+        context: context,
       );
     }
   }

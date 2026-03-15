@@ -80,6 +80,8 @@ dependencies:
   geocoding: ^4.0.0
   google_maps_flutter: ^2.14.2
   flutter_dotenv: ^5.1.0
+  pinput: ^6.0.2
+  smart_auth: ^3.2.0
 
 
 
@@ -110,7 +112,6 @@ flutter:
   uses-material-design: true
   # Assets configuration
   assets:
-    - assets/icons/
     - assets/images/
     - assets/svgs/
     - assets/animations/

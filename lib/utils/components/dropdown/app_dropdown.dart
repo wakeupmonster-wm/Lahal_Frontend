@@ -182,7 +182,6 @@
 //   }
 // }
 
-
-// // Mistakes in the code 
+// // Mistakes in the code
 // // 1. Sizes are not as per figma
-// // 2. Missed layout as per figma 
+// // 2. Missed layout as per figma
