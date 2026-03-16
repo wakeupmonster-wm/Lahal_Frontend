@@ -5,7 +5,8 @@ class FormatExceptionHandler implements Exception {
 
   /// Default constructor with a generic error message.
   const FormatExceptionHandler([
-    this.message = 'An unexpected format error occurred. Please check your input.',
+    this.message =
+        'An unexpected format error occurred. Please check your input.',
   ]);
 
   /// Create a format exception from a specific error message.

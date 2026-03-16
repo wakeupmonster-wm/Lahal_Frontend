@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
-import 'package:lahal_application/utils/routes/app_pages.dart';
-import 'package:lahal_application/features/authentication/repo/auth_repositories.dart';
+import 'package:pinput/pinput.dart';
+import 'package:smart_auth/smart_auth.dart';
+import 'package:lahal_application/features/authentication/services/auth_service.dart';
 
 class OtpController extends GetxController {
   static OtpController get instance => Get.find();
@@ -16,8 +15,13 @@ class OtpController extends GetxController {
   final RxInt remainingSeconds = 0.obs;
   Timer? _timer;
   final int length;
-  final _authRepo = AuthRepositories();
-  OtpController({this.length = 6});
+  final String phone; // Phone passed directly from sign-in screen
+
+  // Pinput controller — lets us programmatically fill from SMS
+  final TextEditingController pinputController = TextEditingController();
+  final smartAuth = SmartAuth.instance;
+
+  OtpController({this.length = 6, required this.phone});
 
   //------------------------helper functions----------------
   bool get isComplete => otp.value.length == length;
@@ -26,11 +30,32 @@ class OtpController extends GetxController {
   void onInit() {
     super.onInit();
     startTimer();
+    _listenForSmsOtp();
+  }
+
+  void _listenForSmsOtp() async {
+    try {
+      final res = await smartAuth.getSmsWithUserConsentApi();
+      if (res.hasData) {
+        final code = res.requireData.code;
+        if (code != null) {
+          // Fill Pinput controller — it will fire onCompleted automatically
+          pinputController.setText(code);
+          otp.value = code;
+        }
+      } else if (res.isCanceled) {
+        debugPrint('SmartAuth: user dismissed OTP consent dialog');
+      }
+    } catch (e) {
+      debugPrint('SmartAuth Error: $e');
+    }
   }
 
   @override
   void onClose() {
     _timer?.cancel();
+    pinputController.dispose();
+    smartAuth.removeUserConsentApiListener();
     super.onClose();
   }
 
@@ -41,12 +66,9 @@ class OtpController extends GetxController {
     }
   }
 
-  void updatePartialOtp(String partial) {
-    otp.value = partial;
-  }
-
   void reset() {
     otp.value = '';
+    pinputController.clear();
     isLoading.value = false;
   }
 
@@ -65,72 +87,33 @@ class OtpController extends GetxController {
   //-------------------------------------- verify otp Api call---------------------
 
   Future<void> verifyOtp(BuildContext context) async {
-    if (!isComplete || isLoading.value) return;
+    if (!isComplete) return;
 
-    /*
-    ApiCallHandler().apiHandler(
-      context: Get.context!, // Using Get.context for convenience, though passing context is better
-      apiCall: () => _authRepo.verifyOtp({
+    final authService = Get.find<AuthService>();
+
+    authService.handleVerifyOtp(
+      payload: {
+        'phone': phone, // Use constructor-injected phone — never empty
         'otp': otp.value,
-      }),
-      isLoading: isLoading,
-      errorMessage: errorMessage,
-      onSuccess: (result) {
-        AppSnackBar.showToast(message: 'OTP verified');
-        reset();
-        // TODO: navigate to next screen
       },
-      onError: (error, stack) {
-        AppSnackBar.showToast(message: 'Verification failed');
-      },
+      context: context,
     );
-    */
-
-    //testttttt
-    try {
-      isLoading.value = true;
-      await Future.delayed(const Duration(seconds: 2));
-      isLoading.value = false;
-      AppSnackBar.showToast(message: 'OTP verified (Mock)');
-      reset();
-      context.go(AppRoutes.bottomNavigationBar);
-      // Get.context?.go(AppRoutes.bottomNavigationBar);
-    } catch (e) {
-      isLoading.value = false;
-      AppSnackBar.showToast(message: 'Verification failed');
-    }
   }
 
   //----------------------------------------resend otp api call--------------------------------
 
-  Future<void> resendOtp() async {
+  Future<void> resendOtp(BuildContext context) async {
     if (remainingSeconds.value > 0 || isLoading.value) return;
 
-    /*
-    ApiCallHandler().apiHandler(
-      context: Get.context!,
-      apiCall: () => _authRepo.resendOtp({}),
-      isLoading: isLoading,
-      errorMessage: errorMessage,
-      onSuccess: (result) {
-        AppSnackBar.showToast(message: 'OTP resent');
-        otp.value = '';
-        startTimer();
-      },
-    );
-    */
+    final authService = Get.find<AuthService>();
 
-    //  TESTING
-    try {
-      isLoading.value = true;
-      await Future.delayed(const Duration(seconds: 1));
-      isLoading.value = false;
-      AppSnackBar.showToast(message: 'OTP resent (Mock)');
-      otp.value = '';
-      startTimer();
-    } catch (e) {
-      isLoading.value = false;
-      AppSnackBar.showToast(message: 'Resend failed');
-    }
+    authService.handleSendOtp(
+      payload: {'phone': phone},
+      context: context,
+    );
+
+    reset();
+    startTimer();
+    _listenForSmsOtp();
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lahal_application/utils/theme/app_palette.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
+import 'package:lahal_application/utils/theme/text/app_text.dart';
+import 'package:lahal_application/utils/theme/text/app_typography.dart';
 
 enum AppButtonVariant { primary, tonal, outline, ghost, danger }
 
@@ -131,11 +133,14 @@ class AppButton extends StatelessWidget {
             opacity: loading
                 ? 0.0
                 : 1.0, // hide text while loading (per your ask)
-            child: Text(
+            child: AppText(
               forceUppercase ? label.toUpperCase() : label,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: textStyle,
+              // style: textStyle,
+              color: cs.onPrimary,
+              size: AppTextSize.s16,
+              weight: AppTextWeight.bold,
             ),
           ),
         ),

@@ -1,5 +1,4 @@
-// -- Enum for HTTP Method --
-enum HttpMethod { get, post, put, delete }
+enum HttpMethod { get, post, put, patch, delete }
 
 enum SnackbarType { success, error, warning, info }
 
