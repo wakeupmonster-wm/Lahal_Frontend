@@ -1,14 +1,17 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lahal_application/features/profile/controller/profile_controller.dart';
 import 'package:lahal_application/features/profile/repo/profile_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
 
 class EditProfileController extends GetxController {
   final ProfileRepository _profileRepo = ProfileRepository();
+  final ProfileController _profileController = Get.find<ProfileController>();
   final ImagePicker _picker = ImagePicker();
 
   final nameController = TextEditingController();
@@ -43,14 +46,28 @@ class EditProfileController extends GetxController {
     super.onClose();
   }
 
-  void fetchUserProfile() async {
-    // For now using dummy data as per image
-    nameController.text = "ddjdl";
-    phoneController.text = "7965485686";
-    emailController.text = "";
-    dobController.text = "";
-    selectedGender.value = "";
-    genderController.text = "";
+  void fetchUserProfile() {
+    final user = _profileController.userProfile.value;
+    if (user != null) {
+      nameController.text = user.name;
+      phoneController.text = user.phoneNumber;
+      emailController.text = user.email;
+
+      // Handle DOB formatting for UI
+      String displayDob = user.dob;
+      if (user.dob.contains('-')) {
+        try {
+          DateTime date = DateFormat('yyyy-MM-dd').parse(user.dob);
+          displayDob = DateFormat('dd/MM/yyyy').format(date);
+        } catch (e) {
+          log("Error parsing dob from API: $e");
+        }
+      }
+      dobController.text = displayDob;
+
+      selectedGender.value = user.gender;
+      genderController.text = user.gender;
+    }
   }
 
   void togglePhoneEditable() {
@@ -91,6 +108,8 @@ class EditProfileController extends GetxController {
       );
       if (image != null) {
         pickedImage.value = File(image.path);
+        // Automatically start upload when image is picked
+        await updateProfileImage(pickedImage.value!);
       }
     } catch (e) {
       AppSnackBar.showToast(message: "Failed to pick image: $e");
@@ -101,40 +120,66 @@ class EditProfileController extends GetxController {
     pickedImage.value = null;
   }
 
-  /*
-  Future<void> updateProfileApi() async {
+  // Update profile image api
+  Future<void> updateProfileImage(File file) async {
     isLoading.value = true;
     try {
+      final response = await _profileRepo.updateProfileImage(file);
+      log("body for updateprofileimage😁: $response");
+      if (response.isSuccess) {
+        AppSnackBar.showToast(message: "Profile image updated successfully");
+        await _profileController.fetchUserProfile();
+      } else {
+        AppSnackBar.showToast(message: response.message);
+      }
+    } catch (e) {
+      AppSnackBar.showToast(message: "Image update failed: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Update profile details api
+  Future<void> updateProfileDetails(BuildContext context) async {
+    isLoading.value = true;
+    try {
+      // Convert dd/MM/yyyy to yyyy-MM-dd for API
+      String formattedDob = dobController.text;
+      try {
+        if (dobController.text.isNotEmpty) {
+          DateTime date = DateFormat('dd/MM/yyyy').parse(dobController.text);
+          formattedDob = DateFormat('yyyy-MM-dd').format(date);
+        }
+      } catch (e) {
+        log("Error parsing dob: $e");
+      }
+
       final body = {
-        'name': nameController.text,
-        'phone': phoneController.text,
-        'email': emailController.text,
-        'dob': dobController.text,
+        'userName': nameController.text,
+        // 'email': emailController.text, //need to add email
+        'dob': formattedDob,
         'gender': selectedGender.value,
       };
-      
-      // If there's an image, you might need to handle multipart upload
-      // final response = await _profileRepo.updateProfile(body);
-      
-      AppSnackBar.showToast(message: "Profile updated successfully");
+      log("body for updateprofiledetails😁: $body");
+
+      final response = await _profileRepo.updateProfile(body);
+      if (response.isSuccess) {
+        AppSnackBar.showToast(message: "Profile updated successfully");
+        await _profileController.fetchUserProfile();
+        if (context.mounted) {
+          context.pop();
+        }
+      } else {
+        AppSnackBar.showToast(message: response.message);
+      }
     } catch (e) {
       AppSnackBar.showToast(message: "Update failed: $e");
     } finally {
       isLoading.value = false;
     }
   }
-  */
 
   void saveProfile(BuildContext context) async {
-    // Logic to save profile
-    isLoading.value = true;
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      context.pop();
-      AppSnackBar.showToast(message: "Profile updated successfully");
-    } finally {
-      isLoading.value = false;
-    }
+    await updateProfileDetails(context);
   }
 }

@@ -144,10 +144,7 @@ class NetworkApiServices {
     );
 
     try {
-      final request = http.MultipartRequest(
-        method == HttpMethod.post ? 'POST' : 'PUT',
-        url,
-      );
+      final request = http.MultipartRequest(method.name.toUpperCase(), url);
 
       request.headers.addAll(headers);
       if (fields != null) request.fields.addAll(fields);

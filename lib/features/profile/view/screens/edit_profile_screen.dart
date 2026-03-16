@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lahal_application/features/profile/controller/edit_profile_controller.dart';
+import 'package:lahal_application/features/profile/controller/profile_controller.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
 import 'package:lahal_application/utils/components/image/app_circular_image.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
@@ -42,13 +43,22 @@ class EditProfileScreen extends StatelessWidget {
                   children: [
                     Obx(
                       () => AppCircularImage(
-                        image:
-                            'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                        image: controller.pickedImage.value != null
+                            ? ""
+                            : Get.find<ProfileController>()
+                                      .userProfile
+                                      .value
+                                      ?.profilePhoto ??
+                                  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                         isNetworkImage: controller.pickedImage.value == null,
                         imageFile: controller.pickedImage.value,
                         backgroundColor: cs.primaryContainer.withOpacity(0.2),
                       ),
                     ),
+                    if (controller.isLoading.value)
+                      const Positioned.fill(
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -204,6 +214,7 @@ class EditProfileScreen extends StatelessWidget {
               Obx(
                 () => AppButton(
                   radiusOverride: 12,
+                  loading: controller.isLoading.value,
                   onPressed: controller.isLoading.value
                       ? null
                       : () => controller.saveProfile(context),

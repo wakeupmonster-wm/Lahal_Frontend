@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:lahal_application/data/datasources/remote/network_api_service.dart';
 import 'package:lahal_application/data/models/api_response.dart';
 import 'package:lahal_application/utils/constants/app_urls.dart';
@@ -14,10 +15,21 @@ class ProfileRepository {
     );
   }
 
+  Future<ApiResponse> updateProfileImage(File file) async {
+    return await _apiService.multipartRequest(
+      url: AppUrls.updateProfileImage,
+      method: HttpMethod.patch,
+      files: [file],
+      fileFieldName: 'uploadImg',
+      includeHeaders: true,
+    );
+  }
+  //implement update profile api
+
   Future<ApiResponse> updateProfile(Map<String, dynamic> body) async {
     return await _apiService.sendRequest(
       url: AppUrls.updateProfile,
-      method: HttpMethod.post,
+      method: HttpMethod.patch,
       body: body,
       includeHeaders: true,
     );

@@ -27,133 +27,140 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: cs.surface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: tok.gap.lg,
-            vertical: tok.gap.lg,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: tok.gap.xs),
-              // --- Profile Header ---
-              AppCircularImage(
-                image:
-                    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                isNetworkImage: true,
-                backgroundColor: cs.primaryContainer.withOpacity(0.2),
-              ),
-              SizedBox(height: tok.gap.md),
-              AppText(
-                'User225',
-                size: AppTextSize.s24,
-                weight: AppTextWeight.bold,
-                color: tx.neutral,
-              ),
-              SizedBox(height: tok.gap.xs),
-              GestureDetector(
-                onTap: () => context.push(AppRoutes.editProfileScreen),
-                child: AppText(
-                  AppStrings.editProfile,
-                  size: AppTextSize.s14,
-                  weight: AppTextWeight.medium,
-                  color: AppColor.primaryColor,
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final user = controller.userProfile.value;
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: tok.gap.lg,
+              vertical: tok.gap.lg,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: tok.gap.xs),
+                // --- Profile Header ---
+                AppCircularImage(
+                  image:
+                      user?.profilePhoto ??
+                      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                  isNetworkImage: true,
+                  backgroundColor: cs.primaryContainer.withOpacity(0.2),
                 ),
-              ),
-              SizedBox(height: tok.gap.md),
+                SizedBox(height: tok.gap.md),
+                AppText(
+                  user?.name ?? 'User',
+                  size: AppTextSize.s24,
+                  weight: AppTextWeight.bold,
+                  color: tx.neutral,
+                ),
+                SizedBox(height: tok.gap.xs),
+                GestureDetector(
+                  onTap: () => context.push(AppRoutes.editProfileScreen),
+                  child: AppText(
+                    AppStrings.editProfile,
+                    size: AppTextSize.s14,
+                    weight: AppTextWeight.medium,
+                    color: AppColor.primaryColor,
+                  ),
+                ),
+                SizedBox(height: tok.gap.md),
 
-              // --- Account Section ---
-              _buildSectionTitle(tx, AppStrings.account, tok),
-              _buildSectionContainer(cs, [
-                _buildProfileItem(
-                  controller,
-                  context,
-                  tok,
-                  tx,
-                  cs,
-                  svgIcon: AppSvg.heartIcon,
-                  label: AppStrings.favorites,
-                ),
-                _buildProfileItem(
-                  controller,
-                  context,
-                  tok,
-                  tx,
-                  cs,
-                  svgIcon: AppSvg.locationIcon,
-                  label: AppStrings.changeLocation,
-                ),
-              ], tok),
-              SizedBox(height: tok.gap.xs),
+                // --- Account Section ---
+                _buildSectionTitle(tx, AppStrings.account, tok),
+                _buildSectionContainer(cs, [
+                  _buildProfileItem(
+                    controller,
+                    context,
+                    tok,
+                    tx,
+                    cs,
+                    svgIcon: AppSvg.heartIcon,
+                    label: AppStrings.favorites,
+                  ),
+                  _buildProfileItem(
+                    controller,
+                    context,
+                    tok,
+                    tx,
+                    cs,
+                    svgIcon: AppSvg.locationIcon,
+                    label: AppStrings.changeLocation,
+                  ),
+                ], tok),
+                SizedBox(height: tok.gap.xs),
 
-              // --- Settings Section ---
-              _buildSectionTitle(tx, AppStrings.settings, tok),
-              _buildSectionContainer(cs, [
-                _buildProfileItem(
-                  controller,
-                  context,
-                  tok,
-                  tx,
-                  cs,
-                  svgIcon: AppSvg.bluenotificationIcon,
-                  label: AppStrings.notificationPreferences,
-                ),
-                _buildProfileItem(
-                  controller,
-                  context,
-                  tok,
-                  tx,
-                  cs,
-                  svgIcon: AppSvg.accountIcon,
-                  label: AppStrings.accountSettings,
-                ),
-              ], tok),
-              SizedBox(height: tok.gap.xs),
+                // --- Settings Section ---
+                _buildSectionTitle(tx, AppStrings.settings, tok),
+                _buildSectionContainer(cs, [
+                  _buildProfileItem(
+                    controller,
+                    context,
+                    tok,
+                    tx,
+                    cs,
+                    svgIcon: AppSvg.bluenotificationIcon,
+                    label: AppStrings.notificationPreferences,
+                  ),
+                  _buildProfileItem(
+                    controller,
+                    context,
+                    tok,
+                    tx,
+                    cs,
+                    svgIcon: AppSvg.accountIcon,
+                    label: AppStrings.accountSettings,
+                  ),
+                ], tok),
+                SizedBox(height: tok.gap.xs),
 
-              // --- Legal Section ---
-              _buildSectionTitle(tx, AppStrings.legal, tok),
-              _buildSectionContainer(cs, [
-                _buildProfileItem(
-                  controller,
-                  context,
-                  tok,
-                  tx,
-                  cs,
-                  svgIcon: AppSvg.faqIcon,
-                  label: AppStrings.faqs,
-                ),
-                _buildProfileItem(
-                  controller,
-                  context,
-                  tok,
-                  tx,
-                  cs,
-                  svgIcon: AppSvg.aboutIcon,
-                  label: AppStrings.about,
-                ),
-              ], tok),
-              SizedBox(height: tok.gap.xs),
+                // --- Legal Section ---
+                _buildSectionTitle(tx, AppStrings.legal, tok),
+                _buildSectionContainer(cs, [
+                  _buildProfileItem(
+                    controller,
+                    context,
+                    tok,
+                    tx,
+                    cs,
+                    svgIcon: AppSvg.faqIcon,
+                    label: AppStrings.faqs,
+                  ),
+                  _buildProfileItem(
+                    controller,
+                    context,
+                    tok,
+                    tx,
+                    cs,
+                    svgIcon: AppSvg.aboutIcon,
+                    label: AppStrings.about,
+                  ),
+                ], tok),
+                SizedBox(height: tok.gap.xs),
 
-              // --- Logout Section ---
-              _buildSectionTitle(tx, AppStrings.logout, tok),
-              _buildSectionContainer(cs, [
-                _buildProfileItem(
-                  controller,
-                  context,
-                  tok,
-                  tx,
-                  cs,
-                  svgIcon: AppSvg.logoutIcon,
-                  label: AppStrings.logout,
-                  isLast: true,
-                ),
-              ], tok),
-              SizedBox(height: tok.gap.xxl),
-              SizedBox(height: tok.gap.xxl),
-              SizedBox(height: tok.gap.xxl),
-            ],
-          ),
-        ),
+                // --- Logout Section ---
+                _buildSectionTitle(tx, AppStrings.logout, tok),
+                _buildSectionContainer(cs, [
+                  _buildProfileItem(
+                    controller,
+                    context,
+                    tok,
+                    tx,
+                    cs,
+                    svgIcon: AppSvg.logoutIcon,
+                    label: AppStrings.logout,
+                    isLast: true,
+                  ),
+                ], tok),
+                SizedBox(height: tok.gap.xxl),
+                SizedBox(height: tok.gap.xxl),
+                SizedBox(height: tok.gap.xxl),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
