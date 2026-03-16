@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:lahal_application/features/authentication/controller/sign_in_controller.dart';
 import 'package:lahal_application/features/authentication/view/widget/social_login_widget.dart';
 import 'package:lahal_application/utils/components/textfields/app_text_field.dart';
+import 'package:lahal_application/utils/components/widgets/full_screen_stack_loading.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
+import 'package:lahal_application/utils/theme/app_button.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
@@ -25,8 +27,10 @@ class SignInScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: cs.surface,
-      body: CustomScrollView(
-        slivers: [
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
           SliverToBoxAdapter(
             child: SizedBox(
               height: height * 0.43,
@@ -158,27 +162,16 @@ class SignInScreen extends StatelessWidget {
 
                         SizedBox(height: tok.gap.md),
 
-                        SizedBox(
-                          width: double.infinity,
-                          height: height * 0.05150,
-                          child: ElevatedButton(
-                            onPressed: () => controller.onGetStarted(context),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: cs.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  tok.radiusMd,
-                                ),
-                              ),
-                            ),
-                            child: AppText(
-                              color: cs.onPrimary,
-                              AppStrings.getStarted,
-                              size: AppTextSize.s16,
-                              weight: AppTextWeight.bold,
-                            ),
-                          ),
-                        ),
+                        Obx(() => AppButton(
+                          label: AppStrings.getStarted,
+                          radiusOverride: tok.radiusMd,
+                          heightOverride: height * 0.05150,
+                          loading: controller.stateService.isAuthenticating.value,
+                          onPressed: () {
+                            print("-----get started-----");
+                            controller.onGetStarted(context);
+                          },
+                        )),
                         SizedBox(height: tok.gap.md),
 
                         const SocialLoginRow(),
@@ -204,12 +197,14 @@ class SignInScreen extends StatelessWidget {
                                     size: AppTextSize.s10,
                                     weight: AppTextWeight.medium,
                                     color: tx.subtle,
+                                    textDecoration: TextDecoration.underline,
                                   ),
                                   AppText(
                                     "${AppStrings.privacyPolicy}  ",
                                     size: AppTextSize.s10,
                                     weight: AppTextWeight.medium,
                                     color: tx.subtle,
+                                    textDecoration: TextDecoration.underline,
                                   ),
                                   AppText(
                                     AppStrings.contentPolicy,
@@ -230,6 +225,11 @@ class SignInScreen extends StatelessWidget {
               ),
             ),
           ),
+        ],
+      ),
+      Obx(() => StackLaoding(
+            isLoading: controller.stateService.isAuthenticating.value,
+          )),
         ],
       ),
     );

@@ -1,56 +1,57 @@
 import 'package:lahal_application/data/datasources/remote/network_api_service.dart';
+import 'package:lahal_application/data/models/api_response.dart';
 import 'package:lahal_application/utils/constants/app_urls.dart';
 import 'package:lahal_application/utils/constants/enum.dart';
 
 class ProfileRepository {
   final NetworkApiServices _apiService = NetworkApiServices();
 
-  Future<Map<String, dynamic>> getProfile() async {
-    return await _apiService.sendHttpRequest(
+  Future<ApiResponse> getProfile() async {
+    return await _apiService.sendRequest(
       url: AppUrls.getProfile,
       method: HttpMethod.get,
       includeHeaders: true,
     );
   }
 
-  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> body) async {
-    return await _apiService.sendHttpRequest(
+  Future<ApiResponse> updateProfile(Map<String, dynamic> body) async {
+    return await _apiService.sendRequest(
       url: AppUrls.updateProfile,
       method: HttpMethod.post,
-      body: body.cast<String, String>(),
+      body: body,
       includeHeaders: true,
     );
   }
 
-  Future<Map<String, dynamic>> getFaqs() async {
-    return await _apiService.sendHttpRequest(
+  Future<ApiResponse> getFaqs() async {
+    return await _apiService.sendRequest(
       url: AppUrls.faqs,
       method: HttpMethod.get,
       includeHeaders: true,
     );
   }
 
-  Future<Map<String, dynamic>> getNotificationPreferences() async {
-    return await _apiService.sendHttpRequest(
+  Future<ApiResponse> getNotificationPreferences() async {
+    return await _apiService.sendRequest(
       url: AppUrls.notificationPreferences,
       method: HttpMethod.get,
       includeHeaders: true,
     );
   }
 
-  Future<Map<String, dynamic>> updateNotificationPreferences(
+  Future<ApiResponse> updateNotificationPreferences(
     Map<String, dynamic> body,
   ) async {
-    return await _apiService.sendHttpRequest(
+    return await _apiService.sendRequest(
       url: AppUrls.notificationPreferences,
       method: HttpMethod.post,
-      body: body.cast<String, String>(),
+      body: body,
       includeHeaders: true,
     );
   }
 
-  Future<Map<String, dynamic>> logout() async {
-    return await _apiService.sendHttpRequest(
+  Future<ApiResponse> logout() async {
+    return await _apiService.sendRequest(
       url: AppUrls.logout,
       method: HttpMethod.post,
       includeHeaders: true,

@@ -41,6 +41,30 @@ class LocationService {
     }
   }
 
+  /// Returns structured placemark details for API usage
+  static Future<Map<String, String>> getAddressDetailsFromLatLng(
+    double latitude,
+    double longitude,
+  ) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks.first;
+        return {
+          'address': place.subLocality ?? place.thoroughfare ?? place.name ?? '',
+          'city': place.locality ?? '',
+          'state': place.administrativeArea ?? '',
+          'country': place.isoCountryCode ?? '',
+        };
+      }
+    } catch (_) {}
+    return {'address': '', 'city': '', 'state': '', 'country': ''};
+  }
+
   static Future<void> openAppSettings() async {
     await ph.openAppSettings();
   }

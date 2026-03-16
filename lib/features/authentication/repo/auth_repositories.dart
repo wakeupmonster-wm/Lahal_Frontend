@@ -1,36 +1,34 @@
 import 'package:lahal_application/data/datasources/remote/network_api_service.dart';
+import 'package:lahal_application/data/models/api_response.dart';
 import 'package:lahal_application/utils/constants/app_urls.dart';
 import 'package:lahal_application/utils/constants/enum.dart';
 
 class AuthRepositories {
-  final NetworkApiServices _apiService = NetworkApiServices();
+  final NetworkApiServices _network = NetworkApiServices();
 
-  //---------------------------------login repo--------------------------------
-  Future<Map<String, dynamic>> signIn(Map<String, dynamic> body) async {
-    return await _apiService.sendHttpRequest(
-      url: AppUrls.signIn,
+  Future<ApiResponse> sendOtp(Map<String, dynamic> body) async {
+    return await _network.sendRequest(
+      url: AppUrls.testSendOtp, // Using test for now as requested
       method: HttpMethod.post,
-      body: body.cast<String, String>(),
+      body: body,
       includeHeaders: false,
     );
   }
 
-  //---------------------------------verify otp repo---------------------------
-  Future<Map<String, dynamic>> verifyOtp(Map<String, dynamic> body) async {
-    return await _apiService.sendHttpRequest(
+  Future<ApiResponse> verifyOtp(Map<String, dynamic> body) async {
+    return await _network.sendRequest(
       url: AppUrls.verifyOtp,
       method: HttpMethod.post,
-      body: body.cast<String, String>(),
+      body: body,
       includeHeaders: false,
     );
   }
 
-  //---------------------------------resend otp repo---------------------------
-  Future<Map<String, dynamic>> resendOtp(Map<String, dynamic> body) async {
-    return await _apiService.sendHttpRequest(
+  Future<ApiResponse> resendOtp(Map<String, dynamic> body) async {
+    return await _network.sendRequest(
       url: AppUrls.resendOtp,
       method: HttpMethod.post,
-      body: body.cast<String, String>(),
+      body: body,
       includeHeaders: false,
     );
   }

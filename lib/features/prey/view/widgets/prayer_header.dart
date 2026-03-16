@@ -97,30 +97,7 @@ class PrayerHeader extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//----old code 
-
+//----old code
 
 // import 'package:flutter/material.dart';
 // import 'package:flutter_svg/svg.dart';

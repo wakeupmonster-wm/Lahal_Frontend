@@ -25,8 +25,10 @@ class ApiResponseHandler {
       return false;
     }
 
-    String status = response['status'] ?? 'error'; // Default to 'error' if status is null
-    String message = response['message'] ?? 'Something went wrong.'; // Default message
+    String status =
+        response['status'] ?? 'error'; // Default to 'error' if status is null
+    String message =
+        response['message'] ?? 'Something went wrong.'; // Default message
 
     if (status == 'success') {
       if (context.mounted) {

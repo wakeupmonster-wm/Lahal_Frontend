@@ -68,7 +68,8 @@ class TDeviceUtils {
   }
 
   static Future<bool> isPhysicalDevice() async {
-    return defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS;
+    return defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
   }
 
   static void vibrate(Duration duration) {
