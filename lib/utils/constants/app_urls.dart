@@ -30,11 +30,17 @@ class AppUrls {
   static Uri updateProfile = setUrls(
     "/api/v1/user/update-profile",
   ); //implemented
-  static Uri getProfile = setUrls("/api/get-profile");
+  static Uri getProfile = setUrls("/api/v1/user"); //implemented
   static Uri faqs = setUrls("/api/faqs");
   static Uri notificationPreferences = setUrls("/api/notification-preferences");
   static Uri favorites = setUrls("/api/favorites");
   static Uri logout = setUrls("/api/logout");
+
+  //ashu add resturent
+  static Uri submitRestaurantRequest = setUrls(
+    "/api/v1/restaurants/addrestaurant-by-req",
+  ); //implment
+  static Uri uploadFoodImages = setUrls("/api/v1/restaurants/upload-foodImg");
 
   //ashu profile
   static Uri updateProfileImage = setUrls("/api/v1/user/upload-profile-img");

@@ -13,6 +13,7 @@ class EditProfileController extends GetxController {
   final ProfileRepository _profileRepo = ProfileRepository();
   final ProfileController _profileController = Get.find<ProfileController>();
   final ImagePicker _picker = ImagePicker();
+  final formKey = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
@@ -21,19 +22,26 @@ class EditProfileController extends GetxController {
   final genderController = TextEditingController();
 
   final RxBool isLoading = false.obs;
-  // final RxBool isPhoneEditable = false.obs;
-  final RxBool isEmailEditable = false.obs;
+  final RxBool isEmailEditable = true.obs;
   final RxString selectedGender = ''.obs;
   final RxBool isGenderExpanded = false.obs;
   final Rx<File?> pickedImage = Rx<File?>(null);
 
-  final genderOptions = ['Male', 'Female', 'Other'];
+  final RxBool hasChanges = false.obs;
+  final Map<String, dynamic> _initialData = {};
+
+  final genderOptions = ['male', 'female', 'other'];
 
   @override
   void onInit() {
     super.onInit();
-    // Initialize with dummy data or fetch from API
     fetchUserProfile();
+
+    // Add listeners to track changes
+    nameController.addListener(_checkChanges);
+    emailController.addListener(_checkChanges);
+    dobController.addListener(_checkChanges);
+    genderController.addListener(_checkChanges);
   }
 
   @override
@@ -49,33 +57,47 @@ class EditProfileController extends GetxController {
   void fetchUserProfile() {
     final user = _profileController.userProfile.value;
     if (user != null) {
-      nameController.text = user.name;
-      phoneController.text = user.phoneNumber;
-      emailController.text = user.email;
+      nameController.text = user.userName;
+      phoneController.text = user.phone;
+      emailController.text = user.email ?? '';
 
-      // Handle DOB formatting for UI
-      String displayDob = user.dob;
-      if (user.dob.contains('-')) {
+      // Handle DOB formatting for UI (API: yyyy-MM-dd, UI: dd/MM/yyyy)
+      String displayDob = '';
+      if (user.dob.isNotEmpty) {
         try {
-          DateTime date = DateFormat('yyyy-MM-dd').parse(user.dob);
+          DateTime date = DateTime.parse(user.dob);
           displayDob = DateFormat('dd/MM/yyyy').format(date);
         } catch (e) {
           log("Error parsing dob from API: $e");
+          displayDob = user.dob;
         }
       }
       dobController.text = displayDob;
 
-      selectedGender.value = user.gender;
+      selectedGender.value = user.gender.toLowerCase();
       genderController.text = user.gender;
+
+      // Store initial data for change comparison
+      _initialData['userName'] = nameController.text;
+      _initialData['email'] = emailController.text;
+      _initialData['dob'] = dobController.text;
+      _initialData['gender'] = selectedGender.value;
+
+      hasChanges.value = false;
     }
   }
 
-  void togglePhoneEditable() {
-    // isPhoneEditable.value = !isPhoneEditable.value;
-  }
+  void _checkChanges() {
+    bool changed =
+        nameController.text != _initialData['userName'] ||
+        emailController.text != _initialData['email'] ||
+        dobController.text != _initialData['dob'] ||
+        selectedGender.value != _initialData['gender'] ||
+        pickedImage.value != null;
 
-  void toggleEmailEditable() {
-    isEmailEditable.value = !isEmailEditable.value;
+    if (hasChanges.value != changed) {
+      hasChanges.value = changed;
+    }
   }
 
   void toggleGenderExpanded() {
@@ -83,20 +105,31 @@ class EditProfileController extends GetxController {
   }
 
   void selectGender(String gender) {
-    selectedGender.value = gender;
+    selectedGender.value = gender.toLowerCase();
     genderController.text = gender;
     isGenderExpanded.value = false;
+    _checkChanges();
   }
 
   Future<void> pickDate(BuildContext context) async {
+    DateTime initialDate = DateTime.now().subtract(
+      const Duration(days: 365 * 18),
+    );
+    try {
+      if (dobController.text.isNotEmpty) {
+        initialDate = DateFormat('dd/MM/yyyy').parse(dobController.text);
+      }
+    } catch (_) {}
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
     if (picked != null) {
       dobController.text = DateFormat('dd/MM/yyyy').format(picked);
+      _checkChanges();
     }
   }
 
@@ -108,8 +141,7 @@ class EditProfileController extends GetxController {
       );
       if (image != null) {
         pickedImage.value = File(image.path);
-        // Automatically start upload when image is picked
-        await updateProfileImage(pickedImage.value!);
+        _checkChanges();
       }
     } catch (e) {
       AppSnackBar.showToast(message: "Failed to pick image: $e");
@@ -118,49 +150,58 @@ class EditProfileController extends GetxController {
 
   void removeImage() {
     pickedImage.value = null;
+    _checkChanges();
   }
 
-  // Update profile image api
   Future<void> updateProfileImage(File file) async {
     isLoading.value = true;
     try {
       final response = await _profileRepo.updateProfileImage(file);
-      log("body for updateprofileimage😁: $response");
       if (response.isSuccess) {
-        AppSnackBar.showToast(message: "Profile image updated successfully");
-        await _profileController.fetchUserProfile();
+        return; // Success handled by updateProfileDetails if called together, or independently
       } else {
         AppSnackBar.showToast(message: response.message);
+        throw Exception(response.message);
       }
     } catch (e) {
-      AppSnackBar.showToast(message: "Image update failed: $e");
+      rethrow;
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Update profile details api
   Future<void> updateProfileDetails(BuildContext context) async {
+    if (!hasChanges.value) {
+      AppSnackBar.showToast(message: "You haven't changed anything.");
+      return;
+    }
+
+    if (!formKey.currentState!.validate()) return;
+
     isLoading.value = true;
     try {
-      // Convert dd/MM/yyyy to yyyy-MM-dd for API
+      // 1. If image changed, upload it first
+      if (pickedImage.value != null) {
+        await _profileRepo.updateProfileImage(pickedImage.value!);
+      }
+
+      // 2. Prepare and send profile details
       String formattedDob = dobController.text;
-      try {
-        if (dobController.text.isNotEmpty) {
+      if (dobController.text.isNotEmpty) {
+        try {
           DateTime date = DateFormat('dd/MM/yyyy').parse(dobController.text);
           formattedDob = DateFormat('yyyy-MM-dd').format(date);
+        } catch (e) {
+          log("Error formatting dob for API: $e");
         }
-      } catch (e) {
-        log("Error parsing dob: $e");
       }
 
       final body = {
         'userName': nameController.text,
-        // 'email': emailController.text, //need to add email
+        'email': emailController.text,
         'dob': formattedDob,
         'gender': selectedGender.value,
       };
-      log("body for updateprofiledetails😁: $body");
 
       final response = await _profileRepo.updateProfile(body);
       if (response.isSuccess) {

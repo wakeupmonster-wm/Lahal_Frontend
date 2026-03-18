@@ -15,7 +15,7 @@ import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
-import 'package:lahal_application/utils/constants/app_colors.dart';
+import 'package:lahal_application/utils/components/shimmer/app_shimmer_effect.dart';
 import 'package:lahal_application/features/profile/view/widgets/image_picker_bottom_sheet.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -30,199 +30,215 @@ class EditProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: cs.surface,
-      appBar: InternalAppBar(title: "", centerTitle: false),
+      appBar: InternalAppBar(title: "Edit Profile", centerTitle: false),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile Photo Placeholder
-              Center(
-                child: Stack(
-                  children: [
-                    Obx(
-                      () => AppCircularImage(
-                        image: controller.pickedImage.value != null
-                            ? ""
-                            : Get.find<ProfileController>()
-                                      .userProfile
-                                      .value
-                                      ?.profilePhoto ??
-                                  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                        isNetworkImage: controller.pickedImage.value == null,
-                        imageFile: controller.pickedImage.value,
-                        backgroundColor: cs.primaryContainer.withOpacity(0.2),
-                      ),
-                    ),
-                    if (controller.isLoading.value)
-                      const Positioned.fill(
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: InkWell(
-                        onTap: () => ImagePickerBottomSheet.show(
-                          context,
-                          onGalleryTap: () {
-                            context.pop();
-                            controller.pickImage(ImageSource.gallery);
-                          },
-                          onCameraTap: () {
-                            context.pop();
-                            controller.pickImage(ImageSource.camera);
-                          },
-                          onRemoveTap: () {
-                            context.pop();
-                            controller.removeImage();
-                          },
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Photo Placeholder
+                Center(
+                  child: Stack(
+                    children: [
+                      Obx(
+                        () => AppCircularImage(
+                          image: controller.pickedImage.value != null
+                              ? ""
+                              : Get.find<ProfileController>()
+                                        .userProfile
+                                        .value
+                                        ?.profilePhoto ??
+                                    '',
+                          isNetworkImage: controller.pickedImage.value == null,
+                          imageFile: controller.pickedImage.value,
+                          backgroundColor: cs.primaryContainer.withOpacity(0.2),
                         ),
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      Obx(
+                        () => controller.isLoading.value
+                            ? Positioned.fill(
+                                child: AppShimerEffect(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.24,
+                                  height:
+                                      MediaQuery.sizeOf(context).width * 0.24,
+                                  radius: 100,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: InkWell(
+                          onTap: () => ImagePickerBottomSheet.show(
+                            context,
+                            onGalleryTap: () {
+                              context.pop();
+                              controller.pickImage(ImageSource.gallery);
+                            },
+                            onCameraTap: () {
+                              context.pop();
+                              controller.pickImage(ImageSource.camera);
+                            },
+                            onRemoveTap: () {
+                              context.pop();
+                              controller.removeImage();
+                            },
                           ),
-                          child: SvgPicture.asset(AppSvg.pencilIcon),
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: SvgPicture.asset(AppSvg.pencilIcon),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: tok.gap.xl),
+                SizedBox(height: tok.gap.xl),
 
-              // Name Field
-              _buildLabel(AppStrings.name, tx, tok),
-              MyTextFeild(
-                controller: controller.nameController,
-                hintText: AppStrings.name,
-              ),
-              SizedBox(height: tok.gap.md),
+                // Name Field
+                _buildLabel(AppStrings.name, tx, tok),
+                NewMyTextFeild(
+                  controller: controller.nameController,
+                  hintText: AppStrings.name,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Name is required'
+                      : null,
+                ),
+                SizedBox(height: tok.gap.md),
 
-              // Phone Number Field
-              _buildLabel(AppStrings.phoneNumberLabelSmall, tx, tok),
-              MyTextFeild(
-                controller: controller.phoneController,
-                hintText: AppStrings.phoneNumberLabelSmall,
-                keyboardType: TextInputType.phone,
-              ),
-              SizedBox(height: tok.gap.md),
+                // Phone Number Field (Disabled)
+                _buildLabel(AppStrings.phoneNumberLabelSmall, tx, tok),
+                NewMyTextFeild(
+                  controller: controller.phoneController,
+                  hintText: AppStrings.phoneNumberLabelSmall,
+                  keyboardType: TextInputType.phone,
+                  typingEnabled: false, // Number is not editable
+                ),
+                SizedBox(height: tok.gap.md),
 
-              // Email Field
-              _buildLabel(AppStrings.emailAddress, tx, tok),
-              Obx(
-                () => MyTextFeild(
+                // Email Field
+                _buildLabel(AppStrings.emailAddress, tx, tok),
+                NewMyTextFeild(
                   controller: controller.emailController,
                   hintText: AppStrings.emailAddress,
-                  typingEnabled: controller.isEmailEditable.value,
-                  suffix: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    // child: TextButton(
-                    //   onPressed: controller.toggleEmailEditable,
-                    //   child: AppText(
-                    //     AppStrings.change,
-                    //     size: AppTextSize.s12,
-                    //     weight: AppTextWeight.bold,
-                    //     color: AppColor.primaryColor,
-                    //   ),
-                    // ),
-                  ),
+                  typingEnabled: true,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty)
+                      return 'Email is required';
+                    if (!GetUtils.isEmail(value)) return 'Enter a valid email';
+                    return null;
+                  },
                 ),
-              ),
+                SizedBox(height: tok.gap.md),
 
-              SizedBox(height: tok.gap.md),
-
-              // DOB Field
-              _buildLabel(AppStrings.dateOfBirth, tx, tok),
-              GestureDetector(
-                onTap: () => controller.pickDate(context),
-                child: AbsorbPointer(
-                  child: MyTextFeild(
-                    controller: controller.dobController,
-                    hintText: AppStrings.dobHint,
-                  ),
-                ),
-              ),
-              SizedBox(height: tok.gap.md),
-
-              // Gender Field
-              _buildLabel(AppStrings.gender, tx, tok),
-              Obx(
-                () => Column(
-                  children: [
-                    GestureDetector(
-                      onTap: controller.toggleGenderExpanded,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: tok.gap.xs,
-                          vertical: tok.gap.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outline,
-                            width: 1.4,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            AppText(
-                              controller.selectedGender.value.isEmpty
-                                  ? AppStrings.select
-                                  : controller.selectedGender.value,
-                              size: AppTextSize.s14,
-                              color: controller.selectedGender.value.isEmpty
-                                  ? tx.primary.withOpacity(0.5)
-                                  : tx.primary,
-                            ),
-                            Icon(
-                              controller.isGenderExpanded.value
-                                  ? Icons.keyboard_arrow_up
-                                  : Icons.keyboard_arrow_down,
-                              color: Colors.grey,
-                            ),
-                          ],
-                        ),
-                      ),
+                // DOB Field
+                _buildLabel(AppStrings.dateOfBirth, tx, tok),
+                GestureDetector(
+                  onTap: () => controller.pickDate(context),
+                  child: AbsorbPointer(
+                    child: NewMyTextFeild(
+                      controller: controller.dobController,
+                      hintText: AppStrings.dobHint,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'DOB is required'
+                          : null,
                     ),
-                    if (controller.isGenderExpanded.value)
-                      Container(
-                        margin: const EdgeInsets.only(top: 4),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: controller.genderOptions.map((gender) {
-                            return ListTile(
-                              title: AppText(gender, size: AppTextSize.s14),
-                              onTap: () => controller.selectGender(gender),
-                            );
-                          }).toList(),
+                  ),
+                ),
+                SizedBox(height: tok.gap.md),
+
+                // Gender Field
+                _buildLabel(AppStrings.gender, tx, tok),
+                Obx(
+                  () => Column(
+                    children: [
+                      GestureDetector(
+                        onTap: controller.toggleGenderExpanded,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: tok.gap.xs,
+                            vertical: tok.gap.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outline,
+                              width: 1.4,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AppText(
+                                controller.selectedGender.value.isEmpty
+                                    ? AppStrings.select
+                                    : controller
+                                          .selectedGender
+                                          .value
+                                          .capitalizeFirst!,
+                                size: AppTextSize.s14,
+                                color: controller.selectedGender.value.isEmpty
+                                    ? tx.primary.withOpacity(0.5)
+                                    : tx.primary,
+                              ),
+                              Icon(
+                                controller.isGenderExpanded.value
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.keyboard_arrow_down,
+                                color: Colors.grey,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                  ],
+                      if (controller.isGenderExpanded.value)
+                        Container(
+                          margin: const EdgeInsets.only(top: 4),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: controller.genderOptions.map((gender) {
+                              return ListTile(
+                                title: AppText(
+                                  gender.capitalizeFirst!,
+                                  size: AppTextSize.s14,
+                                ),
+                                onTap: () => controller.selectGender(gender),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: tok.gap.xxl),
+                SizedBox(height: tok.gap.xxl),
 
-              // Save Button
-              Obx(
-                () => AppButton(
-                  radiusOverride: 12,
-                  loading: controller.isLoading.value,
-                  onPressed: controller.isLoading.value
-                      ? null
-                      : () => controller.saveProfile(context),
-                  label: AppStrings.save,
+                // Save Button
+                Obx(
+                  () => AppButton(
+                    radiusOverride: 12,
+                    loading: controller.isLoading.value,
+                    onPressed: controller.isLoading.value
+                        ? null
+                        : () => controller.saveProfile(context),
+                    label: AppStrings.save,
+                  ),
                 ),
-              ),
-              SizedBox(height: tok.gap.xl),
-            ],
+                SizedBox(height: tok.gap.xl),
+              ],
+            ),
           ),
         ),
       ),

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart' as p;
 import 'package:lahal_application/data/datasources/local/user_prefrence.dart';
 import 'package:lahal_application/data/exceptions/app_exception.dart';
 import 'package:lahal_application/data/models/api_response.dart';
@@ -150,8 +152,23 @@ class NetworkApiServices {
       if (fields != null) request.fields.addAll(fields);
 
       for (final file in files) {
+        final extension = p.extension(file.path).toLowerCase();
+        MediaType? contentType;
+
+        if (extension == '.jpg' || extension == '.jpeg') {
+          contentType = MediaType('image', 'jpeg');
+        } else if (extension == '.png') {
+          contentType = MediaType('image', 'png');
+        } else if (extension == '.webp') {
+          contentType = MediaType('image', 'webp');
+        }
+
         request.files.add(
-          await http.MultipartFile.fromPath(fileFieldName, file.path),
+          await http.MultipartFile.fromPath(
+            fileFieldName,
+            file.path,
+            contentType: contentType,
+          ),
         );
       }
 

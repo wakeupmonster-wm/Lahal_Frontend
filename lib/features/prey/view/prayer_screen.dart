@@ -31,7 +31,8 @@ class PrayerScreen extends StatelessWidget {
       body: Obx(() {
         final loc = controller.locationController;
         final bool popupWasShown = !loc.shouldShowLocationPopup();
-        final bool noLocation = !loc.hasLocation.value &&
+        final bool noLocation =
+            !loc.hasLocation.value &&
             !loc.isLocationLoading.value &&
             (loc.locationDenied.value || popupWasShown);
 
@@ -48,6 +49,7 @@ class PrayerScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const PrayerHeader(),
+              SizedBox(height: tok.gap.sm),
 
               const UpcomingPrayerCard(),
               // 3. Prayer Times Title

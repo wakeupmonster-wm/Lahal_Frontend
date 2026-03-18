@@ -25,12 +25,12 @@ class ProfileController extends GetxController {
     isLoading.value = true;
     try {
       final response = await _profileRepo.getProfile();
-      log("body for updateprofiledetails: $response");
+      log("body for fetchUserProfile😁: $response");
       if (response.isSuccess && response.data != null) {
         userProfile.value = UserProfile.fromJson(response.data);
       }
     } catch (e) {
-      // AppSnackBar.showToast(message: "Failed to fetch profile: $e");
+      log("Error fetching profile: $e");
     } finally {
       isLoading.value = false;
     }

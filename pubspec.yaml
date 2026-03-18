@@ -69,6 +69,8 @@ dependencies:
   intl:        # Internationalization
   url_launcher: ^6.2.5   # Launch URLs
   connectivity_plus: ^7.0.0  # Network connectivity
+  path: ^1.9.0           # Path manipulation
+  http_parser: ^4.1.2    # For MediaType
  # flutter_local_notifications: ^16.3.2  # Local notifications
   loader_overlay: ^5.0.0  # Loading overlay
   fluttertoast: ^9.0.0   # Toast messages
