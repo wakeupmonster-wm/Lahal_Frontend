@@ -261,23 +261,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              // Show shimmer while initial location is loading
-              if (locationController.isLocationLoading.value &&
-                  !locationController.hasLocation.value) {
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: tok.gap.lg,
-                        vertical: tok.gap.xs,
-                      ),
-                      child: const RestaurantCardShimmer(),
-                    ),
-                    childCount: 3,
-                  ),
-                );
-              }
-
               return SliverMainAxisGroup(
                 slivers: [
                   // --- Sticky Categories ---
@@ -372,7 +355,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // --- Restaurant List ---
                   Obx(() {
-                    if (controller.isLoading.value) {
+                    if (controller.isLoading.value ||
+                        locationController.isLocationLoading.value &&
+                            !locationController.hasLocation.value) {
                       return SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) => Padding(

@@ -21,7 +21,8 @@ class AppUrls {
 
 
   // Home
-  static Uri saveUserLocation = setUrls("/api/v1/user/location-save"); // uses query-params
+  static Uri saveUserLocation = setUrls("/api/v1/user/location-save"); 
+  static Uri getRestaurants = setUrls("/api/v1/restaurants/nearbyrestaurants");
 
   static Uri home = setUrls("/api/home");
   static Uri notifications = setUrls("/api/notifications");
