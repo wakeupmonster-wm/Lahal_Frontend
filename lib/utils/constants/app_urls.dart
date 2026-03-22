@@ -33,7 +33,9 @@ class AppUrls {
   static Uri getProfile = setUrls("/api/v1/user"); //implemented
   static Uri faqs = setUrls("/api/faqs");
   static Uri notificationPreferences = setUrls("/api/notification-preferences");
-  static Uri favorites = setUrls("/api/favorites");
+  static Uri nearbyRestaurants = setUrls(
+    "/api/v1/restaurants/nearbyrestaurants",
+  );
   static Uri logout = setUrls("/api/logout");
 
   //ashu add resturent
@@ -44,6 +46,8 @@ class AppUrls {
 
   //ashu profile
   static Uri updateProfileImage = setUrls("/api/v1/user/upload-profile-img");
+  static Uri getAllFavourites = setUrls("/api/v1/user/get-all-favourites");
+  static Uri deleteAccount = setUrls("/api/v1/user/delete-account");
 
   // Third-Party
   static const String aladhanBaseUrl = "https://api.aladhan.com/v1";

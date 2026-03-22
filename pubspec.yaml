@@ -45,6 +45,7 @@ dependencies:
   # smooth_page_indicator: ^1.2.0  # Page indicators
   photo_view: ^0.15.0     # Photo viewer
   flutter_html: ^3.0.0    # HTML rendering
+  flutter_animate: ^4.5.0 # Animations
 
   # ===== State Management =====
   get: ^4.6.6            # GetX state management

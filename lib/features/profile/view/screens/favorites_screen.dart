@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lahal_application/features/profile/controller/favorite_controller.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
 import 'package:lahal_application/utils/components/widgets/restaurant_card.dart';
@@ -32,20 +33,35 @@ class FavoritesScreen extends StatelessWidget {
 
         if (controller.hasError.value) {
           return Center(
-            child: WarningDisplay(
-              warningMessage: "Something went wrong",
-              subWarningMessage: "Failed to load favorites. Please try again.",
-              onRetry: controller.fetchFavorites,
-            ),
+            child:
+                WarningDisplay(
+                      warningMessage: "Something went wrong",
+                      subWarningMessage:
+                          "Failed to load favorites. Please try again.",
+                      onRetry: controller.fetchFavorites,
+                    )
+                    .animate()
+                    .fadeIn(duration: 500.ms)
+                    .scale(
+                      begin: const Offset(0.9, 0.9),
+                      end: const Offset(1, 1),
+                    ),
           );
         }
 
         if (controller.favoriteRestaurants.isEmpty) {
           return Center(
-            child: EmptyStateWidget(
-              title: AppStrings.noFavoritesYet,
-              description: AppStrings.favoritesDescription,
-            ),
+            child:
+                EmptyStateWidget(
+                      title: AppStrings.noFavoritesYet,
+                      description: AppStrings.favoritesDescription,
+                    )
+                    .animate()
+                    .fadeIn(duration: 500.ms)
+                    .scale(
+                      begin: const Offset(0.9, 0.9),
+                      end: const Offset(1, 1),
+                    ),
           );
         }
 
@@ -58,17 +74,28 @@ class FavoritesScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               if (index == 0) {
                 return Padding(
-                  padding: EdgeInsets.only(bottom: tok.gap.md),
-                  child: AppText(
-                    AppStrings.yourLikedRestaurants,
-                    size: AppTextSize.s18,
-                    weight: AppTextWeight.bold,
-                    color: tx.primary,
-                  ),
-                );
+                      padding: EdgeInsets.only(bottom: tok.gap.md),
+                      child: AppText(
+                        AppStrings.yourLikedRestaurants,
+                        size: AppTextSize.s18,
+                        weight: AppTextWeight.bold,
+                        color: tx.primary,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 500.ms)
+                    .slideX(begin: -0.1, end: 0);
               }
-              final restaurant = controller.favoriteRestaurants[index - 1];
-              return RestaurantCard(restaurant: restaurant);
+              final favorite = controller.favoriteRestaurants[index - 1];
+              return RestaurantCard(restaurant: favorite.toRestaurantModel())
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: (index * 80).ms)
+                  .slideY(
+                    begin: 0.2,
+                    end: 0,
+                    duration: 400.ms,
+                    curve: Curves.easeOutQuad,
+                  );
             },
           ),
         );
@@ -81,7 +108,10 @@ class FavoritesScreen extends StatelessWidget {
       padding: EdgeInsets.all(tok.gap.lg),
       itemCount: 3,
       itemBuilder: (context, index) {
-        return const RestaurantCardShimmer();
+        return const RestaurantCardShimmer().animate().fadeIn(
+          duration: 400.ms,
+          delay: (index * 100).ms,
+        );
       },
     );
   }

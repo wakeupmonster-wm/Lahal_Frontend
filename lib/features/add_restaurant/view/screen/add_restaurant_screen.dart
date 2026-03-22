@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
 import 'package:lahal_application/utils/constants/app_colors.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
@@ -46,6 +47,7 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
             controller: _scrollController,
             child: Form(
               key: controller.formKey,
+              autovalidateMode: controller.autovalidateMode.value,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -71,261 +73,340 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              "Help the Community",
-                              size: AppTextSize.s24,
-                              weight: AppTextWeight.bold,
-                              colorToken: tx.neutral,
-                            ),
+                                  "Help the Community",
+                                  size: AppTextSize.s24,
+                                  weight: AppTextWeight.bold,
+                                  colorToken: tx.neutral,
+                                )
+                                .animate()
+                                .fadeIn(duration: 600.ms)
+                                .slideX(begin: -0.2, end: 0),
                             AppText(
-                              "Discover LaLah",
-                              size: AppTextSize.s24,
-                              weight: AppTextWeight.bold,
-                              colorToken: tx.neutral,
-                            ),
+                                  "Discover LaLah",
+                                  size: AppTextSize.s24,
+                                  weight: AppTextWeight.bold,
+                                  colorToken: tx.neutral,
+                                )
+                                .animate()
+                                .fadeIn(duration: 600.ms, delay: 200.ms)
+                                .slideX(begin: -0.2, end: 0),
                           ],
                         ),
                       ),
                     ],
-                  ),
+                  ).animate().fadeIn().slideY(begin: -0.1, end: 0),
 
                   Padding(
                     padding: EdgeInsets.all(tok.gap.md),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Restaurant Name
-                        const FormLabel(label: "Restaurant name"),
-                        AppTextField(
-                          controller: controller.restaurantNameController,
-                          hintText: "Hamza food court",
-                          isOutline: true,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'Restaurant name is required'
-                              : null,
-                        ),
-                        SizedBox(height: tok.gap.md),
+                        ...[
+                              // Restaurant Name
+                              const FormLabel(label: "Restaurant name"),
+                              AppTextField(
+                                controller: controller.restaurantNameController,
+                                hintText: "Hamza food court",
+                                isOutline: true,
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'Restaurant name is required'
+                                    : null,
+                              ),
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 300.ms)
+                            .slideX(begin: 0.1, end: 0),
 
-                        // Address
-                        const FormLabel(label: "Address"),
+                        ...[
+                              // Address
+                              const FormLabel(label: "Address"),
 
-                        AppTextField(
-                          controller: controller.addressController,
-                          hintText: "Full restaurant address",
-                          isOutline: true,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'Address is required'
-                              : null,
-                        ),
-                        SizedBox(height: tok.gap.md),
-
-                        // City
-                        const FormLabel(label: "City"),
-                        AppTextField(
-                          controller: controller.cityController,
-                          hintText: "City",
-                          isOutline: true,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'City is required'
-                              : null,
-                        ),
-                        SizedBox(height: tok.gap.md),
-
-                        // State
-                        const FormLabel(label: "State"),
-                        AppTextField(
-                          controller: controller.stateController,
-                          hintText: "State",
-                          isOutline: true,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'State is required'
-                              : null,
-                        ),
-                        SizedBox(height: tok.gap.md),
-
-                        // Country
-                        const FormLabel(label: "Country"),
-                        AppTextField(
-                          controller: controller.countryController,
-                          hintText: "Country",
-                          isOutline: true,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'Country is required'
-                              : null,
-                        ),
-                        SizedBox(height: tok.gap.md),
-
-                        // Pincode
-                        const FormLabel(label: "Pincode"),
-                        AppTextField(
-                          controller: controller.pincodeController,
-                          hintText: "Pincode",
-                          isOutline: true,
-                          keyboardType: TextInputType.number,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'Pincode is required'
-                              : null,
-                        ),
-                        SizedBox(height: tok.gap.md),
-
-                        // Halal Status
-                        const FormLabel(label: "Halal Status"),
-                        Obx(
-                          () => Column(
-                            children: controller.halalStatuses.map((status) {
-                              return RadioListTile<String>(
-                                title: AppText(
-                                  status,
-                                  size: AppTextSize.s14,
-                                  weight: AppTextWeight.semibold,
-                                  colorToken: tx.neutral,
-                                ),
-                                value: status,
-                                groupValue:
-                                    controller.selectedHalalStatus.value,
-                                onChanged: (value) {
-                                  if (value != null)
-                                    controller.setHalalStatus(value);
+                              AppTextField(
+                                controller: controller.addressController,
+                                hintText: "Full restaurant address",
+                                isOutline: true,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Address is required';
+                                  }
+                                  if (value.trim().length < 10) {
+                                    return 'Address must be at least 10 characters long';
+                                  }
+                                  return null;
                                 },
-                                contentPadding: EdgeInsets.zero,
-                                visualDensity: const VisualDensity(
-                                  horizontal: 0,
-                                  vertical: -1,
-                                ),
-                                fillColor:
-                                    MaterialStateProperty.resolveWith<Color>((
-                                      states,
-                                    ) {
-                                      if (states.contains(
-                                        MaterialState.selected,
-                                      )) {
-                                        return AppColor.primaryColor;
-                                      }
-                                      return AppColor.grey.withOpacity(0.4);
-                                    }),
-                                dense: true,
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        SizedBox(height: tok.gap.md),
+                              ),
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 400.ms)
+                            .slideX(begin: 0.1, end: 0),
 
-                        // Add Restaurant Photos
-                        const FormLabel(label: "Add restaurant photos"),
-                        SizedBox(height: tok.gap.xs),
-                        Obx(
-                          () => GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            clipBehavior: Clip.none,
-                            padding: EdgeInsets.only(top: tok.gap.xs),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: tok.gap.sm,
-                                  mainAxisSpacing: tok.gap.sm,
-                                  mainAxisExtent: height * 0.118,
-                                ),
-                            itemCount: controller.selectedImages.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index < controller.selectedImages.length) {
-                                return ImagePickerTile(
-                                  image: controller.selectedImages[index],
-                                  onTap: () {},
-                                  onRemove: () => controller.removeImage(index),
-                                );
-                              } else {
-                                return ImagePickerTile(
-                                  isAddButton: true,
-                                  onTap: controller.pickImages,
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        SizedBox(height: tok.gap.md),
+                        ...[
+                              // City
+                              const FormLabel(label: "City"),
+                              AppTextField(
+                                controller: controller.cityController,
+                                hintText: "City",
+                                isOutline: true,
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'City is required'
+                                    : null,
+                              ),
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 500.ms)
+                            .slideX(begin: 0.1, end: 0),
 
-                        // Additional Note
-                        const FormLabel(label: "Additional Note"),
-                        SizedBox(height: tok.gap.xs),
-                        AppTextField(
-                          controller: controller.additionalNoteController,
-                          hintText: "Any helpful detail",
-                          isOutline: true,
-                          maxLines: 4,
-                        ),
-                        SizedBox(height: tok.gap.lg),
+                        ...[
+                              // State
+                              const FormLabel(label: "State"),
+                              AppTextField(
+                                controller: controller.stateController,
+                                hintText: "State",
+                                isOutline: true,
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'State is required'
+                                    : null,
+                              ),
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 600.ms)
+                            .slideX(begin: 0.1, end: 0),
 
-                        // Buttons
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: controller.clearForm,
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: cs.outline),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: tok.gap.sm,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      tok.radiusMd,
-                                    ),
-                                  ),
-                                ),
-                                child: AppText(
-                                  "Cancel",
-                                  size: AppTextSize.s16,
-                                  weight: AppTextWeight.semibold,
-                                  colorToken: tx.neutral,
+                        ...[
+                              // Country
+                              const FormLabel(label: "Country"),
+                              AppTextField(
+                                controller: controller.countryController,
+                                hintText: "Country",
+                                isOutline: true,
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'Country is required'
+                                    : null,
+                              ),
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 700.ms)
+                            .slideX(begin: 0.1, end: 0),
+
+                        ...[
+                              // Pincode
+                              const FormLabel(label: "Pincode"),
+                              AppTextField(
+                                controller: controller.pincodeController,
+                                hintText: "Pincode",
+                                isOutline: true,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Pincode is required';
+                                  }
+                                  if (value.length < 6) {
+                                    return 'Enter a valid 6-digit pincode';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 800.ms)
+                            .slideX(begin: 0.1, end: 0),
+
+                        ...[
+                              // Halal Status
+                              const FormLabel(label: "Halal Status"),
+                              Obx(
+                                () => Column(
+                                  children: controller.halalStatuses.map((
+                                    status,
+                                  ) {
+                                    return RadioListTile<String>(
+                                      title: AppText(
+                                        status,
+                                        size: AppTextSize.s14,
+                                        weight: AppTextWeight.semibold,
+                                        colorToken: tx.neutral,
+                                      ),
+                                      value: status,
+                                      groupValue:
+                                          controller.selectedHalalStatus.value,
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          controller.setHalalStatus(value);
+                                        }
+                                      },
+                                      contentPadding: EdgeInsets.zero,
+                                      visualDensity: const VisualDensity(
+                                        horizontal: 0,
+                                        vertical: -1,
+                                      ),
+                                      fillColor:
+                                          WidgetStateProperty.resolveWith<
+                                            Color
+                                          >((states) {
+                                            if (states.contains(
+                                              WidgetState.selected,
+                                            )) {
+                                              return AppColor.primaryColor;
+                                            }
+                                            return AppColor.grey.withOpacity(
+                                              0.4,
+                                            );
+                                          }),
+                                      dense: true,
+                                    );
+                                  }).toList(),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: tok.gap.md),
-                            Expanded(
-                              child: Obx(
-                                () => ElevatedButton(
-                                  onPressed:
-                                      (controller.isLoading.value ||
-                                          !controller.isFormValid.value)
-                                      ? null
-                                      : controller.submitRequest,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColor.primaryColor,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: tok.gap.sm,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        tok.radiusMd,
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 900.ms)
+                            .slideX(begin: 0.1, end: 0),
+
+                        ...[
+                              // Add Restaurant Photos
+                              const FormLabel(label: "Add restaurant photos"),
+                              SizedBox(height: tok.gap.xs),
+                              Obx(
+                                () => GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  clipBehavior: Clip.none,
+                                  padding: EdgeInsets.only(top: tok.gap.xs),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        crossAxisSpacing: tok.gap.sm,
+                                        mainAxisSpacing: tok.gap.sm,
+                                        mainAxisExtent: height * 0.118,
+                                      ),
+                                  itemCount:
+                                      controller.selectedImages.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index <
+                                        controller.selectedImages.length) {
+                                      return ImagePickerTile(
+                                            image: controller
+                                                .selectedImages[index],
+                                            onTap: () {},
+                                            onRemove: () =>
+                                                controller.removeImage(index),
+                                          )
+                                          .animate()
+                                          .fadeIn(delay: (index * 50).ms)
+                                          .scale(begin: const Offset(0.8, 0.8));
+                                    } else {
+                                      return ImagePickerTile(
+                                            isAddButton: true,
+                                            onTap: controller.pickImages,
+                                          )
+                                          .animate()
+                                          .fadeIn(delay: (index * 50).ms)
+                                          .scale(begin: const Offset(0.8, 0.8));
+                                    }
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: tok.gap.md),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 1000.ms)
+                            .slideX(begin: 0.1, end: 0),
+
+                        ...[
+                              // Additional Note
+                              const FormLabel(label: "Additional Note"),
+                              AppTextField(
+                                controller: controller.additionalNoteController,
+                                hintText: "Any helpful detail",
+                                isOutline: true,
+                                maxLines: 4,
+                                validator: (value) =>
+                                    value == null || value.trim().isEmpty
+                                    ? 'Additional note is required'
+                                    : null,
+                              ),
+                              SizedBox(height: tok.gap.lg),
+                            ]
+                            .animate(interval: 50.ms)
+                            .fadeIn(delay: 1100.ms)
+                            .slideX(begin: 0.1, end: 0),
+
+                        Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: controller.clearForm,
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide(color: cs.outline),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: tok.gap.sm,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          tok.radiusMd,
+                                        ),
                                       ),
                                     ),
+                                    child: AppText(
+                                      "Cancel",
+                                      size: AppTextSize.s16,
+                                      weight: AppTextWeight.semibold,
+                                      colorToken: tx.neutral,
+                                    ),
                                   ),
-                                  child: controller.isLoading.value
-                                      ? const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : AppText(
-                                          "Send Request",
-                                          size: AppTextSize.s16,
-                                          weight: AppTextWeight.semibold,
-                                          colorToken: tx.inverse,
-                                        ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
+                                SizedBox(width: tok.gap.md),
+                                Expanded(
+                                  child: Obx(
+                                    () => ElevatedButton(
+                                      onPressed: controller.isLoading.value
+                                          ? null
+                                          : controller.submitRequest,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColor.primaryColor,
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: tok.gap.sm,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            tok.radiusMd,
+                                          ),
+                                        ),
+                                      ),
+                                      child: controller.isLoading.value
+                                          ? const SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
+                                            )
+                                          : AppText(
+                                              "Send Request",
+                                              size: AppTextSize.s16,
+                                              weight: AppTextWeight.semibold,
+                                              colorToken: tx.inverse,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                            .animate(delay: 1200.ms)
+                            .fadeIn()
+                            .scale(begin: const Offset(0.9, 0.9)),
                       ],
                     ),
                   ),

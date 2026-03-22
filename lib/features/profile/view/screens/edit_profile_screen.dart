@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lahal_application/features/profile/controller/edit_profile_controller.dart';
@@ -41,93 +42,115 @@ class EditProfileScreen extends StatelessWidget {
               children: [
                 // Profile Photo Placeholder
                 Center(
-                  child: Stack(
-                    children: [
-                      Obx(
-                        () => AppCircularImage(
-                          image: controller.pickedImage.value != null
-                              ? ""
-                              : Get.find<ProfileController>()
-                                        .userProfile
-                                        .value
-                                        ?.profilePhoto ??
-                                    '',
-                          isNetworkImage: controller.pickedImage.value == null,
-                          imageFile: controller.pickedImage.value,
-                          backgroundColor: cs.primaryContainer.withOpacity(0.2),
-                        ),
-                      ),
-                      Obx(
-                        () => controller.isLoading.value
-                            ? Positioned.fill(
-                                child: AppShimerEffect(
-                                  width:
-                                      MediaQuery.sizeOf(context).width * 0.24,
-                                  height:
-                                      MediaQuery.sizeOf(context).width * 0.24,
-                                  radius: 100,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: InkWell(
-                          onTap: () => ImagePickerBottomSheet.show(
-                            context,
-                            onGalleryTap: () {
-                              context.pop();
-                              controller.pickImage(ImageSource.gallery);
-                            },
-                            onCameraTap: () {
-                              context.pop();
-                              controller.pickImage(ImageSource.camera);
-                            },
-                            onRemoveTap: () {
-                              context.pop();
-                              controller.removeImage();
-                            },
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.grey.shade300),
+                      child: Stack(
+                        children: [
+                          Obx(
+                            () => AppCircularImage(
+                              image: controller.pickedImage.value != null
+                                  ? ""
+                                  : Get.find<ProfileController>()
+                                            .userProfile
+                                            .value
+                                            ?.profilePhoto ??
+                                        '',
+                              isNetworkImage:
+                                  controller.pickedImage.value == null,
+                              imageFile: controller.pickedImage.value,
+                              backgroundColor: cs.primaryContainer.withOpacity(
+                                0.2,
+                              ),
                             ),
-                            child: SvgPicture.asset(AppSvg.pencilIcon),
                           ),
-                        ),
+                          Obx(
+                            () => controller.isLoading.value
+                                ? Positioned.fill(
+                                    child: AppShimerEffect(
+                                      width:
+                                          MediaQuery.sizeOf(context).width *
+                                          0.24,
+                                      height:
+                                          MediaQuery.sizeOf(context).width *
+                                          0.24,
+                                      radius: 100,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: InkWell(
+                              onTap: () => ImagePickerBottomSheet.show(
+                                context,
+                                onGalleryTap: () {
+                                  context.pop();
+                                  controller.pickImage(ImageSource.gallery);
+                                },
+                                onCameraTap: () {
+                                  context.pop();
+                                  controller.pickImage(ImageSource.camera);
+                                },
+                                onRemoveTap: () {
+                                  context.pop();
+                                  controller.removeImage();
+                                },
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                ),
+                                child: SvgPicture.asset(AppSvg.pencilIcon),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    )
+                    .animate()
+                    .scale(duration: 400.ms, curve: Curves.easeOutBack)
+                    .fadeIn(),
                 SizedBox(height: tok.gap.xl),
 
                 // Name Field
-                _buildLabel(AppStrings.name, tx, tok),
+                _buildLabel(
+                  AppStrings.name,
+                  tx,
+                  tok,
+                ).animate().fadeIn(delay: 100.ms).slideX(begin: 0.1, end: 0),
                 NewMyTextFeild(
                   controller: controller.nameController,
                   hintText: AppStrings.name,
                   validator: (value) => value == null || value.trim().isEmpty
                       ? 'Name is required'
                       : null,
-                ),
+                ).animate().fadeIn(delay: 150.ms).slideX(begin: 0.1, end: 0),
                 SizedBox(height: tok.gap.md),
 
                 // Phone Number Field (Disabled)
-                _buildLabel(AppStrings.phoneNumberLabelSmall, tx, tok),
+                _buildLabel(
+                  AppStrings.phoneNumberLabelSmall,
+                  tx,
+                  tok,
+                ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, end: 0),
                 NewMyTextFeild(
                   controller: controller.phoneController,
                   hintText: AppStrings.phoneNumberLabelSmall,
                   keyboardType: TextInputType.phone,
                   typingEnabled: false, // Number is not editable
-                ),
+                ).animate().fadeIn(delay: 250.ms).slideX(begin: 0.1, end: 0),
                 SizedBox(height: tok.gap.md),
 
                 // Email Field
-                _buildLabel(AppStrings.emailAddress, tx, tok),
+                _buildLabel(
+                  AppStrings.emailAddress,
+                  tx,
+                  tok,
+                ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.1, end: 0),
                 NewMyTextFeild(
                   controller: controller.emailController,
                   hintText: AppStrings.emailAddress,
@@ -138,11 +161,15 @@ class EditProfileScreen extends StatelessWidget {
                     if (!GetUtils.isEmail(value)) return 'Enter a valid email';
                     return null;
                   },
-                ),
+                ).animate().fadeIn(delay: 350.ms).slideX(begin: 0.1, end: 0),
                 SizedBox(height: tok.gap.md),
 
                 // DOB Field
-                _buildLabel(AppStrings.dateOfBirth, tx, tok),
+                _buildLabel(
+                  AppStrings.dateOfBirth,
+                  tx,
+                  tok,
+                ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1, end: 0),
                 GestureDetector(
                   onTap: () => controller.pickDate(context),
                   child: AbsorbPointer(
@@ -154,11 +181,15 @@ class EditProfileScreen extends StatelessWidget {
                           : null,
                     ),
                   ),
-                ),
+                ).animate().fadeIn(delay: 450.ms).slideX(begin: 0.1, end: 0),
                 SizedBox(height: tok.gap.md),
 
                 // Gender Field
-                _buildLabel(AppStrings.gender, tx, tok),
+                _buildLabel(
+                  AppStrings.gender,
+                  tx,
+                  tok,
+                ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.1, end: 0),
                 Obx(
                   () => Column(
                     children: [
@@ -222,20 +253,23 @@ class EditProfileScreen extends StatelessWidget {
                         ),
                     ],
                   ),
-                ),
+                ).animate().fadeIn(delay: 550.ms).slideX(begin: 0.1, end: 0),
                 SizedBox(height: tok.gap.xxl),
 
                 // Save Button
                 Obx(
-                  () => AppButton(
-                    radiusOverride: 12,
-                    loading: controller.isLoading.value,
-                    onPressed: controller.isLoading.value
-                        ? null
-                        : () => controller.saveProfile(context),
-                    label: AppStrings.save,
-                  ),
-                ),
+                      () => AppButton(
+                        radiusOverride: 12,
+                        loading: controller.isLoading.value,
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : () => controller.saveProfile(context),
+                        label: AppStrings.save,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(delay: 600.ms)
+                    .scale(begin: const Offset(0.9, 0.9)),
                 SizedBox(height: tok.gap.xl),
               ],
             ),

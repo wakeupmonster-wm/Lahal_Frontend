@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lahal_application/features/prey/controller/prayer_controller.dart';
 import 'package:lahal_application/features/prey/view/widgets/prayer_header.dart';
 import 'package:lahal_application/features/prey/view/widgets/upcoming_prayer_card.dart';
@@ -48,10 +49,16 @@ class PrayerScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const PrayerHeader(),
+              const PrayerHeader().animate().fadeIn().slideY(
+                begin: -0.1,
+                end: 0,
+              ),
               SizedBox(height: tok.gap.sm),
 
-              const UpcomingPrayerCard(),
+              const UpcomingPrayerCard()
+                  .animate()
+                  .fadeIn(delay: 200.ms)
+                  .scale(begin: const Offset(0.95, 0.95)),
               // 3. Prayer Times Title
               SizedBox(height: tok.gap.xxl),
               Padding(
@@ -62,7 +69,7 @@ class PrayerScreen extends StatelessWidget {
                   weight: AppTextWeight.bold,
                   color: tx.primary,
                 ),
-              ),
+              ).animate().fadeIn(delay: 400.ms).slideX(begin: -0.1, end: 0),
 
               SizedBox(height: tok.gap.xl),
 
@@ -79,8 +86,11 @@ class PrayerScreen extends StatelessWidget {
                     itemCount: controller.prayerTimes.length,
                     itemBuilder: (context, index) {
                       return PrayerTimeCard(
-                        prayerTime: controller.prayerTimes[index],
-                      );
+                            prayerTime: controller.prayerTimes[index],
+                          )
+                          .animate()
+                          .fadeIn(delay: (500 + index * 100).ms)
+                          .slideX(begin: 0.1, end: 0);
                     },
                   );
                 }),

@@ -15,6 +15,20 @@ class ProfileRepository {
     );
   }
 
+  Future<ApiResponse> getFavoriteRestaurants({
+    required double lat,
+    required double lng,
+  }) async {
+    final uri = AppUrls.getAllFavourites.replace(
+      queryParameters: {'lat': lat.toString(), 'lng': lng.toString()},
+    );
+    return await _apiService.sendRequest(
+      url: uri,
+      method: HttpMethod.get,
+      includeHeaders: true,
+    );
+  }
+
   Future<ApiResponse> updateProfileImage(File file) async {
     return await _apiService.multipartRequest(
       url: AppUrls.updateProfileImage,
@@ -66,6 +80,14 @@ class ProfileRepository {
     return await _apiService.sendRequest(
       url: AppUrls.logout,
       method: HttpMethod.post,
+      includeHeaders: true,
+    );
+  }
+
+  Future<ApiResponse> deleteAccount() async {
+    return await _apiService.sendRequest(
+      url: AppUrls.deleteAccount,
+      method: HttpMethod.delete,
       includeHeaders: true,
     );
   }

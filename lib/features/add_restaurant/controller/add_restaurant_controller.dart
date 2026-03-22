@@ -25,29 +25,11 @@ class AddRestaurantController extends GetxController {
   final RxList<File> selectedImages = <File>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isFormValid = false.obs;
+  final Rx<AutovalidateMode> autovalidateMode = AutovalidateMode.disabled.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Listen to changes to validate form
-    restaurantNameController.addListener(_validateForm);
-    addressController.addListener(_validateForm);
-    cityController.addListener(_validateForm);
-    stateController.addListener(_validateForm);
-    countryController.addListener(_validateForm);
-    pincodeController.addListener(_validateForm);
-    ever(selectedImages, (_) => _validateForm());
-  }
-
-  void _validateForm() {
-    isFormValid.value =
-        restaurantNameController.text.trim().isNotEmpty &&
-        addressController.text.trim().isNotEmpty &&
-        cityController.text.trim().isNotEmpty &&
-        stateController.text.trim().isNotEmpty &&
-        countryController.text.trim().isNotEmpty &&
-        pincodeController.text.trim().isNotEmpty &&
-        selectedImages.isNotEmpty;
   }
 
   final List<String> halalStatuses = [
@@ -72,7 +54,8 @@ class AddRestaurantController extends GetxController {
   }
 
   Future<void> submitRequest() async {
-    if (formKey.currentState == null || !formKey.currentState!.validate()) {
+    if (!formKey.currentState!.validate()) {
+      autovalidateMode.value = AutovalidateMode.onUserInteraction;
       return;
     }
 
@@ -166,7 +149,6 @@ class AddRestaurantController extends GetxController {
   }
 
   void clearForm() {
-    formKey.currentState?.reset();
     restaurantNameController.clear();
     addressController.clear();
     cityController.clear();
@@ -176,7 +158,7 @@ class AddRestaurantController extends GetxController {
     additionalNoteController.clear();
     selectedHalalStatus.value = 'Fully Halal';
     selectedImages.clear();
-    _validateForm();
+    autovalidateMode.value = AutovalidateMode.disabled;
   }
 
   @override
