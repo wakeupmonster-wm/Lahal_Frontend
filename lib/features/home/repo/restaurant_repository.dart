@@ -2,28 +2,41 @@ import 'package:lahal_application/features/home/model/restaurant_model.dart';
 
 class RestaurantRepository {
   Future<RestaurantModel> getRestaurantDetails(String id) async {
-    // Mocking an API delay
+    // Mocking an API delay — will be replaced with real API later
     await Future.delayed(const Duration(milliseconds: 500));
 
     return RestaurantModel(
       id: id,
-      name: 'Rose Garden Restaurant',
-      address: '28 Riverside Lane, Melbourne, VIC 3001, Australia',
-      distance: '1.6 km away',
-      rating: 5.0,
-      reviewCount: 129,
-      status: 'Open now',
-      openingHours: '11:30 AM to 11:00 PM',
-      category: 'Middle Eastern restaurant',
-      imageUrl:
+      restaurantName: 'Rose Garden Restaurant',
+      cuisine: 'Middle Eastern restaurant',
+      address: const RestaurantAddress(
+        fullAddress: '28 Riverside Lane, Melbourne, VIC 3001, Australia',
+        city: 'Melbourne',
+        state: 'VIC',
+        country: 'Australia',
+        pincode: '3001',
+      ),
+      location: const RestaurantLocation(
+        type: 'Point',
+        longitude: 144.96,
+        latitude: -37.802,
+      ),
+      phone: '+61390001234',
+      isOpenNow: true,
+      isFavourite: false,
+      distanceInKm: 1.6,
+      metrics: const RestaurantMetrics(avgRating: 5.0, totalReviews: 129),
+      halalInfo: const HalalInfo(
+        isCertified: true,
+        summary: 'Meat imported from certified Australian Halal suppliers.',
+      ),
+      restaurantImg:
           'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+      // Extended fields for details screen (kept for backward compatibility)
       description:
           'Experience the taste of Rose Garden Restaurant! We offer a delightful menu of halal dishes, prepared with fresh, high-quality ingredients and traditional recipes. From flavorful biryani to succulent curries, every meal is a culinary journey. Join us for a memorable dining experience in a welcoming atmosphere.',
-      halalSummary: [
-        'No alcohol',
-        'No alcohol',
-        'No alcohol',
-      ], // Matching the repeated tags in screenshot
+      openingHours: '11:30 AM to 11:00 PM',
+      halalSummary: ['No alcohol', 'No alcohol', 'No alcohol'],
       photos: [
         'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=400',
         'https://images.unsplash.com/photo-1567620905732-2d1ec7bb7445?auto=format&fit=crop&q=80&w=400',
@@ -47,8 +60,7 @@ class RestaurantRepository {
               'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100',
           date: '1 year ago',
           rating: 5.0,
-          comment:
-              'First of all, most importantly the food cooked and delivered is delicious. they put in their b...moreus.dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdfsdfdsfdsfsdfsdfsdfdsfdsfdsfdsfsdfsdfdsffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+          comment: 'First of all, most importantly the food cooked and delivered is delicious.',
         ),
         ReviewModel(
           userName: 'Johan Doe',
@@ -56,8 +68,7 @@ class RestaurantRepository {
               'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100',
           date: '1 year ago',
           rating: 5.0,
-          comment:
-              'First of all, most importantly the food cooked and delivered is delicious.dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdfsdfdsfdsfsdfsdfsdfdsfdsfdsfdsfsdfsdfdsffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+          comment: 'First of all, most importantly the food cooked and delivered is delicious.',
         ),
       ],
       socialConnects: SocialConnects(
@@ -66,8 +77,6 @@ class RestaurantRepository {
         email: 'rose@example.com',
         twitter: 'https://twitter.com',
       ),
-      latitude: -37.802,
-      longitude: 144.96,
     );
   }
 }

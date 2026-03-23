@@ -1,11 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lahal_application/features/home/controller/restaurant_details_controller.dart';
-import 'package:lahal_application/features/home/model/restaurant_model.dart';
+import 'package:lahal_application/features/home/model/restaurant_details_model.dart';
 import 'package:lahal_application/utils/components/widgets/empty_state_widget.dart';
+import 'package:lahal_application/utils/components/shimmer/restaurant_details_shimmer.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
@@ -13,12 +15,29 @@ import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 
-class RestaurantDetailsScreen extends StatelessWidget {
-  const RestaurantDetailsScreen({super.key});
+class RestaurantDetailsScreen extends StatefulWidget {
+  final String restaurantId;
+  const RestaurantDetailsScreen({super.key, required this.restaurantId});
+
+  @override
+  State<RestaurantDetailsScreen> createState() =>
+      _RestaurantDetailsScreenState();
+}
+
+class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
+  final RestaurantDetailsController controller = Get.put(
+    RestaurantDetailsController(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch details when screen loads
+    controller.fetchRestaurantDetails(widget.restaurantId);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(RestaurantDetailsController());
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
@@ -30,7 +49,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
       backgroundColor: cs.surface,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const RestaurantDetailsShimmer();
         }
 
         final restaurant = controller.restaurant.value;
@@ -119,7 +138,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                         duration: const Duration(milliseconds: 100),
                         opacity: isCollapsed ? 1.0 : 0.0,
                         child: AppText(
-                          restaurant.name,
+                          restaurant.restaurantName,
                           size: AppTextSize.s16,
                           weight: AppTextWeight.bold,
                           color: cs.onSurface,
@@ -152,14 +171,16 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     _buildSectionHeader(tx, 'Halal summary'),
                     SizedBox(height: tok.gap.md),
                     AppText(
-                      restaurant.description,
+                      restaurant.about.isNotEmpty
+                          ? restaurant.about
+                          : restaurant.halalInfo.summary,
                       size: AppTextSize.s14,
                       color: tx.subtle,
                     ),
                     SizedBox(height: tok.gap.md),
                     Wrap(
                       spacing: tok.gap.sm,
-                      children: restaurant.halalSummary.map((tag) {
+                      children: restaurant.halalSummaryTags.map((tag) {
                         return _buildTag(cs, tx, tag);
                       }).toList(),
                     ),
@@ -177,7 +198,9 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     _buildSectionHeader(tx, 'About this place'),
                     SizedBox(height: tok.gap.md),
                     AppText(
-                      restaurant.description,
+                      restaurant.about.isNotEmpty
+                          ? restaurant.about
+                          : restaurant.halalInfo.summary,
                       size: AppTextSize.s14,
                       color: tx.subtle,
                     ),
@@ -187,29 +210,30 @@ class RestaurantDetailsScreen extends StatelessWidget {
                     SizedBox(height: tok.gap.xl),
 
                     // --- Reviews Section ---
-                    _buildSectionHeader(tx, 'Reviews'),
-                    SizedBox(height: tok.gap.md),
-                    _buildReviewsList(
-                      tok,
-                      tx,
-                      cs,
-                      restaurant.reviews,
-                      controller,
-                      width,
-                      height,
-                    ),
-
-                    SizedBox(height: tok.gap.xl),
+                    if (restaurant.reviews.isNotEmpty) ...[
+                      _buildSectionHeader(tx, 'Reviews'),
+                      SizedBox(height: tok.gap.md),
+                      _buildReviewsList(
+                        tok,
+                        tx,
+                        cs,
+                        restaurant.reviews,
+                        controller,
+                        width,
+                        height,
+                      ),
+                      SizedBox(height: tok.gap.xl),
+                    ],
 
                     // --- Connects Section ---
                     _buildSectionHeader(tx, 'Connects'),
                     SizedBox(height: tok.gap.md),
-                    _buildConnectsGrid(tok, tx, cs, restaurant.socialConnects),
+                    _buildConnectsGrid(tok, tx, cs, restaurant.contact),
 
                     SizedBox(height: tok.gap.xl),
 
                     // --- Footer ---
-                    _buildFooter(tok, tx, cs, context),
+                    _buildFooter(tok, tx, cs, context, widget.restaurantId),
                     SizedBox(height: tok.gap.xl),
                   ],
                 ),
@@ -226,7 +250,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
     AppTokens tok,
     AppTextColors tx,
     ColorScheme cs,
-    RestaurantModel restaurant,
+    RestaurantDetailsModel restaurant,
     RestaurantDetailsController controller,
     double width,
     double height,
@@ -248,7 +272,10 @@ class RestaurantDetailsScreen extends StatelessWidget {
               children: [
                 // Background Image
                 Positioned.fill(
-                  child: Image.network(restaurant.imageUrl, fit: BoxFit.cover),
+                  child: CachedNetworkImage(
+                    imageUrl: restaurant.coverImage,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 // Gradient Overlay
                 Positioned.fill(
@@ -280,7 +307,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              restaurant.name,
+                              restaurant.restaurantName,
                               size: AppTextSize.s24,
                               weight: AppTextWeight.bold,
                               color: tx.inverse,
@@ -289,7 +316,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: tok.gap.xxs / 2),
                             AppText(
-                              restaurant.address,
+                              restaurant.address.fullAddress,
                               size: AppTextSize.s14,
                               color: tx.inverse.withOpacity(0.9),
                               maxLines: 2,
@@ -297,7 +324,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: tok.gap.xxs / 2),
                             AppText(
-                              restaurant.distance,
+                              restaurant.formattedDistance,
                               size: AppTextSize.s14,
                               color: tx.inverse.withOpacity(0.9),
                               maxLines: 2,
@@ -314,7 +341,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                                 SizedBox(width: tok.gap.xxs / 2),
                                 Expanded(
                                   child: AppText(
-                                    '${restaurant.status} | ${restaurant.openingHours}',
+                                    '${restaurant.statusText} | ${restaurant.openingHours}',
                                     size: AppTextSize.s12,
                                     color: tx.inverse,
                                     maxLines: 2,
@@ -345,7 +372,8 @@ class RestaurantDetailsScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   AppText(
-                                    restaurant.rating.toStringAsFixed(1),
+                                    restaurant.metrics.avgRating
+                                        .toStringAsFixed(1),
                                     size: AppTextSize.s14,
                                     weight: AppTextWeight.bold,
                                     color: tx.inverse,
@@ -371,7 +399,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   AppText(
-                                    restaurant.reviewCount.toString(),
+                                    restaurant.metrics.totalReviews.toString(),
                                     size: AppTextSize.s14,
                                     weight: AppTextWeight.bold,
                                     color: tx.neutral,
@@ -406,7 +434,10 @@ class RestaurantDetailsScreen extends StatelessWidget {
                   context: context,
                   label: "Directions",
                   iconPath: AppSvg.routingIcon,
-                  onTap: controller.getDirections,
+                  onTap: () {
+                    print("on tap of Direction");
+                    controller.getDirections(context);
+                  },
                   tok: tok,
                   tx: tx,
                   cs: cs,
@@ -440,24 +471,23 @@ class RestaurantDetailsScreen extends StatelessWidget {
     required AppTextColors tx,
     required ColorScheme cs,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(tok.radiusLg * 2),
-        border: Border.all(color: cs.outline),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: cs.surface,
           borderRadius: BorderRadius.circular(tok.radiusLg * 2),
+          border: Border.all(color: cs.outline),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: tok.gap.sm - 2),
             child: Row(
@@ -616,7 +646,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
     AppTokens tok,
     AppTextColors tx,
     ColorScheme cs,
-    RestaurantModel restaurant,
+    RestaurantDetailsModel restaurant,
   ) {
     return Container(
       padding: EdgeInsets.all(tok.gap.md),
@@ -627,10 +657,10 @@ class RestaurantDetailsScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildAmenityRow(AppSvg.dishIcon, restaurant.category, tx),
+          _buildAmenityRow(AppSvg.dishIcon, restaurant.cuisine, tx),
           _buildAmenityRow(
             AppSvg.locationNobcakgroundIcon, // Preserving user's variable
-            restaurant.address,
+            restaurant.address.fullAddress,
             tx,
           ),
           SizedBox(height: tok.gap.xxxs),
@@ -660,9 +690,9 @@ class RestaurantDetailsScreen extends StatelessWidget {
               mainAxisSpacing: tok.gap.xxs,
               crossAxisSpacing: tok.gap.xxs,
             ),
-            itemCount: restaurant.amenities.length,
+            itemCount: restaurant.availableAmenities.length,
             itemBuilder: (context, index) {
-              final key = restaurant.amenities.keys.elementAt(index);
+              final key = restaurant.availableAmenities[index];
               return Row(
                 children: [
                   SvgPicture.asset(AppSvg.tickCircleIcon),
@@ -710,7 +740,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
     AppTokens tok,
     AppTextColors tx,
     ColorScheme cs,
-    List<ReviewModel> reviews,
+    List<RestaurantDetailsReview> reviews,
     RestaurantDetailsController controller,
     double width,
     double height,
@@ -745,17 +775,13 @@ class RestaurantDetailsScreen extends StatelessWidget {
     AppTokens tok,
     AppTextColors tx,
     ColorScheme cs,
-    SocialConnects connects,
+    RestaurantDetailsContact contact,
   ) {
     final List<Map<String, dynamic>> items = [
-      if (connects.website != null)
-        {'icon': Iconsax.global_outline, 'label': 'Website'},
-      if (connects.facebook != null)
-        {'icon': Iconsax.facebook_outline, 'label': 'Facebook'},
-      if (connects.email != null)
-        {'icon': Iconsax.sms_outline, 'label': 'Email'},
-      if (connects.twitter.isNotEmpty)
-        {'icon': AppSvg.twitterIcon, 'label': 'Twitter'},
+      {'icon': Iconsax.global_outline, 'label': 'Website'},
+      {'icon': Iconsax.facebook_outline, 'label': 'Facebook'},
+      {'icon': Iconsax.sms_outline, 'label': 'Email'},
+      {'icon': AppSvg.twitterIcon, 'label': 'Twitter'},
     ];
 
     if (items.isEmpty) return const SizedBox.shrink();
@@ -804,6 +830,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
     AppTextColors tx,
     ColorScheme cs,
     BuildContext context,
+    String restaurantId,
   ) {
     return Container(
       padding: EdgeInsets.all(tok.gap.md),
@@ -825,7 +852,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
                   color: tx.subtle,
                 ),
                 GestureDetector(
-                  onTap: () => context.push(AppRoutes.reportErrorScreen),
+                  onTap: () => context.push(AppRoutes.reportErrorScreen, extra: restaurantId),
                   child: AppText(
                     'Report error \u2192',
                     size: AppTextSize.s12,
@@ -836,7 +863,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
               ],
             ),
           ),
-          SvgPicture.asset(AppSvg.warning2Icon),
+          SvgPicture.asset(AppSvg.warning2Icon, width: 24, height: 20),
         ],
       ),
     );
@@ -844,7 +871,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
 }
 
 class _ReviewCard extends StatelessWidget {
-  final ReviewModel review;
+  final RestaurantDetailsReview review;
   final AppTokens tok;
   final AppTextColors tx;
   final ColorScheme cs;
@@ -877,7 +904,7 @@ class _ReviewCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(review.userImageUrl),
+                backgroundImage: NetworkImage(review.user.imageUrl),
               ),
               SizedBox(width: tok.gap.xs),
               Expanded(
@@ -885,12 +912,12 @@ class _ReviewCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText(
-                      review.userName,
+                      review.user.userName,
                       size: AppTextSize.s14,
                       weight: AppTextWeight.bold,
                     ),
                     AppText(
-                      review.date,
+                      review.createdAt,
                       size: AppTextSize.s10,
                       color: tx.muted,
                     ),

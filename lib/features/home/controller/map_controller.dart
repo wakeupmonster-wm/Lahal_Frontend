@@ -2,11 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lahal_application/features/home/controller/home_controller.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
-import 'package:lahal_application/features/home/repo/home_repository.dart';
 
 class MapController extends GetxController {
-  final HomeRepository _repository = HomeRepository();
 
   // Map State
   Completer<GoogleMapController> mapController = Completer();
@@ -44,9 +43,14 @@ class MapController extends GetxController {
   Future<void> fetchRestaurants() async {
     try {
       isLoading.value = true;
-      // Fetching all restaurants to show on map
-      final results = await _repository.fetchBestRestaurants();
-      restaurants.assignAll(results);
+      // Get restaurants from HomeController if available
+      try {
+        final homeController = Get.find<HomeController>();
+        restaurants.assignAll(homeController.bestRestaurants);
+      } catch (_) {
+        // HomeController not available, leave empty
+        restaurants.clear();
+      }
       _createMarkers();
 
       if (restaurants.isNotEmpty) {
@@ -65,10 +69,10 @@ class MapController extends GetxController {
       markers.add(
         Marker(
           markerId: MarkerId(restaurant.id),
-          position: LatLng(restaurant.latitude, restaurant.longitude),
+          position: LatLng(restaurant.location.latitude, restaurant.location.longitude),
           infoWindow: InfoWindow(
-            title: restaurant.name,
-            snippet: restaurant.address,
+            title: restaurant.restaurantName,
+            snippet: restaurant.address.fullAddress,
           ),
           onTap: () {
             _onMarkerTapped(restaurant);
@@ -95,7 +99,7 @@ class MapController extends GetxController {
     if (index >= 0 && index < restaurants.length) {
       final restaurant = restaurants[index];
       selectedRestaurant.value = restaurant;
-      _animateCamera(restaurant.latitude, restaurant.longitude);
+      _animateCamera(restaurant.location.latitude, restaurant.location.longitude);
     }
   }
 

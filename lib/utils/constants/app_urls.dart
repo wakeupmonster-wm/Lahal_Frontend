@@ -12,17 +12,26 @@ class AppUrls {
   }
 
   //  AUTH
-  static Uri testSendOtp = setUrls("/api/v1/auth/test/send-otp");   // testSendOTP
-  static Uri sendOtp = setUrls("/api/v1/auth/send-phone-otp");  
+  static Uri testSendOtp = setUrls("/api/v1/auth/test/send-otp"); // testSendOTP
+  static Uri sendOtp = setUrls("/api/v1/auth/send-phone-otp");
   static Uri verifyOtp = setUrls("/api/v1/auth/verify-phone-otp");
-  static Uri resendOtp = setUrls("/api/v1/auth/test/send-otp");  // need to change with real one
+  static Uri resendOtp = setUrls(
+    "/api/v1/auth/test/send-otp",
+  ); // need to change with real one
   static Uri refreshToken = setUrls("/api/v1/auth/refresh");
 
-
-
   // Home
-  static Uri saveUserLocation = setUrls("/api/v1/user/location-save"); 
-  static Uri getRestaurants = setUrls("/api/v1/restaurants/nearbyrestaurants");
+  static Uri saveUserLocation = setUrls("/api/v1/user/location-save");
+  static String getRestaurants = setBaseUrl(
+    "/api/v1/restaurants/nearbyrestaurants",
+  );
+  static String getRestaurantById = setBaseUrl("/api/v1/restaurants");
+  static Uri addFavouriteRestuarant = setUrls("/api/v1/user/add-favourites");
+  static Uri removeFavouriteRestuarant = setUrls(
+    "/api/v1/user/update-favourites",
+  );
+
+  static Uri reportError = setUrls("/api/v1/reports/restaurant");
 
   static Uri home = setUrls("/api/home");
   static Uri notifications = setUrls("/api/notifications");

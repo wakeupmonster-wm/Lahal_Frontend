@@ -19,8 +19,8 @@ class FavoriteController extends GetxController {
     isLoading.value = true;
     hasError.value = false;
     try {
-      final restaurants = await _homeRepo.fetchFavoriteRestaurants();
-      favoriteRestaurants.assignAll(restaurants);
+      // TODO: Replace with dedicated favorites API when available
+      favoriteRestaurants.clear();
     } catch (e) {
       hasError.value = true;
     } finally {

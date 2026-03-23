@@ -55,6 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ScrollDirection.forward) {
         bottomNavController.setNavBarVisible(true);
       }
+
+      // Pagination: load more when near bottom
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        controller.loadMoreRestaurants();
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -238,7 +244,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(22),
-                child: _HomeSearchBar(tok: tok, cs: cs, tx: tx),
+                child: _HomeSearchBar(
+                  tok: tok,
+                  cs: cs,
+                  tx: tx,
+                  onSearchChanged: controller.onSearchChanged,
+                ),
               ),
             ),
 
@@ -322,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 tok,
                                 tx,
                                 cs,
-                                'Top reviewe',
+                                'Top reviewed',
                                 AppAssets.reviewIcon,
                                 controller.selectedCategory.value ==
                                     'Top reviewed',
@@ -403,7 +414,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           return RestaurantCard(
                             restaurant: restaurant,
                             onTap: () {
-                              context.push(AppRoutes.restaurantDetails);
+                              context.push(
+                                AppRoutes.restaurantDetails,
+                                extra: restaurant.id,
+                              );
                             },
                             onFavoriteToggle: () {
                               controller.toggleFavorite(restaurant.id);
@@ -412,6 +426,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         }, childCount: controller.bestRestaurants.length),
                       ),
                     );
+                  }),
+
+                  // --- Loading More Indicator ---
+                  Obx(() {
+                    if (controller.isLoadingMore.value) {
+                      return SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.all(tok.gap.lg),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SliverToBoxAdapter(child: SizedBox.shrink());
                   }),
 
                   // --- Footer ---
@@ -523,11 +552,17 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _HomeSearchBar extends StatelessWidget {
-  const _HomeSearchBar({required this.tok, required this.cs, required this.tx});
+  const _HomeSearchBar({
+    required this.tok,
+    required this.cs,
+    required this.tx,
+    required this.onSearchChanged,
+  });
 
   final AppTokens tok;
   final ColorScheme cs;
   final AppTextColors tx;
+  final Function(String) onSearchChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -548,7 +583,9 @@ class _HomeSearchBar extends StatelessWidget {
                 "Search for \"Burger\"",
                 "Search for \"Coffee\"",
               ],
-              onChanged: (value) {},
+              onChanged: (value) {
+                onSearchChanged(value);
+              },
             ),
           ),
           SizedBox(width: tok.gap.md),

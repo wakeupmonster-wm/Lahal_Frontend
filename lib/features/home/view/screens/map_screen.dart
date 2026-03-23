@@ -319,7 +319,7 @@ class MapScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(tok.radiusSm),
                   child: Image.network(
-                    restaurant.imageUrl,
+                    restaurant.restaurantImg,
                     width: width * 0.18,
                     height: height * 0.075,
                     fit: BoxFit.cover,
@@ -348,7 +348,7 @@ class MapScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: AppText(
-                              restaurant.name,
+                              restaurant.restaurantName,
                               size: AppTextSize.s14,
                               weight: AppTextWeight.bold,
                               color: tx.primary,
@@ -369,7 +369,7 @@ class MapScreen extends StatelessWidget {
                             child: Row(
                               children: [
                                 AppText(
-                                  "${restaurant.rating}",
+                                  "${restaurant.metrics.avgRating}",
                                   size: AppTextSize.s10,
                                   weight: AppTextWeight.bold,
                                   color: cs.onPrimary,
@@ -382,7 +382,7 @@ class MapScreen extends StatelessWidget {
                         ],
                       ),
                       AppText(
-                        restaurant.category,
+                        restaurant.cuisine,
                         size: AppTextSize.s10,
                         weight: AppTextWeight.medium,
                         color: tx.subtle,
@@ -390,7 +390,7 @@ class MapScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       AppText(
-                        restaurant.distance,
+                        restaurant.formattedDistance,
                         size: AppTextSize.s10,
                         weight: AppTextWeight.medium,
                         color: tx.subtle,

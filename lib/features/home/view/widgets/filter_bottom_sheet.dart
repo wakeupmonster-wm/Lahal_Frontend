@@ -260,7 +260,7 @@ class _ActionButtons extends StatelessWidget {
           flex: 2,
           child: Obx(() {
             final hasFiltersChanged =
-                controller.distanceRange.value != 200.0 ||
+                controller.distanceRange.value > 0 ||
                 controller.rating.value != 0 ||
                 controller.selectedCuisines.isNotEmpty;
 

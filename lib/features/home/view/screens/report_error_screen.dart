@@ -9,7 +9,8 @@ import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 
 class ReportErrorScreen extends StatelessWidget {
-  const ReportErrorScreen({super.key});
+  final String restaurantId;
+  const ReportErrorScreen({super.key, required this.restaurantId});
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +106,7 @@ class ReportErrorScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: isEnabled
-                        ? () => controller.submit(context)
+                        ? () => controller.submit(context, restaurantId)
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isEnabled
