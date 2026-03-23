@@ -127,8 +127,9 @@ class NetworkApiServices {
   Future<ApiResponse<T>> multipartRequest<T>({
     required Uri url,
     required HttpMethod method,
-    required List<File> files,
+    List<File>? files,
     String fileFieldName = 'photos',
+    Map<String, List<File>>? multiFiles,
     Map<String, String>? fields,
     bool includeHeaders = true, // Added for backward compatibility
     T Function(dynamic json)? fromJsonT,
@@ -151,25 +152,31 @@ class NetworkApiServices {
       request.headers.addAll(headers);
       if (fields != null) request.fields.addAll(fields);
 
-      for (final file in files) {
-        final extension = p.extension(file.path).toLowerCase();
-        MediaType? contentType;
-
-        if (extension == '.jpg' || extension == '.jpeg') {
-          contentType = MediaType('image', 'jpeg');
-        } else if (extension == '.png') {
-          contentType = MediaType('image', 'png');
-        } else if (extension == '.webp') {
-          contentType = MediaType('image', 'webp');
+      if (files != null && files.isNotEmpty) {
+        for (final file in files) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              fileFieldName,
+              file.path,
+              contentType: _getContentType(file.path),
+            ),
+          );
         }
+      }
 
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            fileFieldName,
-            file.path,
-            contentType: contentType,
-          ),
-        );
+      if (multiFiles != null && multiFiles.isNotEmpty) {
+        for (final entry in multiFiles.entries) {
+          final fieldName = entry.key;
+          for (final file in entry.value) {
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                fieldName,
+                file.path,
+                contentType: _getContentType(file.path),
+              ),
+            );
+          }
+        }
       }
 
       final streamed = await request.send().timeout(timeout);
@@ -256,5 +263,17 @@ class NetworkApiServices {
         }
         throw ServerException('Request failed with status $statusCode: $msg');
     }
+  }
+
+  MediaType? _getContentType(String filePath) {
+    final extension = p.extension(filePath).toLowerCase();
+    if (extension == '.jpg' || extension == '.jpeg') {
+      return MediaType('image', 'jpeg');
+    } else if (extension == '.png') {
+      return MediaType('image', 'png');
+    } else if (extension == '.webp') {
+      return MediaType('image', 'webp');
+    }
+    return null;
   }
 }

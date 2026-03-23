@@ -70,32 +70,102 @@ class FavoriteRestaurantModel {
     required this.distanceInKm,
   });
 
-  factory FavoriteRestaurantModel.fromJson(Map<String, dynamic> json) =>
-      FavoriteRestaurantModel(
-        id: json["_id"],
-        restaurantName: json["restaurantName"],
-        about: json["about"],
-        cuisine: json["cuisine"],
-        address: Address.fromJson(json["address"]),
-        location: Location.fromJson(json["location"]),
-        isHalalCertified: json["isHalalCertified"],
-        halalSummary: json["halalSummary"],
-        alcoholPolicy: json["alcoholPolicy"],
-        openingHours: OpeningHours.fromJson(json["openingHours"]),
-        rating: Rating.fromJson(json["rating"]),
-        foodsImages: List<FoodImage>.from(
-          json["foodsImages"].map((x) => FoodImage.fromJson(x)),
+  factory FavoriteRestaurantModel.fromJson(Map<String, dynamic> json) {
+    // Halal info parsing
+    final halalInfo = json["halalInfo"] ?? {};
+    final isHalal =
+        halalInfo["isCertified"] ?? json["isHalalCertified"] ?? false;
+    final hSummary = halalInfo["summary"] ?? json["halalSummary"] ?? "";
+
+    // Rating / Metrics parsing
+    final metrics = json["metrics"] ?? {};
+    final rt = json["rating"] ?? {};
+    final avgRating =
+        (metrics["avgRating"]?.toDouble() ?? rt["average"]?.toDouble() ?? 0.0);
+    final totalRev = (metrics["totalReviews"] ?? rt["totalReviews"] ?? 0);
+
+    // Distance parsing (handles "15.73 km far away")
+    double dist = 0.0;
+    final distVal = json["distanceInKm"];
+    if (distVal is String) {
+      try {
+        final match = RegExp(r"(\d+\.?\d*)").firstMatch(distVal);
+        if (match != null) {
+          dist = double.parse(match.group(0)!);
+        }
+      } catch (_) {}
+    } else if (distVal is num) {
+      dist = distVal.toDouble();
+    }
+
+    // Address parsing (API sometimes returns an array of addresses)
+    final addrJson = json["address"];
+    Address address;
+    if (addrJson is List && addrJson.isNotEmpty) {
+      address = Address.fromJson(addrJson[0]);
+    } else if (addrJson is Map<String, dynamic>) {
+      address = Address.fromJson(addrJson);
+    } else {
+      address = Address(
+        fullAddress: "",
+        city: "",
+        state: "",
+        country: "",
+        pincode: "",
+      );
+    }
+
+    // Image parsing (API has restaurantImg as string)
+    final List<RestaurantImage> restImages = [];
+    if (json["restaurantImg"] != null && json["restaurantImg"] is String) {
+      restImages.add(
+        RestaurantImage(
+          url: json["restaurantImg"],
+          publicId: "",
+          uploadedAt: DateTime.now(),
+          isCover: true,
         ),
-        restaurantImages: List<RestaurantImage>.from(
+      );
+    } else if (json["restaurantImages"] != null) {
+      restImages.addAll(
+        List<RestaurantImage>.from(
           json["restaurantImages"].map((x) => RestaurantImage.fromJson(x)),
         ),
-        amenities: Amenities.fromJson(json["amenities"]),
-        reviews: List<dynamic>.from(json["reviews"].map((x) => x)),
-        phone: json["phone"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-        distanceInKm: json["distanceInKm"]?.toDouble() ?? 0.0,
       );
+    }
+
+    return FavoriteRestaurantModel(
+      id: json["_id"] ?? "",
+      restaurantName: json["restaurantName"] ?? "",
+      about: json["about"] ?? "",
+      cuisine: json["cuisine"] ?? "",
+      address: address,
+      location: Location.fromJson(json["location"] ?? {}),
+      isHalalCertified: isHalal,
+      halalSummary: hSummary,
+      alcoholPolicy: json["alcoholPolicy"] ?? "",
+      openingHours: OpeningHours.fromJson(json["openingHours"] ?? {}),
+      rating: Rating(average: avgRating, totalReviews: totalRev),
+      foodsImages: json["foodsImages"] != null
+          ? List<FoodImage>.from(
+              json["foodsImages"].map((x) => FoodImage.fromJson(x)),
+            )
+          : [],
+      restaurantImages: restImages,
+      amenities: Amenities.fromJson(json["amenities"] ?? {}),
+      reviews: json["reviews"] != null
+          ? List<dynamic>.from(json["reviews"].map((x) => x))
+          : [],
+      phone: json["phone"] ?? "",
+      createdAt: json["createdAt"] != null
+          ? DateTime.parse(json["createdAt"])
+          : DateTime.now(),
+      updatedAt: json["updatedAt"] != null
+          ? DateTime.parse(json["updatedAt"])
+          : DateTime.now(),
+      distanceInKm: dist,
+    );
+  }
 
   RestaurantModel toRestaurantModel() {
     return RestaurantModel(
@@ -120,10 +190,12 @@ class FavoriteRestaurantModel {
         "Restroom": amenities.restroom,
         "Outdoor Seating": amenities.outdoorSeating,
       },
-      reviews: [], // Reviews mapping can be added if needed
-      latitude: location.coordinates[1],
-      longitude: location.coordinates[0],
-      socialConnects: SocialConnects(twitter: ""), // Default values
+      reviews: [],
+      latitude: location.coordinates.length > 1 ? location.coordinates[1] : 0.0,
+      longitude: location.coordinates.isNotEmpty
+          ? location.coordinates[0]
+          : 0.0,
+      socialConnects: SocialConnects(twitter: ""),
       isFavorite: true,
     );
   }
@@ -145,11 +217,11 @@ class Address {
   });
 
   factory Address.fromJson(Map<String, dynamic> json) => Address(
-    fullAddress: json["fullAddress"],
-    city: json["city"],
-    state: json["state"],
-    country: json["country"],
-    pincode: json["pincode"],
+    fullAddress: json["fullAddress"] ?? "",
+    city: json["city"] ?? "",
+    state: json["state"] ?? "",
+    country: json["country"] ?? "",
+    pincode: json["pincode"] ?? "",
   );
 }
 
@@ -159,12 +231,22 @@ class Location {
 
   Location({required this.type, required this.coordinates});
 
-  factory Location.fromJson(Map<String, dynamic> json) => Location(
-    type: json["type"],
-    coordinates: List<double>.from(
-      json["coordinates"].map((x) => x.toDouble()),
-    ),
-  );
+  factory Location.fromJson(Map<String, dynamic> json) {
+    if (json["coordinates"] != null) {
+      return Location(
+        type: json["type"] ?? "Point",
+        coordinates: List<double>.from(
+          json["coordinates"].map((x) => x.toDouble()),
+        ),
+      );
+    } else if (json["lng"] != null && json["lat"] != null) {
+      return Location(
+        type: "Point",
+        coordinates: [json["lng"].toDouble(), json["lat"].toDouble()],
+      );
+    }
+    return Location(type: "Point", coordinates: []);
+  }
 }
 
 class OpeningHours {
@@ -179,9 +261,9 @@ class OpeningHours {
   });
 
   factory OpeningHours.fromJson(Map<String, dynamic> json) => OpeningHours(
-    openTime: json["openTime"],
-    closeTime: json["closeTime"],
-    isOpenNow: json["isOpenNow"],
+    openTime: json["openTime"] ?? "00:00",
+    closeTime: json["closeTime"] ?? "00:00",
+    isOpenNow: json["isOpenNow"] ?? false,
   );
 }
 
@@ -193,7 +275,7 @@ class Rating {
 
   factory Rating.fromJson(Map<String, dynamic> json) => Rating(
     average: json["average"]?.toDouble() ?? 0.0,
-    totalReviews: json["totalReviews"],
+    totalReviews: json["totalReviews"] ?? 0,
   );
 }
 
@@ -211,10 +293,12 @@ class FoodImage {
   });
 
   factory FoodImage.fromJson(Map<String, dynamic> json) => FoodImage(
-    url: json["url"],
-    publicId: json["publicId"],
-    uploadedAt: DateTime.parse(json["uploadedAt"]),
-    isCover: json["isCover"],
+    url: json["url"] ?? "",
+    publicId: json["publicId"] ?? "",
+    uploadedAt: json["uploadedAt"] != null
+        ? DateTime.parse(json["uploadedAt"])
+        : DateTime.now(),
+    isCover: json["isCover"] ?? false,
   );
 }
 
@@ -233,10 +317,12 @@ class RestaurantImage {
 
   factory RestaurantImage.fromJson(Map<String, dynamic> json) =>
       RestaurantImage(
-        url: json["url"],
-        publicId: json["publicId"],
-        uploadedAt: DateTime.parse(json["uploadedAt"]),
-        isCover: json["isCover"],
+        url: json["url"] ?? "",
+        publicId: json["publicId"] ?? "",
+        uploadedAt: json["uploadedAt"] != null
+            ? DateTime.parse(json["uploadedAt"])
+            : DateTime.now(),
+        isCover: json["isCover"] ?? false,
       );
 }
 
@@ -258,11 +344,11 @@ class Amenities {
   });
 
   factory Amenities.fromJson(Map<String, dynamic> json) => Amenities(
-    dineIn: json["dineIn"],
-    takeaway: json["takeaway"],
-    delivery: json["delivery"],
-    reservationAvailable: json["reservationAvailable"],
-    restroom: json["restroom"],
-    outdoorSeating: json["outdoorSeating"],
+    dineIn: json["dineIn"] ?? false,
+    takeaway: json["takeaway"] ?? false,
+    delivery: json["delivery"] ?? false,
+    reservationAvailable: json["reservationAvailable"] ?? false,
+    restroom: json["restroom"] ?? false,
+    outdoorSeating: json["outdoorSeating"] ?? false,
   );
 }

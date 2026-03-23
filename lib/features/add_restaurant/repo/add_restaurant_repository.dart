@@ -7,21 +7,15 @@ import 'package:lahal_application/utils/constants/enum.dart';
 class AddRestaurantRepository {
   final NetworkApiServices _network = NetworkApiServices();
 
-  Future<ApiResponse> submitRestaurantRequest(Map<String, dynamic> body) async {
-    return await _network.sendRequest(
-      url: AppUrls.submitRestaurantRequest,
-      method: HttpMethod.post,
-      body: body,
-      includeHeaders: true,
-    );
-  }
-
-  Future<ApiResponse> uploadFoodImages(List<File> images) async {
+  Future<ApiResponse> addRestaurantRequest({
+    required Map<String, String> fields,
+    required Map<String, List<File>> multipartFiles,
+  }) async {
     return await _network.multipartRequest(
-      url: AppUrls.uploadFoodImages,
+      url: AppUrls.addRestaurantRequest,
       method: HttpMethod.post,
-      files: images,
-      fileFieldName: 'foodsImgs',
+      fields: fields,
+      multiFiles: multipartFiles,
       includeHeaders: true,
     );
   }

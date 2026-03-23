@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:get/get.dart';
 import '../model/favorite_restaurant_model.dart';
 import '../repo/profile_repository.dart';
@@ -29,12 +30,21 @@ class FavoriteController extends GetxController {
       if (response.isSuccess) {
         final List<dynamic> data = response.data as List<dynamic>;
         favoriteRestaurants.assignAll(
-          data.map((x) => FavoriteRestaurantModel.fromJson(x)).toList(),
+          data.map((x) {
+            try {
+              return FavoriteRestaurantModel.fromJson(x);
+            } catch (e) {
+              log("Error parsing favorite restaurant: $e, Data: $x");
+              rethrow;
+            }
+          }).toList(),
         );
       } else {
+        log("API Error in fetchFavorites: ${response.message}");
         hasError.value = true;
       }
     } catch (e) {
+      log("Catch Error in fetchFavorites: $e");
       hasError.value = true;
     } finally {
       isLoading.value = false;

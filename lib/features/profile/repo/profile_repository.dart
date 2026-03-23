@@ -29,22 +29,16 @@ class ProfileRepository {
     );
   }
 
-  Future<ApiResponse> updateProfileImage(File file) async {
+  Future<ApiResponse> updateProfile({
+    required Map<String, String> fields,
+    File? image,
+  }) async {
     return await _apiService.multipartRequest(
-      url: AppUrls.updateProfileImage,
-      method: HttpMethod.patch,
-      files: [file],
-      fileFieldName: 'uploadImg',
-      includeHeaders: true,
-    );
-  }
-  //implement update profile api
-
-  Future<ApiResponse> updateProfile(Map<String, dynamic> body) async {
-    return await _apiService.sendRequest(
       url: AppUrls.updateProfile,
       method: HttpMethod.patch,
-      body: body,
+      fields: fields,
+      files: image != null ? [image] : [],
+      fileFieldName: 'uploadImg',
       includeHeaders: true,
     );
   }

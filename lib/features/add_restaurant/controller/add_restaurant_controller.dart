@@ -1,9 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import '../model/add_restaurant_model.dart';
 import '../repo/add_restaurant_repository.dart';
 import 'package:lahal_application/data/exceptions/app_exception.dart';
 
@@ -22,15 +23,11 @@ class AddRestaurantController extends GetxController {
   final additionalNoteController = TextEditingController();
 
   final RxString selectedHalalStatus = 'Fully Halal'.obs;
-  final RxList<File> selectedImages = <File>[].obs;
+  final RxList<File> selectedImages = <File>[].obs; // Typically food images
+  final RxString selectedImagesError = ''.obs;
   final RxBool isLoading = false.obs;
   final RxBool isFormValid = false.obs;
   final Rx<AutovalidateMode> autovalidateMode = AutovalidateMode.disabled.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   final List<String> halalStatuses = [
     'Fully Halal',
@@ -46,11 +43,16 @@ class AddRestaurantController extends GetxController {
     final List<XFile> images = await _picker.pickMultiImage();
     if (images.isNotEmpty) {
       selectedImages.addAll(images.map((image) => File(image.path)));
+      selectedImagesError.value = '';
     }
   }
 
   void removeImage(int index) {
     selectedImages.removeAt(index);
+    if (selectedImages.isEmpty &&
+        autovalidateMode.value != AutovalidateMode.disabled) {
+      selectedImagesError.value = "Please add at least one photo.";
+    }
   }
 
   Future<void> submitRequest() async {
@@ -60,54 +62,40 @@ class AddRestaurantController extends GetxController {
     }
 
     if (selectedImages.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please add at least one restaurant photo.",
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-      );
+      selectedImagesError.value = "Please add at least one photo.";
+      autovalidateMode.value = AutovalidateMode.onUserInteraction;
       return;
     }
 
     isLoading.value = true;
 
     try {
-      // Step 1: Upload Images
-      final uploadResponse = await repository.uploadFoodImages(selectedImages);
-      if (!uploadResponse.isSuccess) {
-        Fluttertoast.showToast(
-          msg: "Image upload failed: ${uploadResponse.message}",
-          backgroundColor: Colors.redAccent,
-        );
-        return;
-      }
+      final Map<String, String> fields = {
+        "restaurantName": restaurantNameController.text.trim(),
+        "address": jsonEncode({
+          "fullAddress": addressController.text.trim(),
+          "city": cityController.text.trim(),
+          "state": stateController.text.trim(),
+          "country": countryController.text.trim(),
+          "pincode": pincodeController.text.trim(),
+        }),
+        "halalStatus": selectedHalalStatus.value,
+        "additionalNote": additionalNoteController.text.trim(),
+      };
+      log("fields: ---------------------${fields.toString()}");
 
-      // Parse uploaded images from response
-      final List<dynamic> dataList = uploadResponse.data as List<dynamic>;
-      final List<FoodImage> foodImages = dataList
-          .map((item) => FoodImage.fromJson(item as Map<String, dynamic>))
-          .toList();
+      final Map<String, List<File>> multipartFiles = {
+        "restaurantImgs": selectedImages.toList(),
+        // "restaurantImgs": restaurantImages.toList(),
+      };
 
-      // Step 2: Submit Restaurant Request
-      final address = RestaurantAddress(
-        fullAddress: addressController.text.trim(),
-        city: cityController.text.trim(),
-        state: stateController.text.trim(),
-        country: countryController.text.trim(),
-        pincode: pincodeController.text.trim(),
-      );
-
-      final restaurantRequest = AddRestaurantRequest(
-        restaurantName: restaurantNameController.text.trim(),
-        address: address,
-        halalStatus: selectedHalalStatus.value,
-        foodsImages: foodImages,
-      );
-
-      final response = await repository.submitRestaurantRequest(
-        restaurantRequest.toJson(),
+      final response = await repository.addRestaurantRequest(
+        fields: fields,
+        multipartFiles: multipartFiles,
       );
 
       if (response.isSuccess) {
+        log("response: ---------------------${response.toString()}");
         Fluttertoast.showToast(
           msg: "Restaurant request sent successfully!",
           backgroundColor: Colors.green,
@@ -115,6 +103,7 @@ class AddRestaurantController extends GetxController {
         );
         clearForm();
       } else {
+        log("response: ---------------------${response.toString()}");
         Fluttertoast.showToast(
           msg: response.message,
           backgroundColor: Colors.redAccent,
@@ -149,6 +138,7 @@ class AddRestaurantController extends GetxController {
   }
 
   void clearForm() {
+    formKey.currentState?.reset();
     restaurantNameController.clear();
     addressController.clear();
     cityController.clear();
@@ -158,6 +148,8 @@ class AddRestaurantController extends GetxController {
     additionalNoteController.clear();
     selectedHalalStatus.value = 'Fully Halal';
     selectedImages.clear();
+    selectedImagesError.value = '';
+    // restaurantImages.clear();
     autovalidateMode.value = AutovalidateMode.disabled;
   }
 

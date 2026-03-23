@@ -153,23 +153,6 @@ class EditProfileController extends GetxController {
     _checkChanges();
   }
 
-  Future<void> updateProfileImage(File file) async {
-    isLoading.value = true;
-    try {
-      final response = await _profileRepo.updateProfileImage(file);
-      if (response.isSuccess) {
-        return; // Success handled by updateProfileDetails if called together, or independently
-      } else {
-        AppSnackBar.showToast(message: response.message);
-        throw Exception(response.message);
-      }
-    } catch (e) {
-      rethrow;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
   Future<void> updateProfileDetails(BuildContext context) async {
     if (!hasChanges.value) {
       AppSnackBar.showToast(message: "You haven't changed anything.");
@@ -180,12 +163,6 @@ class EditProfileController extends GetxController {
 
     isLoading.value = true;
     try {
-      // 1. If image changed, upload it first
-      if (pickedImage.value != null) {
-        await _profileRepo.updateProfileImage(pickedImage.value!);
-      }
-
-      // 2. Prepare and send profile details
       String formattedDob = dobController.text;
       if (dobController.text.isNotEmpty) {
         try {
@@ -196,17 +173,24 @@ class EditProfileController extends GetxController {
         }
       }
 
-      final body = {
-        'userName': nameController.text,
-        'email': emailController.text,
+      // 2. Prepare fields for multipart request
+      final Map<String, String> fields = {
+        'userName': nameController.text.trim(),
+        'email': emailController.text.trim(),
         'dob': formattedDob,
         'gender': selectedGender.value,
       };
 
-      final response = await _profileRepo.updateProfile(body);
+      // 3. Send single multipart request
+      final response = await _profileRepo.updateProfile(
+        fields: fields,
+        image: pickedImage.value,
+      );
+
       if (response.isSuccess) {
         AppSnackBar.showToast(message: "Profile updated successfully");
         await _profileController.fetchUserProfile();
+        fetchUserProfile(); // Reset initial data for change detection
         if (context.mounted) {
           context.pop();
         }
