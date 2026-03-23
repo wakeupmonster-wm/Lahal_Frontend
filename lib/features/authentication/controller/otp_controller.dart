@@ -19,6 +19,7 @@ class OtpController extends GetxController {
 
   // Pinput controller — lets us programmatically fill from SMS
   final TextEditingController pinputController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
   final smartAuth = SmartAuth.instance;
 
   OtpController({this.length = 6, required this.phone});
@@ -31,6 +32,12 @@ class OtpController extends GetxController {
     super.onInit();
     startTimer();
     _listenForSmsOtp();
+    // Ensure focus is explicitly requested after transition completes
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!focusNode.hasFocus) {
+        focusNode.requestFocus();
+      }
+    });
   }
 
   void _listenForSmsOtp() async {
@@ -55,6 +62,7 @@ class OtpController extends GetxController {
   void onClose() {
     _timer?.cancel();
     pinputController.dispose();
+    focusNode.dispose();
     smartAuth.removeUserConsentApiListener();
     super.onClose();
   }
@@ -110,6 +118,7 @@ class OtpController extends GetxController {
     authService.handleSendOtp(
       payload: {'phone': phone},
       context: context,
+      navigateToVerify: false,
     );
 
     reset();
