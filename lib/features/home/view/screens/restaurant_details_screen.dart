@@ -557,12 +557,12 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
     Widget buildPhotoItem(String url) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(tok.radiusMd),
-        child: Image.network(
-          url,
+        child: CachedNetworkImage(
+          imageUrl: url,
           fit: BoxFit.cover,
           width: double.infinity,
           height: double.infinity,
-          errorBuilder: (context, error, stackTrace) =>
+          errorWidget: (context, error, stackTrace) =>
               Container(color: Colors.grey.shade200),
         ),
       );

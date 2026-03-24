@@ -14,7 +14,7 @@ import 'package:lahal_application/data/datasources/local/storage_utility.dart';
 class LocationController extends GetxController {
   final LocationRepository _locationRepository = LocationRepository();
 
-  final isLocationLoading = false.obs;
+  final isLocationLoading = true.obs;
   final currentAddress = 'Select your location'.obs;
   final latitude = 0.0.obs;
   final longitude = 0.0.obs;
@@ -40,9 +40,12 @@ class LocationController extends GetxController {
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         await fetchLocation();
+      } else {
+        isLocationLoading.value = false;
       }
     } catch (e) {
       log(e.toString());
+      isLocationLoading.value = false;
     }
   }
 
