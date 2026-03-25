@@ -1,15 +1,22 @@
-import '../model/add_restaurant_model.dart';
+import 'dart:io';
+import 'package:lahal_application/data/datasources/remote/network_api_service.dart';
+import 'package:lahal_application/data/models/api_response.dart';
+import 'package:lahal_application/utils/constants/app_urls.dart';
+import 'package:lahal_application/utils/constants/enum.dart';
 
 class AddRestaurantRepository {
-  Future<bool> submitRestaurantRequest(AddRestaurantModel restaurant) async {
-    // TODO: Implement actual API call with Multipart request for images
-    // For now, simulating a network delay and success
-    await Future.delayed(const Duration(seconds: 2));
+  final NetworkApiServices _network = NetworkApiServices();
 
-    // Log data for "debugging" purposes as requested
-    print("Submitting Restaurant: ${restaurant.toJson()}");
-    print("Images to upload: ${restaurant.images.length}");
-
-    return true;
+  Future<ApiResponse> addRestaurantRequest({
+    required Map<String, String> fields,
+    required Map<String, List<File>> multipartFiles,
+  }) async {
+    return await _network.multipartRequest(
+      url: AppUrls.addRestaurantRequest,
+      method: HttpMethod.post,
+      fields: fields,
+      multiFiles: multipartFiles,
+      includeHeaders: true,
+    );
   }
 }
