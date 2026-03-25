@@ -45,6 +45,7 @@ dependencies:
   # smooth_page_indicator: ^1.2.0  # Page indicators
   photo_view: ^0.15.0     # Photo viewer
   flutter_html: ^3.0.0    # HTML rendering
+  flutter_animate: ^4.5.0 # Animations
 
   # ===== State Management =====
   get: ^4.6.6            # GetX state management
@@ -69,6 +70,8 @@ dependencies:
   intl:        # Internationalization
   url_launcher: ^6.2.5   # Launch URLs
   connectivity_plus: ^7.0.0  # Network connectivity
+  path: ^1.9.0           # Path manipulation
+  http_parser: ^4.1.2    # For MediaType
  # flutter_local_notifications: ^16.3.2  # Local notifications
   loader_overlay: ^5.0.0  # Loading overlay
   fluttertoast: ^9.0.0   # Toast messages

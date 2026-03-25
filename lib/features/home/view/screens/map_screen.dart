@@ -12,6 +12,7 @@ import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/app_map_styles.dart';
 import 'package:lahal_application/utils/routes/app_pages.dart';
+import 'package:lahal_application/features/profile/view/widgets/change_location_bottom_sheet.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
@@ -93,7 +94,7 @@ class MapScreen extends StatelessWidget {
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                context.push(AppRoutes.changeLocationScreen);
+                                ChangeLocationBottomSheet.show(context);
                               },
                               child: Row(
                                 children: [

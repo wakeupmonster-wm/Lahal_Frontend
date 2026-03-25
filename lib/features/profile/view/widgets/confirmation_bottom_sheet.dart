@@ -15,6 +15,7 @@ class ConfirmationBottomSheet extends StatelessWidget {
   final String confirmLabel;
   final VoidCallback onConfirm;
   final AppButtonVariant confirmVariant;
+  final bool loading;
 
   const ConfirmationBottomSheet({
     super.key,
@@ -23,6 +24,7 @@ class ConfirmationBottomSheet extends StatelessWidget {
     required this.confirmLabel,
     required this.onConfirm,
     this.confirmVariant = AppButtonVariant.danger,
+    this.loading = false,
   });
 
   static void show(
@@ -32,6 +34,7 @@ class ConfirmationBottomSheet extends StatelessWidget {
     required String confirmLabel,
     required VoidCallback onConfirm,
     AppButtonVariant confirmVariant = AppButtonVariant.danger,
+    bool loading = false,
   }) {
     showModalBottomSheet(
       context: context,
@@ -43,6 +46,7 @@ class ConfirmationBottomSheet extends StatelessWidget {
         confirmLabel: confirmLabel,
         onConfirm: onConfirm,
         confirmVariant: confirmVariant,
+        loading: loading,
       ),
     );
   }
@@ -86,6 +90,7 @@ class ConfirmationBottomSheet extends StatelessWidget {
               onPressed: onConfirm,
               minWidth: double.infinity,
               variant: confirmVariant,
+              loading: loading,
             ),
             SizedBox(height: tok.gap.sm),
             AppButton(

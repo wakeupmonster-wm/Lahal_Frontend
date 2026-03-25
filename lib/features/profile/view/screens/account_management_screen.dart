@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lahal_application/utils/components/appbar/internal_app_bar.dart';
 import 'package:lahal_application/utils/constants/app_strings.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
-import 'package:lahal_application/utils/routes/app_pages.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/features/profile/view/widgets/confirmation_bottom_sheet.dart';
+import 'package:lahal_application/features/profile/controller/account_management_controller.dart';
+import 'package:get/get.dart';
 
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(AccountManagementController());
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -53,15 +54,19 @@ class AccountManagementScreen extends StatelessWidget {
                     context,
                     AppStrings.deleteYourAccount,
                     onTap: () {
-                      ConfirmationBottomSheet.show(
-                        context,
-                        title: AppStrings.wantToDeleteAccount,
-                        subtitle: AppStrings.deleteAccountConfirmation,
-                        confirmLabel: AppStrings.delete,
-                        onConfirm: () {
-                          // Logic to delete account
-                          context.pop();
-                        },
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Obx(
+                          () => ConfirmationBottomSheet(
+                            title: AppStrings.wantToDeleteAccount,
+                            subtitle: AppStrings.deleteAccountConfirmation,
+                            confirmLabel: AppStrings.delete,
+                            onConfirm: () => controller.deleteAccount(context),
+                            loading: controller.isLoading.value,
+                          ),
+                        ),
                       );
                     },
                     showArrow: true,

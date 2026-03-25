@@ -20,7 +20,7 @@ class AppStrings {
   static const goBackToLogin = "Go Back to Login";
   static const secondsSuffix = "s";
 
-//------------profile sectionuse
+  //------------profile sectionuse
   static const accountSettings = "Account Settings";
   static const accountManagement = "Account Management";
   static const deleteYourAccount = "Delete Your Account";
