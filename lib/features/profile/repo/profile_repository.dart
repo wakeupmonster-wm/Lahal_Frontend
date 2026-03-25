@@ -70,10 +70,17 @@ class ProfileRepository {
     );
   }
 
-  Future<ApiResponse> logout() async {
+  Future<ApiResponse> logout({
+    required String refreshToken,
+    required String deviceToken,
+  }) async {
     return await _apiService.sendRequest(
       url: AppUrls.logout,
       method: HttpMethod.post,
+      body: {
+        'refreshToken': refreshToken,
+        //  'deviceToken': deviceToken
+      },
       includeHeaders: true,
     );
   }

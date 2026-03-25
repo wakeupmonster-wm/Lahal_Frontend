@@ -24,6 +24,7 @@ class AppButton extends StatelessWidget {
     this.fgColorOverride,
     this.bgColorOverride,
     this.borderColorOverride,
+    this.focusNode,
   });
 
   final String label;
@@ -42,13 +43,14 @@ class AppButton extends StatelessWidget {
   final double? heightOverride;
   final double? radiusOverride;
   final Color? borderColorOverride;
+  final FocusNode? focusNode;
 
   // design baseline for responsive scale
   static const double _designWidth = 430.0;
 
   Color _overlayForBrightness(Brightness b) => b == Brightness.light
       ? Colors.white.withValues(alpha: 0.3)
-      : Colors.black.withOpacity(0.10);
+      : Colors.black.withValues(alpha: 0.10);
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +76,6 @@ class AppButton extends StatelessWidget {
     final horizontalPadding = tok != null
         ? (tok.inset.card * 0.9) * widthScale
         : 24.0 * widthScale;
-    final fontSize = tok != null ? (16.0 * widthScale) : (16.0 * widthScale);
     final iconSize = tok != null ? tok.iconSm * widthScale : 20.0 * widthScale;
     final radius = radiusOverride ?? 50;
 
@@ -108,14 +109,6 @@ class AppButton extends StatelessWidget {
     }
 
     final effectiveOnPressed = (loading || disabled) ? null : onPressed;
-
-    final textStyle = TextStyle(
-      fontSize: fontSize,
-      fontWeight: FontWeight.w800,
-      color: effectiveOnPressed == null
-          ? cs.onSurface.withValues(alpha: 0.4)
-          : fgColorOverride ?? fg,
-    );
 
     final content = Row(
       mainAxisSize: MainAxisSize.min,
@@ -171,8 +164,9 @@ class AppButton extends StatelessWidget {
         ),
         child: InkWell(
           onTap: effectiveOnPressed,
+          focusNode: focusNode,
           borderRadius: BorderRadius.circular(radius),
-          splashColor: fg.withOpacity(0.08),
+          splashColor: fg.withValues(alpha: 0.08),
           highlightColor: Colors.transparent,
           child: Stack(
             alignment: Alignment.center,

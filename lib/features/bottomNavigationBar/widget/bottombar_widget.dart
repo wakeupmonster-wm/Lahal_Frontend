@@ -8,11 +8,9 @@ import '../../../utils/constants/app_sizer.dart';
 import '../controller/bottom_navigationbar_controller.dart';
 
 class BottomNavigationWidget extends StatelessWidget {
-  BottomNavigationWidget({super.key});
-  final BottomNavController controller = Get.put(BottomNavController());
-
   @override
   Widget build(BuildContext context) {
+    final BottomNavController controller = Get.find<BottomNavController>();
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
     final sizer = SizeConfig(context);
