@@ -13,11 +13,11 @@ class FavoriteController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool hasError = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetchFavorites();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   fetchFavorites();
+  // }
 
   Future<void> fetchFavorites() async {
     isLoading.value = true;

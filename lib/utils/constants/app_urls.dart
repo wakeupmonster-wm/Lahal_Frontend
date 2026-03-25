@@ -41,7 +41,7 @@ class AppUrls {
   static Uri nearbyRestaurants = setUrls(
     "/api/v1/restaurants/nearbyrestaurants",
   );
-  static Uri logout = setUrls("/api/logout");
+  static Uri logout = setUrls("/api/v1/auth/logout"); //implemnt
 
   //ashu add resturent
   static Uri submitRestaurantRequest = setUrls(

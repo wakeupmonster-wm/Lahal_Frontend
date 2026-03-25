@@ -170,16 +170,39 @@ class FavoriteRestaurantModel {
   RestaurantModel toRestaurantModel() {
     return RestaurantModel(
       id: id,
-      name: restaurantName,
-      address: address.fullAddress,
-      distance: '${distanceInKm.toStringAsFixed(1)} km',
-      rating: rating.average,
-      reviewCount: rating.totalReviews,
-      status: openingHours.isOpenNow ? "Open now" : "Closed",
-      openingHours: '${openingHours.openTime} to ${openingHours.closeTime}',
-      category: cuisine,
-      imageUrl: restaurantImages.isNotEmpty ? restaurantImages[0].url : "",
+      restaurantName: restaurantName,
+      cuisine: cuisine,
+      address: RestaurantAddress(
+        fullAddress: address.fullAddress,
+        city: address.city,
+        state: address.state,
+        country: address.country,
+        pincode: address.pincode,
+      ),
+      location: RestaurantLocation(
+        type: location.type,
+        longitude: location.coordinates.isNotEmpty
+            ? location.coordinates[0]
+            : 0.0,
+        latitude: location.coordinates.length > 1
+            ? location.coordinates[1]
+            : 0.0,
+      ),
+      phone: phone,
+      isOpenNow: openingHours.isOpenNow,
+      isFavourite: true,
+      distanceInKm: distanceInKm,
+      metrics: RestaurantMetrics(
+        avgRating: rating.average,
+        totalReviews: rating.totalReviews,
+      ),
+      halalInfo: HalalInfo(
+        isCertified: isHalalCertified,
+        summary: halalSummary,
+      ),
+      restaurantImg: restaurantImages.isNotEmpty ? restaurantImages[0].url : "",
       description: about,
+      openingHours: '${openingHours.openTime} to ${openingHours.closeTime}',
       halalSummary: [halalSummary, alcoholPolicy],
       photos: restaurantImages.map((e) => e.url).toList(),
       amenities: {
@@ -191,12 +214,7 @@ class FavoriteRestaurantModel {
         "Outdoor Seating": amenities.outdoorSeating,
       },
       reviews: [],
-      latitude: location.coordinates.length > 1 ? location.coordinates[1] : 0.0,
-      longitude: location.coordinates.isNotEmpty
-          ? location.coordinates[0]
-          : 0.0,
-      socialConnects: SocialConnects(twitter: ""),
-      isFavorite: true,
+      socialConnects: const SocialConnects(twitter: ""),
     );
   }
 }

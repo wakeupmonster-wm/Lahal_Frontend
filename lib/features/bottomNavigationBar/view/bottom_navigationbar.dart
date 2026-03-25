@@ -8,10 +8,9 @@ import '../widget/bottombar_widget.dart';
 class BottomNavigationbar extends StatelessWidget {
   BottomNavigationbar({super.key});
 
-  final BottomNavController controller = Get.put(BottomNavController());
-
   @override
   Widget build(BuildContext context) {
+    final BottomNavController controller = Get.put(BottomNavController());
     final sizer = SizeConfig(context);
     final mq = MediaQuery.sizeOf(context);
 

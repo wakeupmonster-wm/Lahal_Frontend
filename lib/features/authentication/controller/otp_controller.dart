@@ -124,5 +124,6 @@ class OtpController extends GetxController {
     reset();
     startTimer();
     _listenForSmsOtp();
+    focusNode.requestFocus();
   }
 }

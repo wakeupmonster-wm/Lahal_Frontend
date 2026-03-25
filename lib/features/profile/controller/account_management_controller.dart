@@ -32,7 +32,8 @@ class AccountManagementController extends GetxController {
   }
 
   Future<void> _logoutLocally(BuildContext context) async {
-    await _prefs.removeUser();
+    await _prefs.clearAll();
+    Get.deleteAll();
     if (context.mounted) {
       context.go(AppRoutes.signInScreen);
     }

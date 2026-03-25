@@ -222,15 +222,19 @@ class ProfileScreen extends StatelessWidget {
         } else if (label == AppStrings.favorites) {
           context.push(AppRoutes.favoritesScreen);
         } else if (label == AppStrings.logout) {
-          ConfirmationBottomSheet.show(
-            context,
-            title: AppStrings.wantToLogout,
-            subtitle: AppStrings.logoutConfirmation,
-            confirmLabel: AppStrings.logout,
-            onConfirm: () {
-              context.pop();
-              controller.logout(context);
-            },
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => Obx(
+              () => ConfirmationBottomSheet(
+                title: AppStrings.wantToLogout,
+                subtitle: AppStrings.logoutConfirmation,
+                confirmLabel: AppStrings.logout,
+                loading: controller.isLoggingOut.value,
+                onConfirm: () => controller.logout(context),
+              ),
+            ),
           );
         }
       },

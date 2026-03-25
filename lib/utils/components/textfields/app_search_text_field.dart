@@ -14,12 +14,14 @@ class AppSearchField extends StatelessWidget {
     super.key,
     required this.hintText,
     this.controller,
+    this.focusNode,
     this.onChanged,
     this.onSubmitted,
   });
 
   final String hintText;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
   final void Function(String)? onChanged;
   final void Function(String)? onSubmitted;
 
@@ -54,6 +56,7 @@ class AppSearchField extends StatelessWidget {
 
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       style: textStyle,
       onChanged: onChanged,
       onSubmitted: onSubmitted,

@@ -23,6 +23,9 @@ class FavoritesScreen extends StatelessWidget {
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchFavorites();
+    });
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: InternalAppBar(title: AppStrings.favorites, centerTitle: false),
