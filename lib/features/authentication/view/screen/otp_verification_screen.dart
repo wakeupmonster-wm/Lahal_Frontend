@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -95,6 +97,7 @@ class OtpVerificationScreen extends StatelessWidget {
                   child: Pinput(
                     length: 6,
                     controller: ctrl.pinputController,
+                    focusNode: ctrl.focusNode,
                     defaultPinTheme: defaultPinTheme,
                     focusedPinTheme: focusedPinTheme,
                     submittedPinTheme: filledPinTheme,
@@ -102,6 +105,7 @@ class OtpVerificationScreen extends StatelessWidget {
                     autofocus: true,
                     // Paste support is built-in to Pinput
                     onChanged: (value) {
+                      log("OTP Input: $value");
                       ctrl.otp.value = value;
                     },
                     onCompleted: (code) {
@@ -179,8 +183,9 @@ class OtpVerificationScreen extends StatelessWidget {
           ),
           // Loading Overlay
           Obx(() {
-            final isBusy = ctrl.isLoading.value || 
-                           Get.find<AuthStateService>().isAuthenticating.value;
+            final isBusy =
+                ctrl.isLoading.value ||
+                Get.find<AuthStateService>().isAuthenticating.value;
             return StackLaoding(isLoading: isBusy);
           }),
         ],

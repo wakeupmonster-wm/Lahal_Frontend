@@ -1,267 +1,123 @@
+import 'package:lahal_application/data/datasources/remote/network_api_service.dart';
+import 'package:lahal_application/data/models/api_response.dart';
+import 'package:lahal_application/features/home/model/restaurant_list_response.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
+import 'package:lahal_application/utils/constants/app_urls.dart';
+import 'package:lahal_application/utils/constants/enum.dart';
 
 class HomeRepository {
-  Future<List<RestaurantModel>> fetchBestRestaurants() async {
-    // API calling setup (commented for now)
-    /*
-    final response = await _apiService.sendHttpRequest(
-      url: AppUrls.home,
+  final NetworkApiServices _network = NetworkApiServices();
+
+  /// Fetches restaurants with pagination, optional filter, search, location,
+  /// distance radius, minimum rating, and cuisine type.
+  Future<ApiResponse<RestaurantListResponse>> fetchRestaurants({
+    required int page,
+    required int limit,
+    RestaurantFilters? filter,
+    String? search,
+    double? lat,
+    double? lng,
+    double? distance,   // search radius in km (e.g. 5 = 5km)
+    int? minRating,     // e.g. 4 → only 4★ and above
+    String? cuisine,    // e.g. "Italian,Indian"
+  }) async {
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'limit': limit.toString(),
+    };
+
+    // Filter param (top_rated, open_now, certified, top_reviewed)
+    final filterValue = filter?.filterValue;
+    if (filterValue != null) {
+      queryParams['filter'] = filterValue;
+    }
+
+    // Search
+    if (search != null && search.trim().isNotEmpty) {
+      queryParams['search'] = search.trim();
+    }
+
+    // Lat/Lng for Near You
+    if (lat != null && lng != null && lat != 0.0 && lng != 0.0) {
+      queryParams['lat'] = lat.toStringAsFixed(6);
+      queryParams['lng'] = lng.toStringAsFixed(6);
+    }
+
+    // Distance radius in km (sent as integer per API convention)
+    if (distance != null && distance > 0) {
+      queryParams['distance'] = distance.toInt().toString();
+    }
+
+    // Minimum star rating
+    if (minRating != null && minRating > 0) {
+      queryParams['minRating'] = minRating.toString();
+    }
+
+    // Cuisine (comma-separated for multi-select)
+    if (cuisine != null && cuisine.trim().isNotEmpty) {
+      queryParams['cuisine'] = cuisine.trim();
+    }
+
+    final uri = Uri.parse(AppUrls.getRestaurants).replace(
+      queryParameters: queryParams,
+    );
+
+    final rawResponse = await _network.sendRequest<dynamic>(
+      url: uri,
       method: HttpMethod.get,
     );
-    if (response is List) {
-      return response.map((e) => RestaurantModel.fromJson(e)).toList();
-    }
-    return [];
-    */
 
-    // Dummy data for currently
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API delay
-    return [
-      RestaurantModel(
-        id: '1',
-        name: 'Rose Garden Restaurant',
-        address: 'Melbourne, VIC 3001',
-        distance: '1.6 km',
-        rating: 5.0,
-        reviewCount: 120,
-        status: 'Open now',
-        openingHours: '11:30 AM to 11:00 PM',
-        category: 'Middle Eastern restaurant',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-        description:
-            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
-        halalSummary: ['100% Halal', 'No Alcohol'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.802,
-        longitude: 144.96,
-        socialConnects: SocialConnects(twitter: ""),
+    final List<RestaurantModel> restaurants = [];
+    if (rawResponse.data is List) {
+      for (final item in rawResponse.data as List) {
+        if (item is Map<String, dynamic>) {
+          restaurants.add(RestaurantModel.fromJson(item));
+        }
+      }
+    }
+
+    final metadata = RestaurantMetadata(
+      page: page,
+      limit: limit,
+      count: restaurants.length,
+      distanceRange: distance != null ? '${distance.toInt()}km' : '',
+    );
+
+    return ApiResponse<RestaurantListResponse>(
+      status: rawResponse.status,
+      message: rawResponse.message,
+      data: RestaurantListResponse(
+        metadata: metadata,
+        restaurants: restaurants,
       ),
-      RestaurantModel(
-        id: '2',
-        name: 'The Halal Guys',
-        address: 'Sydney, NSW 2000',
-        distance: '2.4 km',
-        rating: 4.8,
-        reviewCount: 350,
-        status: 'Open now',
-        openingHours: '10:00 AM to 12:00 AM',
-        category: 'American Halal',
-        imageUrl:
-            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-        description: 'Famous NYC style halal platters and sandwiches.',
-        halalSummary: ['Certified Halal'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.805,
-        longitude: 144.965,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '3',
-        name: 'Rose Garden Restaurant',
-        address: 'Melbourne, VIC 3001',
-        distance: '1.6 km',
-        rating: 5.0,
-        reviewCount: 120,
-        status: 'Open now',
-        openingHours: '11:30 AM to 11:00 PM',
-        category: 'Middle Eastern restaurant',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-        description:
-            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
-        halalSummary: ['100% Halal', 'No Alcohol'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.81,
-        longitude: 144.97,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '4',
-        name: 'The Halal Guys',
-        address: 'Sydney, NSW 2000',
-        distance: '2.4 km',
-        rating: 4.8,
-        reviewCount: 350,
-        status: 'Open now',
-        openingHours: '10:00 AM to 12:00 AM',
-        category: 'American Halal',
-        imageUrl:
-            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-        description: 'Famous NYC style halal platters and sandwiches.',
-        halalSummary: ['Certified Halal'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.795,
-        longitude: 144.95,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '5',
-        name: 'Rose Garden Restaurant',
-        address: 'Melbourne, VIC 3001',
-        distance: '1.6 km',
-        rating: 5.0,
-        reviewCount: 120,
-        status: 'Open now',
-        openingHours: '11:30 AM to 11:00 PM',
-        category: 'Middle Eastern restaurant',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-        description:
-            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
-        halalSummary: ['100% Halal', 'No Alcohol'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.802,
-        longitude: 144.96,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '6',
-        name: 'The Halal Guys',
-        address: 'Sydney, NSW 2000',
-        distance: '2.4 km',
-        rating: 4.8,
-        reviewCount: 350,
-        status: 'Open now',
-        openingHours: '10:00 AM to 12:00 AM',
-        category: 'American Halal',
-        imageUrl:
-            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-        description: 'Famous NYC style halal platters and sandwiches.',
-        halalSummary: ['Certified Halal'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.805,
-        longitude: 144.965,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '7',
-        name: 'Rose Garden Restaurant',
-        address: 'Melbourne, VIC 3001',
-        distance: '1.6 km',
-        rating: 5.0,
-        reviewCount: 120,
-        status: 'Open now',
-        openingHours: '11:30 AM to 11:00 PM',
-        category: 'Middle Eastern restaurant',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-        description:
-            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
-        halalSummary: ['100% Halal', 'No Alcohol'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.81,
-        longitude: 144.97,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '8',
-        name: 'The Halal Guys',
-        address: 'Sydney, NSW 2000',
-        distance: '2.4 km',
-        rating: 4.8,
-        reviewCount: 350,
-        status: 'Open now',
-        openingHours: '10:00 AM to 12:00 AM',
-        category: 'American Halal',
-        imageUrl:
-            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-        description: 'Famous NYC style halal platters and sandwiches.',
-        halalSummary: ['Certified Halal'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.795,
-        longitude: 144.95,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-    ];
+    );
   }
 
-  Future<List<RestaurantModel>> fetchFavoriteRestaurants() async {
-    // Dummy data for currently
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API delay
-    return [
-      RestaurantModel(
-        id: '1',
-        name: 'Rose Garden Restaurant',
-        address: 'Melbourne, VIC 3001',
-        distance: '1.6 km',
-        rating: 5.0,
-        reviewCount: 120,
-        status: 'Open now',
-        openingHours: '11:30 AM to 11:00 PM',
-        category: 'Middle Eastern restaurant',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-        description:
-            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
-        halalSummary: ['100% Halal', 'No Alcohol'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.802,
-        longitude: 144.96,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '2',
-        name: 'Rose Garden Restaurant',
-        address: 'Melbourne, VIC 3001',
-        distance: '1.6 km',
-        rating: 5.0,
-        reviewCount: 120,
-        status: 'Open now',
-        openingHours: '11:30 AM to 11:00 PM',
-        category: 'Middle Eastern restaurant',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-        description:
-            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
-        halalSummary: ['100% Halal', 'No Alcohol'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.802,
-        longitude: 144.96,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-      RestaurantModel(
-        id: '3',
-        name: 'Rose Garden Restaurant',
-        address: 'Melbourne, VIC 3001',
-        distance: '1.6 km',
-        rating: 5.0,
-        reviewCount: 120,
-        status: 'Open now',
-        openingHours: '11:30 AM to 11:00 PM',
-        category: 'Middle Eastern restaurant',
-        imageUrl:
-            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
-        description:
-            'A beautiful garden restaurant serving authentic Middle Eastern cuisine.',
-        halalSummary: ['100% Halal', 'No Alcohol'],
-        photos: [],
-        amenities: {},
-        reviews: [],
-        latitude: -37.802,
-        longitude: 144.96,
-        socialConnects: SocialConnects(twitter: ""),
-      ),
-    ];
+  Future<ApiResponse<dynamic>> addFavoriteRestaurant(String restaurantId) async {
+    final rawResponse = await _network.sendRequest<dynamic>(
+      url: AppUrls.addFavouriteRestuarant,
+      method: HttpMethod.post,
+      body: {"restaurantId": restaurantId},
+    );
+
+    return ApiResponse<dynamic>(
+      status: rawResponse.status,
+      message: rawResponse.message,
+      data: rawResponse.data,
+    );
+  }
+
+  Future<ApiResponse<dynamic>> removeFavoriteRestaurant(String restaurantId) async {
+    final rawResponse = await _network.sendRequest<dynamic>(
+      url: AppUrls.removeFavouriteRestuarant,
+      method: HttpMethod.patch,
+      body: {"restaurantId": restaurantId},
+    );
+
+    return ApiResponse<dynamic>(
+      status: rawResponse.status,
+      message: rawResponse.message,
+      data: rawResponse.data,
+    );
   }
 }

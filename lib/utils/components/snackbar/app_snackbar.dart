@@ -9,6 +9,8 @@ import 'package:lahal_application/utils/theme/text/app_typography.dart';
 
 final AppDebouncer _debouncer = AppDebouncer(milliseconds: 500);
 
+final AppDebouncer _toastdebouncer = AppDebouncer(milliseconds: 2000);
+
 class AppSnackBar {
   static void showSnackbar({
     required BuildContext context,
@@ -20,6 +22,7 @@ class AppSnackBar {
       return;
     }
     final width = MediaQuery.sizeOf(context).width;
+    final cs = Theme.of(context).colorScheme;
 
     // Determine the color and icon based on the type
     Color getColor(SnackbarType type) {
@@ -88,6 +91,7 @@ class AppSnackBar {
                       title,
                       size: AppTextSize.s14,
                       weight: AppTextWeight.bold,
+                      color: cs.onSurface,
                     ),
                     // Message (conditionally rendered)
                     if (message.isNotEmpty) ...[
@@ -96,6 +100,7 @@ class AppSnackBar {
                         message,
                         size: AppTextSize.s12,
                         weight: AppTextWeight.regular,
+                        color: cs.onSurface,
                       ),
                     ],
                   ],
@@ -105,7 +110,7 @@ class AppSnackBar {
           ],
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: cs.surface,
       duration: const Duration(seconds: 3),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
@@ -125,12 +130,12 @@ class AppSnackBar {
   static void showToast({
     String message = 'Some thing went wrong. Please try again later.',
   }) {
-    _debouncer.run(() {
+    _toastdebouncer.run(() {
       Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        // timeInSecForIosWeb: 1,
         backgroundColor: Colors.grey.shade900,
         textColor: Colors.white,
         fontSize: AppSizer.width * 0.03,

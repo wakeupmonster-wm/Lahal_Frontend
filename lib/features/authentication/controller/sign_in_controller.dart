@@ -34,24 +34,58 @@ class SignInController extends GetxController {
     stateService = Get.find<AuthStateService>();
 
     // Android only: prompt user to pick their SIM phone number automatically
-    _requestPhoneHint();
+    // _requestPhoneHint(); // called conditionally later via requestPhoneHintIfNeeded
   }
 
-  void _requestPhoneHint() async {
+  bool _hintRequested = false;
+
+  void requestPhoneHintIfNeeded(BuildContext context) {
+    if (!_hintRequested) {
+      _hintRequested = true;
+      _requestPhoneHint(context);
+    }
+  }
+
+  void _requestPhoneHint(BuildContext context) async {
     try {
       final res = await _smartAuth.requestPhoneNumberHint();
       if (res.hasData) {
         final fullPhone = res.requireData; // e.g. "+918349020828"
-        // Strip the country code prefix and fill both fields
-        if (fullPhone.startsWith('+91')) {
-          countryCodeController.text = '+91';
-          phoneNumberController.text = fullPhone.substring(3);
-        } else if (fullPhone.startsWith('+61')) {
-          countryCodeController.text = '+61';
-          phoneNumberController.text = fullPhone.substring(3);
+        String parsedNumber = fullPhone;
+
+        // Extract digits only, ignoring spaces, dashes, or plus signs
+        String digitsOnly = fullPhone.replaceAll(RegExp(r'\D'), '');
+        String countryCodeDigits = countryCodeController.text.replaceAll(RegExp(r'\D'), '');
+
+        // Safely strip the country code if it is included in the hint
+        if (countryCodeDigits.isNotEmpty &&
+            digitsOnly.startsWith(countryCodeDigits) &&
+            digitsOnly.length > countryCodeDigits.length + 5) {
+          parsedNumber = digitsOnly.substring(countryCodeDigits.length);
+        } else if (digitsOnly.length >= 10) {
+          // Fallback: extract the last 10 digits as a robust default
+          parsedNumber = digitsOnly.substring(digitsOnly.length - 10);
         } else {
-          // Generic fallback: put the whole thing in phone field
-          phoneNumberController.text = fullPhone;
+          parsedNumber = digitsOnly;
+        }
+
+        final finalPhone = "${countryCodeController.text}$parsedNumber";
+
+        if (context.mounted) {
+          AppSnackBar.showSnackbar(
+            context: context,
+            title: "Number is : $finalPhone",
+          );
+        } else {
+          AppSnackBar.showToast(message: "Context is not mounted");
+        }
+
+        final authService = Get.find<AuthService>();
+        if (context.mounted) {
+          authService.handleSendOtp(
+            payload: {'phone': finalPhone},
+            context: context,
+          );
         }
       }
     } catch (e) {

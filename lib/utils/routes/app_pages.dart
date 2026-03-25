@@ -60,9 +60,16 @@ class AppGoRouter {
       _createRoute(AppRoutes.mapScreen, const MapScreen()),
       _createRoute(AppRoutes.preyScreen, const PrayerScreen()),
       _createRoute(AppRoutes.profileScreen, const ProfileScreen()),
-      _createRoute(
-        AppRoutes.restaurantDetails,
-        const RestaurantDetailsScreen(),
+      GoRoute(
+        path: AppRoutes.restaurantDetails,
+        pageBuilder: (context, state) {
+          final restaurantId = state.extra as String? ?? '';
+          return _buildTransitionPage(
+            context,
+            state,
+            RestaurantDetailsScreen(restaurantId: restaurantId),
+          );
+        },
       ),
       _createRoute(AppRoutes.editProfileScreen, const EditProfileScreen()),
       _createRoute(
@@ -82,7 +89,17 @@ class AppGoRouter {
         const NotificationPreferenceScreen(),
       ),
       _createRoute(AppRoutes.favoritesScreen, const FavoritesScreen()),
-      _createRoute(AppRoutes.reportErrorScreen, const ReportErrorScreen()),
+      GoRoute(
+        path: AppRoutes.reportErrorScreen,
+        pageBuilder: (context, state) {
+          final restaurantId = state.extra as String? ?? '';
+          return _buildTransitionPage(
+            context,
+            state,
+            ReportErrorScreen(restaurantId: restaurantId),
+          );
+        },
+      ),
 
       _createRoute(AppRoutes.notificationScreen, const NotificationScreen()),
 

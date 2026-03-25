@@ -21,9 +21,17 @@ class AppUrls {
   static Uri refreshToken = setUrls("/api/v1/auth/refresh");
 
   // Home
-  static Uri saveUserLocation = setUrls(
-    "/api/v1/user/location-save",
-  ); // uses query-params
+  static Uri saveUserLocation = setUrls("/api/v1/user/location-save");
+  static String getRestaurants = setBaseUrl(
+    "/api/v1/restaurants/nearbyrestaurants",
+  );
+  static String getRestaurantById = setBaseUrl("/api/v1/restaurants");
+  static Uri addFavouriteRestuarant = setUrls("/api/v1/user/add-favourites");
+  static Uri removeFavouriteRestuarant = setUrls(
+    "/api/v1/user/update-favourites",
+  );
+
+  static Uri reportError = setUrls("/api/v1/reports/restaurant");
 
   static Uri home = setUrls("/api/home");
   static Uri notifications = setUrls("/api/notifications");

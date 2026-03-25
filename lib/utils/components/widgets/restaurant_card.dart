@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
@@ -47,11 +48,22 @@ class RestaurantCard extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  Image.network(
-                    restaurant.imageUrl,
+                  CachedNetworkImage(
+                    imageUrl: restaurant.restaurantImg,
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorWidget: (context, error, stackTrace) => Container(
+                      height: 200,
+                      color: cs.surfaceContainerHighest,
+                      child: Center(
+                        child: Icon(
+                          Icons.restaurant,
+                          size: 48,
+                          color: tx.subtle,
+                        ),
+                      ),
+                    ),
                   ),
                   Positioned(
                     top: tok.gap.xs,
@@ -61,11 +73,11 @@ class RestaurantCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         child: Icon(
-                          (restaurant.isFavorite == true)
+                          restaurant.isFavourite
                               ? Icons.favorite
                               : Icons.favorite_border,
                           size: 22,
-                          color: restaurant.isFavorite
+                          color: restaurant.isFavourite
                               ? Colors.red
                               : Colors.white,
                         ),
@@ -92,7 +104,7 @@ class RestaurantCard extends StatelessWidget {
                         ),
                       ),
                       child: AppText(
-                        restaurant.category,
+                        restaurant.cuisine,
                         size: AppTextSize.s12,
                         weight: AppTextWeight.medium,
                         color: Colors.white,
@@ -116,7 +128,7 @@ class RestaurantCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              restaurant.name,
+                              restaurant.restaurantName,
                               size: AppTextSize.s16,
                               weight: AppTextWeight.bold,
                               color: tx.neutral,
@@ -126,17 +138,22 @@ class RestaurantCard extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                AppText(
-                                  restaurant.address,
-                                  size: AppTextSize.s12,
-                                  color: tx.subtle,
-                                  overflow: TextOverflow.ellipsis,
+                                Expanded(
+                                  child: AppText(
+                                    restaurant.address.fullAddress,
+                                    size: AppTextSize.s12,
+                                    color: tx.subtle,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
                               ],
                             ),
                             SizedBox(height: tok.gap.xxs),
                             AppText(
-                              '${restaurant.distance} away • \$\$',
+                              restaurant.formattedDistance.isNotEmpty
+                                  ? '${restaurant.formattedDistance} away • \$\$'
+                                  : '\$\$',
                               size: AppTextSize.s12,
                               color: tx.subtle,
                             ),
@@ -158,7 +175,7 @@ class RestaurantCard extends StatelessWidget {
                             child: Row(
                               children: [
                                 AppText(
-                                  restaurant.rating.toString(),
+                                  restaurant.metrics.avgRating.toString(),
                                   size: AppTextSize.s12,
                                   weight: AppTextWeight.bold,
                                   color: tx.inverse,
@@ -170,7 +187,7 @@ class RestaurantCard extends StatelessWidget {
                           ),
                           SizedBox(height: tok.gap.xxs),
                           AppText(
-                            'by ${restaurant.reviewCount}',
+                            'by ${restaurant.metrics.totalReviews}',
                             size: AppTextSize.s12,
                             color: tx.subtle,
                           ),
