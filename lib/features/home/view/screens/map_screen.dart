@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lahal_application/features/home/controller/map_controller.dart';
+import 'package:lahal_application/features/home/controller/location_controller.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
 import 'package:lahal_application/utils/constants/app_svg.dart';
 import 'package:lahal_application/utils/theme/app_tokens.dart';
@@ -20,6 +21,9 @@ class MapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MapController());
+    // LocationController is always registered before MapScreen is opened
+    // (HomeScreen puts it). We use find so it shares the same instance.
+    final locationController = Get.find<LocationController>();
     final tok = Theme.of(context).extension<AppTokens>()!;
     final tx = Theme.of(context).extension<AppTextColors>()!;
     final cs = Theme.of(context).colorScheme;
@@ -35,7 +39,9 @@ class MapScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             return GoogleMap(
-              initialCameraPosition: MapController.initialCameraPosition,
+              // Uses the dynamic camera position calculated from the user's
+              // GPS coordinates (or a neutral fallback if not yet available).
+              initialCameraPosition: controller.initialCameraPosition,
               style: Theme.of(context).brightness == Brightness.dark
                   ? AppMapStyles.darkMapStyle
                   : null,
@@ -44,7 +50,7 @@ class MapScreen extends StatelessWidget {
                 controller.mapController.complete(mapController);
               },
               myLocationEnabled: true,
-              myLocationButtonEnabled: false, // We'll build custom or hide it
+              myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
             );
           }),
@@ -105,12 +111,21 @@ class MapScreen extends StatelessWidget {
                                   ),
                                   SizedBox(width: tok.gap.xxs),
                                   Flexible(
-                                    child: AppText(
-                                      "Sector A, Sarvanand Nagar...",
-                                      size: AppTextSize.s16,
-                                      color: Colors.white,
-                                      weight: AppTextWeight.bold,
-                                      overflow: TextOverflow.ellipsis,
+                                    // Mirror the exact pattern used in HomeScreen:
+                                    // reactive address text driven by LocationController.
+                                    child: Obx(
+                                      () => AppText(
+                                        locationController
+                                                .isLocationLoading.value
+                                            ? 'Fetching location...'
+                                            : locationController
+                                                .currentAddress.value,
+                                        size: AppTextSize.s16,
+                                        color: Colors.white,
+                                        weight: AppTextWeight.bold,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: tok.gap.xxs),
@@ -219,7 +234,7 @@ class MapScreen extends StatelessWidget {
     AppTextColors tx,
   ) {
     return Obx(() {
-      final isSelected = controller.selectedFilters.contains(label);
+      final isSelected = controller.selectedFilter.value == label;
       return GestureDetector(
         onTap: () => controller.updateFilter(label),
         child: Container(

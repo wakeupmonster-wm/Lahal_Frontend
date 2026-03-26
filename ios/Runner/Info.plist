@@ -36,6 +36,9 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app needs photo library access to pick photos</string>
 
+	<key>GMSApiKey</key>
+	<string>AIzaSyCTDQ5d-XLif2RYqoz9fu51hFRYY0J3TaY</string>
+
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
