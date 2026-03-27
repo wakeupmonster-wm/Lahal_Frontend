@@ -59,6 +59,10 @@ class AppUrls {
   static Uri getAllFavourites = setUrls("/api/v1/user/get-all-favourites");
   static Uri deleteAccount = setUrls("/api/v1/user/delete-account");
 
+  // Legal (Commented for now)
+  // static Uri termsAndConditions = setUrls("/api/v1/legal/terms");
+  // static Uri privacyPolicy = setUrls("/api/v1/legal/privacy");
+
   // Third-Party
   static const String aladhanBaseUrl = "https://api.aladhan.com/v1";
 }
