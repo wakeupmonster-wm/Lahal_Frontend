@@ -36,7 +36,7 @@ class AppUrls {
   static Uri home = setUrls("/api/home");
   static Uri notifications = setUrls("/api/notifications");
 
-  static Uri faqs = setUrls("/api/faqs");
+  static Uri faqs = setUrls("/api/v1/cms/faq");
   static Uri notificationPreferences = setUrls("/api/notification-preferences");
   static Uri nearbyRestaurants = setUrls(
     "/api/v1/restaurants/nearbyrestaurants",

@@ -49,7 +49,7 @@ class FaqScreen extends StatelessWidget {
                 if (controller.hasError.value) {
                   return WarningDisplay(
                         onRetry: () => controller.fetchFaqs(),
-                        warningMessage: "Something went wrong",
+                        warningMessage: controller.errorMessage.value,
                         subWarningMessage:
                             "We couldn't load the FAQs. Please try again.",
                       )
@@ -61,11 +61,16 @@ class FaqScreen extends StatelessWidget {
                       );
                 }
                 if (controller.filteredFaqs.isEmpty) {
+                  final isSearching =
+                      controller.searchController.text.isNotEmpty;
                   return EmptyStateWidget(
                         imagePath: AppAssets.emptyStateImage,
-                        title: 'No notifications yet',
-                        description:
-                            'We will notify you when something important happens.',
+                        title: isSearching
+                            ? 'No results found'
+                            : 'No FAQs found',
+                        description: isSearching
+                            ? 'Try searching with different keywords.'
+                            : 'Check back later for updated questions.',
                       )
                       .animate()
                       .fadeIn(duration: 500.ms)
