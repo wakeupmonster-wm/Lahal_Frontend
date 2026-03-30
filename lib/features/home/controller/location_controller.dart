@@ -57,6 +57,24 @@ class LocationController extends GetxController {
         false);
   }
 
+  /// Async check before actually showing the popup to avoid redundant popups 
+  /// if OS-level permission was already granted previously
+  Future<bool> checkAndShowLocationPopup() async {
+    if (!shouldShowLocationPopup()) return false;
+
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        await markLocationPopupAsShown();
+        return false;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return true;
+  }
+
   /// Save popup state
   Future<void> markLocationPopupAsShown() async {
     await AppLocalStorage.instance().writeData(
@@ -160,13 +178,15 @@ class LocationController extends GetxController {
     context.push(AppRoutes.changeLocationScreen);
   }
 
-  /// Show permission sheet
-  void showLocationSheet(BuildContext context) {
+  /// Show permission sheet. [onGranted] is called if the user successfully
+  /// enables location via the sheet.
+  void showLocationSheet(BuildContext context, {VoidCallback? onGranted}) {
     LocationPermissionSheet.show(
       context,
       onEnable: () async {
         await markLocationPopupAsShown();
-        await enableLocation(context);
+        final granted = await enableLocation(context);
+        if (granted) onGranted?.call();
       },
       onManualSearch: () async {
         await markLocationPopupAsShown();

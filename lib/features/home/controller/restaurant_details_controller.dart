@@ -4,11 +4,13 @@ import 'package:lahal_application/features/home/model/restaurant_details_model.d
 import 'package:lahal_application/features/home/repo/restaurant_details_repository.dart';
 import 'package:lahal_application/features/home/services/restaurant_details_api_service.dart';
 import 'package:lahal_application/features/home/services/restaurant_details_service.dart';
+import 'package:lahal_application/features/home/repo/home_repository.dart';
 import 'package:lahal_application/features/home/view/widgets/redirecting_snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RestaurantDetailsController extends GetxController {
   late final RestaurantDetailsService _service;
+  late final HomeRepository _homeRepo;
 
   final Rxn<RestaurantDetailsModel> restaurant = Rxn<RestaurantDetailsModel>();
   final RxBool isLoading = false.obs;
@@ -20,17 +22,24 @@ class RestaurantDetailsController extends GetxController {
   void onInit() {
     super.onInit();
 
-    if (!Get.isRegistered<RestaurantDetailsRepository>())
+    if (!Get.isRegistered<RestaurantDetailsRepository>()) {
       Get.put(RestaurantDetailsRepository());
-    if (!Get.isRegistered<RestaurantDetailsApiService>())
+    }
+    if (!Get.isRegistered<RestaurantDetailsApiService>()) {
       Get.put(RestaurantDetailsApiService());
-    if (!Get.isRegistered<RestaurantDetailsService>())
+    }
+    if (!Get.isRegistered<RestaurantDetailsService>()) {
       Get.put(RestaurantDetailsService());
+    }
+    if (!Get.isRegistered<HomeRepository>()) {
+      Get.put(HomeRepository());
+    }
 
     _service = Get.find<RestaurantDetailsService>();
+    _homeRepo = Get.find<HomeRepository>();
   }
 
-  void fetchRestaurantDetails(String id) {
+  void fetchRestaurantDetails(String id, {bool? isFav}) {
     if (id.isEmpty) return;
 
     // Clear old state when switching to a new restaurant
@@ -43,6 +52,9 @@ class RestaurantDetailsController extends GetxController {
       isLoading: isLoading,
       errorMessage: error,
       onSuccess: (details) {
+        if (isFav != null) {
+          details.isFavourite = isFav;
+        }
         restaurant.value = details;
       },
     );
@@ -56,17 +68,61 @@ class RestaurantDetailsController extends GetxController {
     }
   }
 
-  void toggleFavorite() {
-    // Logic to toggle favorite status
+  void toggleFavorite() async {
+    final res = restaurant.value;
+    if (res == null) return;
+
+    final bool isFav = res.isFavourite;
+    
+    // Optimistic UI Update
+    res.isFavourite = !isFav;
+    restaurant.refresh();
+
+    // Call API
+    try {
+      final response = isFav 
+          ? await _homeRepo.removeFavoriteRestaurant(res.id)
+          : await _homeRepo.addFavoriteRestaurant(res.id);
+          
+      if (!response.isSuccess) {
+        // Revert on failure
+        res.isFavourite = isFav;
+        restaurant.refresh();
+        Get.snackbar("Error", response.message.isNotEmpty ? response.message : "Failed to update favorite");
+      }
+    } catch (e) {
+      // Revert on error
+      res.isFavourite = isFav;
+      restaurant.refresh();
+      Get.snackbar("Error", "Failed to update favorite");
+    }
   }
 
   void shareRestaurant() {
     // Logic to share restaurant
   }
 
-  void callRestaurant() {
-    // Logic to trigger a phone call
-    print("on tap of Direction");
+  Future<void> callRestaurant() async {
+    final res = restaurant.value;
+    if (res == null) return;
+
+    final phone = res.contact.phone;
+    if (phone.isEmpty) {
+      Get.snackbar("Error", "Phone number not available.");
+      return;
+    }
+
+    final Uri phoneUri = Uri(scheme: 'tel', path: phone);
+
+    try {
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      } else {
+        Get.snackbar("Error", "Could not open dialer.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Could not open dialer.");
+    }
   }
 
   Future<void> getDirections(BuildContext context) async {

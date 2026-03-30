@@ -2,14 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lahal_application/features/home/controller/home_controller.dart';
 import 'package:lahal_application/features/home/controller/location_controller.dart';
 import 'package:lahal_application/features/home/model/restaurant_model.dart';
 import 'package:lahal_application/features/home/repo/home_repository.dart';
 import 'package:lahal_application/features/home/services/home_api_service.dart';
 import 'package:lahal_application/features/home/model/restaurant_list_response.dart';
 import 'package:lahal_application/features/home/services/home_service.dart';
+import 'package:lahal_application/features/home/view/widgets/redirecting_snackbar.dart';
 import 'package:lahal_application/utils/constants/enum.dart';
 import 'package:lahal_application/utils/services/helper/app_logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapController extends GetxController {
   // ---- Map Native State ----
@@ -74,7 +77,7 @@ class MapController extends GetxController {
     _applyUserLocationToCamera();
 
     // Pre-cache marker icons then load data
-    _initMarkerIcons().then((_) => fetchRestaurants());
+    _initMarkerIcons().then((_) => _loadRestaurants());
   }
 
   @override
@@ -112,6 +115,32 @@ class MapController extends GetxController {
     );
     _iconsReady = true;
   }
+
+  /// Load restaurants — prefers the cached list from HomeController to avoid
+  /// a redundant network call. Falls back to its own API fetch if needed.
+  void _loadRestaurants() {
+    try {
+      if (Get.isRegistered<HomeController>()) {
+        final hc = Get.find<HomeController>();
+        if (hc.bestRestaurants.isNotEmpty) {
+          restaurants.assignAll(hc.bestRestaurants);
+          isLoading.value = false;
+          _rebuildAllMarkers();
+          if (restaurants.isNotEmpty) {
+            _setSelectedRestaurant(restaurants.first, animate: true);
+          }
+          // Reset carousel to first page
+          if (pageController.hasClients) {
+            pageController.jumpToPage(0);
+          }
+          return;
+        }
+      }
+    } catch (_) {}
+    // Fallback: fetch from network (e.g. deep-link / HomeController not ready)
+    fetchRestaurants();
+  }
+
 
   // ---------------------------------------------------------------------------
   // Data fetching
@@ -288,6 +317,30 @@ class MapController extends GetxController {
   }
 
   /// Move the camera to the user's current position (used externally if needed).
+  /// Called from map_screen onMapCreated every time the GoogleMap widget is
+  /// (re-)built. Safely resets the Completer so returning to the map screen
+  /// after a pop doesn't reuse the old, completed (and disposed) controller.
+  void onMapWidgetCreated(GoogleMapController gmc) {
+    // Reset the Completer so it can be completed again on re-entry
+    if (mapController.isCompleted) {
+      mapController = Completer<GoogleMapController>();
+    }
+    mapController.complete(gmc);
+    // Animate to the currently selected restaurant once the map is ready
+    onMapReady();
+  }
+
+  /// Called from map_screen onMapCreated — animates to the currently selected
+  /// restaurant once the GoogleMapController is ready.
+  /// Fixes the timing issue where _setSelectedRestaurant runs before the map
+  /// widget exists (camera animation was silently dropped).
+  void onMapReady() {
+    final r = selectedRestaurant.value;
+    if (r != null) {
+      _animateCamera(r.location.latitude, r.location.longitude);
+    }
+  }
+
   Future<void> animateToUserLocation() async {
     try {
       final lc = Get.find<LocationController>();
@@ -327,6 +380,67 @@ class MapController extends GetxController {
         return RestaurantFilters.certified;
       default:
         return null;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Directions & Call (mirrors RestaurantDetailsController)
+  // ---------------------------------------------------------------------------
+
+  /// Opens the device maps app with the 3-second timer snackbar, same as the
+  /// restaurant details screen.
+  Future<void> getDirections(
+    BuildContext context,
+    RestaurantModel restaurant,
+  ) async {
+    final lat = restaurant.location.latitude;
+    final lng = restaurant.location.longitude;
+    final name = Uri.encodeComponent(restaurant.restaurantName);
+
+    final bool completed = await RedirectingSnackbar.show(context);
+    if (!completed) return;
+
+    Uri mapUri;
+    if (GetPlatform.isIOS) {
+      mapUri = Uri.parse("maps://?q=$name&ll=$lat,$lng");
+    } else {
+      mapUri = Uri.parse("geo:$lat,$lng?q=$lat,$lng($name)");
+    }
+
+    try {
+      if (await canLaunchUrl(mapUri)) {
+        await launchUrl(mapUri, mode: LaunchMode.externalApplication);
+      } else {
+        final webUri = Uri.parse(
+          "https://www.google.com/maps/search/?api=1&query=$lat,$lng",
+        );
+        if (await canLaunchUrl(webUri)) {
+          await launchUrl(webUri, mode: LaunchMode.externalApplication);
+        } else {
+          Get.snackbar("Error", "Could not open map.");
+        }
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Could not open map.");
+    }
+  }
+
+  /// Dials the restaurant's phone number.
+  Future<void> callRestaurant(RestaurantModel restaurant) async {
+    final phone = restaurant.phone;
+    if (phone.isEmpty) {
+      Get.snackbar("Error", "Phone number not available.");
+      return;
+    }
+    final Uri phoneUri = Uri(scheme: 'tel', path: phone);
+    try {
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      } else {
+        Get.snackbar("Error", "Could not open dialer.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Could not open dialer.");
     }
   }
 }

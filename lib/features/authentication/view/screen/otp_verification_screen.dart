@@ -102,7 +102,7 @@ class OtpVerificationScreen extends StatelessWidget {
                     focusedPinTheme: focusedPinTheme,
                     submittedPinTheme: filledPinTheme,
                     keyboardType: TextInputType.number,
-                    autofocus: true,
+                    // autofocus: true, // Disabled auto-focus on screen load
                     // Paste support is built-in to Pinput
                     onChanged: (value) {
                       log("OTP Input: $value");

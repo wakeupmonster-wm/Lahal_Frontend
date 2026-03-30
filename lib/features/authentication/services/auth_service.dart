@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lahal_application/data/datasources/local/user_prefrence.dart';
@@ -38,12 +39,12 @@ class AuthService extends GetxService {
           );
 
           // Extract OTP for testing if available
-          String otpMessage = "";
+          String rawOtp = "";
           try {
             if (response.data != null && response.data is Map) {
               final otp = response.data['otp'];
               if (otp != null) {
-                otpMessage = "Test OTP: $otp";
+                rawOtp = otp.toString();
               }
             }
           } catch (_) {}
@@ -59,13 +60,58 @@ class AuthService extends GetxService {
             );
           }
 
-          // AppSnackBar.showSnackbar(
-          //   context: context,
-          //   title: navigateToVerify ? "Otp Sent Successfully" : "Otp Resent Successfully",
-          //   message: otpMessage,
-          // );
-
-          AppSnackBar.showToast(message: otpMessage);
+          if (rawOtp.isNotEmpty) {
+            // Show dialog for testing purposes when using test endpoint
+            // Introduce a small delay so the page transition finishes before the dialog opens.
+            Future.delayed(const Duration(milliseconds: 500), () {
+              // We use the root navigator context to ensure it remains valid after push.
+              final rootContext = AppGoRouter.navigatorKey.currentContext;
+              if (rootContext != null && rootContext.mounted) {
+                showDialog(
+                  context: rootContext,
+                  builder: (dialogContext) {
+                    return AlertDialog(
+                      title: const Text('Test OTP'),
+                      content: Text(
+                        'Your OTP is: $rawOtp\n\n(This dialog is for testing purposes only)',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                          },
+                          child: const Text('Close'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: rawOtp)).then((
+                              _,
+                            ) {
+                              AppSnackBar.showToast(
+                                message: 'OTP copied to clipboard',
+                              );
+                              if (dialogContext.mounted) {
+                                Navigator.pop(dialogContext);
+                              }
+                            });
+                          },
+                          child: const Text('Copy'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            });
+          } else {
+            print("---------- else block ----------");
+            // Normal flow for real endpoint when OTP isn't exposed
+            AppSnackBar.showToast(
+              message: navigateToVerify
+                  ? "OTP Sent Successfully"
+                  : "OTP Resent Successfully",
+            );
+          }
         }
       },
       onError: (error) {

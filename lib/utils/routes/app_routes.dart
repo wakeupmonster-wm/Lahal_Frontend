@@ -11,8 +11,10 @@ abstract class AppRoutes {
   static const String otpVerify = '/otp-verification-screen';
 
   //======================= HOME ==================
+  //======================= HOME ==================
   static const String homeScreen = '/home_screen';
   static const String mapScreen = '/map_screen';
+  static const String searchRestaurants = '/search_restaurants';
   static const String preyScreen = '/prey_screen';
   static const String profileScreen = '/profile_screen';
   static const String restaurantDetails = '/restaurant_details';

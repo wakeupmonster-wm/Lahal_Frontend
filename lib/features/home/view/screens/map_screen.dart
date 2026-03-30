@@ -46,9 +46,7 @@ class MapScreen extends StatelessWidget {
                   ? AppMapStyles.darkMapStyle
                   : null,
               markers: controller.markers,
-              onMapCreated: (GoogleMapController mapController) {
-                controller.mapController.complete(mapController);
-              },
+              onMapCreated: controller.onMapWidgetCreated,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
@@ -116,10 +114,12 @@ class MapScreen extends StatelessWidget {
                                     child: Obx(
                                       () => AppText(
                                         locationController
-                                                .isLocationLoading.value
+                                                .isLocationLoading
+                                                .value
                                             ? 'Fetching location...'
                                             : locationController
-                                                .currentAddress.value,
+                                                  .currentAddress
+                                                  .value,
                                         size: AppTextSize.s16,
                                         color: Colors.white,
                                         weight: AppTextWeight.bold,
@@ -211,6 +211,7 @@ class MapScreen extends StatelessWidget {
                     return _buildMapRestaurantCard(
                       context,
                       restaurant,
+                      controller,
                       tok,
                       cs,
                       tx,
@@ -292,6 +293,7 @@ class MapScreen extends StatelessWidget {
   Widget _buildMapRestaurantCard(
     BuildContext context,
     RestaurantModel restaurant,
+    MapController controller,
     AppTokens tok,
     ColorScheme cs,
     AppTextColors tx,
@@ -427,7 +429,13 @@ class MapScreen extends StatelessWidget {
                         0.043, // Dynamic height (approx 36px on standard screen)
                     child: ElevatedButton(
                       onPressed: () {
-                        context.push(AppRoutes.restaurantDetails);
+                        context.push(
+                          AppRoutes.restaurantDetails,
+                          extra: {
+                            'id': restaurant.id,
+                            'isFav': restaurant.isFavourite,
+                          },
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: cs.primary,
@@ -446,9 +454,28 @@ class MapScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: width * 0.02), // Dynamic gap
-                _buildCompactButton(cs, AppSvg.routingIcon, width, height),
+                GestureDetector(
+                  onTap: () => controller.getDirections(context, restaurant),
+                  child: _buildCompactButton(
+                    cs,
+                    AppSvg.routingIcon,
+                    width,
+                    height,
+                  ),
+                ),
                 SizedBox(width: width * 0.01), // Dynamic gap
-                _buildCompactButton(cs, AppSvg.callCallingIcon, width, height),
+                GestureDetector(
+                  onTap: () {
+                    print("clickedd!!!!!!!! ");
+                    controller.callRestaurant(restaurant);
+                  },
+                  child: _buildCompactButton(
+                    cs,
+                    AppSvg.callCallingIcon,
+                    width,
+                    height,
+                  ),
+                ),
               ],
             ),
           ],
