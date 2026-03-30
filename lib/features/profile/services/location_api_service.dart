@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:lahal_application/data/datasources/remote/api_call_handler.dart';
 import 'package:lahal_application/data/models/api_response.dart';
 import 'package:lahal_application/data/exceptions/app_exception.dart';
-import 'package:lahal_application/features/profile/repo/location_repository.dart';
+import 'package:lahal_application/features/profile/repo/search_location_repository.dart';
 import 'package:lahal_application/features/home/repo/location_repository.dart'
     as home_repo;
 import '../model/location_model.dart';

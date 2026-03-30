@@ -1,38 +1,59 @@
 import 'package:get/get.dart';
+import 'package:lahal_application/features/profile/services/cms_service.dart';
+import 'package:lahal_application/features/profile/model/cms_model.dart';
 import 'package:lahal_application/features/profile/repo/profile_repository.dart';
+import 'package:lahal_application/features/profile/services/profile_api_service.dart';
 
 class CmsController extends GetxController {
-  final ProfileRepository _profileRepo = ProfileRepository();
+  late final CmsService _cmsService;
 
-  // Terms & Conditions
-  final RxString termsData = "".obs;
-  final RxBool isTermsLoading = false.obs;
+  // State Management
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = "".obs;
 
-  // Privacy Policy
-  final RxString privacyData = "".obs;
-  final RxBool isPrivacyLoading = false.obs;
+  // CMS Data
+  final Rx<CmsModel> termsData = CmsModel.empty().obs;
+  final Rx<CmsModel> privacyData = CmsModel.empty().obs;
 
-  Future<void> fetchTerms() async {
-    isTermsLoading.value = true;
-    try {
-      final response = await _profileRepo.getTermsAndConditions();
-      if (response.isSuccess) {
-        termsData.value = response.data.toString();
-      }
-    } finally {
-      isTermsLoading.value = false;
-    }
+  @override
+  void onInit() {
+    super.onInit();
+    // Ensure dependencies are registered
+    if (!Get.isRegistered<ProfileRepository>()) Get.put(ProfileRepository());
+    if (!Get.isRegistered<ProfileApiService>()) Get.put(ProfileApiService());
+    if (!Get.isRegistered<CmsService>()) Get.put(CmsService());
+
+    _cmsService = Get.find<CmsService>();
   }
 
-  Future<void> fetchPrivacyPolicy() async {
-    isPrivacyLoading.value = true;
-    try {
-      final response = await _profileRepo.getPrivacyPolicy();
-      if (response.isSuccess) {
-        privacyData.value = response.data.toString();
-      }
-    } finally {
-      isPrivacyLoading.value = false;
-    }
+  void fetchTerms() {
+    _cmsService.loadTermsAndConditions(
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onSuccess: (model) {
+        termsData.value = model;
+      },
+      onError: (error) {
+        errorMessage.value = error.toString();
+      },
+    );
+  }
+
+  void fetchPrivacyPolicy() {
+    _cmsService.loadPrivacyPolicy(
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onSuccess: (model) {
+        privacyData.value = model;
+      },
+      onError: (error) {
+        errorMessage.value = error.toString();
+      },
+    );
+  }
+
+  // Helper to clear errors
+  void clearError() {
+    errorMessage.value = "";
   }
 }

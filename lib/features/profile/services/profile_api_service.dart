@@ -27,4 +27,34 @@ class ProfileApiService extends GetxService {
       onError: onError,
     );
   }
+
+  void fetchTermsAndConditions({
+    required RxBool isLoading,
+    required RxString errorMessage,
+    required Function(ApiResponse response) onSuccess,
+    Function(AppException error)? onError,
+  }) async {
+    await ApiCallHandler.call(
+      apiCall: () => _profileRepo.getTermsAndConditions(),
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onSuccess: onSuccess,
+      onError: onError,
+    );
+  }
+
+  void fetchPrivacyPolicy({
+    required RxBool isLoading,
+    required RxString errorMessage,
+    required Function(ApiResponse response) onSuccess,
+    Function(AppException error)? onError,
+  }) async {
+    await ApiCallHandler.call(
+      apiCall: () => _profileRepo.getPrivacyPolicy(),
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onSuccess: onSuccess,
+      onError: onError,
+    );
+  }
 }
