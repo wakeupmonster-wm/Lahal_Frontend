@@ -173,6 +173,40 @@ class LocationController extends GetxController {
     });
   }
 
+  /// Public method to save a custom selected location
+  Future<bool> saveCustomLocation(String address, double lat, double lng) async {
+    try {
+      isLocationLoading.value = true;
+      final details = await LocationService.getAddressDetailsFromLatLng(lat, lng);
+      
+      // Update local observables
+      currentAddress.value = address;
+      latitude.value = lat;
+      longitude.value = lng;
+      hasLocation.value = true;
+      
+      final result = await _locationRepository.saveLocation(
+        address: details['address']?.isNotEmpty == true ? details['address']! : address,
+        city: details['city'] ?? '',
+        state: details['state'] ?? '',
+        lat: lat,
+        lng: lng,
+      );
+      
+      if (result != null) {
+        savedLocation.value = result;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      log(e.toString());
+      AppSnackBar.showToast(message: "Failed to save location");
+      return false;
+    } finally {
+      isLocationLoading.value = false;
+    }
+  }
+
   /// Manual search navigation
   void openManualSearch(BuildContext context) {
     context.push(AppRoutes.changeLocationScreen);

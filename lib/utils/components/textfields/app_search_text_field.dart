@@ -17,6 +17,7 @@ class AppSearchField extends StatelessWidget {
     this.focusNode,
     this.onChanged,
     this.onSubmitted,
+    this.suffixIcon,
   });
 
   final String hintText;
@@ -24,6 +25,7 @@ class AppSearchField extends StatelessWidget {
   final FocusNode? focusNode;
   final void Function(String)? onChanged;
   final void Function(String)? onSubmitted;
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +85,10 @@ class AppSearchField extends StatelessWidget {
         prefixIconConstraints: BoxConstraints(
           minWidth: tok.iconLg + tok.gap.sm,
         ),
+        suffixIcon: suffixIcon,
+        suffixIconConstraints: suffixIcon != null ? BoxConstraints(
+          minWidth: tok.iconLg + tok.gap.sm,
+        ) : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide(color: outlineColor),
