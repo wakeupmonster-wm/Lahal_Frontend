@@ -32,4 +32,13 @@ class AuthRepositories {
       includeHeaders: false,
     );
   }
+
+  Future<ApiResponse> googleLogin(Map<String, dynamic> body) async {
+    return await _network.sendRequest(
+      url: AppUrls.googleLogin,
+      method: HttpMethod.post,
+      body: body,
+      includeHeaders: false,
+    );
+  }
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "259071568902",
+    "project_id": "lalah-app-30589",
+    "storage_bucket": "lalah-app-30589.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259071568902:android:d151292996abc83238a787",
+        "android_client_info": {
+          "package_name": "com.lalah.restaurant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6S7rFrrinU5Qqay_wnVDip2Y7Pz-8rC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

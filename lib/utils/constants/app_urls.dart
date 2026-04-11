@@ -18,6 +18,7 @@ class AppUrls {
   static Uri resendOtp = setUrls(
     "/api/v1/auth/test/send-otp",
   ); // need to change with real one
+  static Uri googleLogin = setUrls("/api/v1/auth/google-login");
   static Uri refreshToken = setUrls("/api/v1/auth/refresh");
 
   // Home
