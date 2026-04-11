@@ -13,15 +13,14 @@ class PrayerRepository {
     required String dateStr,
   }) async {
     try {
-      final uri = Uri.parse(
-        '${AppUrls.aladhanBaseUrl}/timings/$dateStr',
-      ).replace(
-        queryParameters: {
-          'latitude': lat.toString(),
-          'longitude': lng.toString(),
-          'method': '2', // ISNA method
-        },
-      );
+      final uri = Uri.parse('${AppUrls.aladhanBaseUrl}/timings/$dateStr')
+          .replace(
+            queryParameters: {
+              'latitude': lat.toString(),
+              'longitude': lng.toString(),
+              'method': '2', // ISNA method
+            },
+          );
 
       AppLogger.i('PrayerRepository', 'Fetching prayer times: $uri');
 
