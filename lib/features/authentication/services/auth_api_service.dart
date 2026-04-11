@@ -50,4 +50,22 @@ class AuthApiService extends GetxService {
       );
     });
   }
+
+  void googleLogin({
+    required Map<String, dynamic> payload,
+    required RxBool isLoading,
+    required RxString errorMessage,
+    required Function(ApiResponse response) onSuccess,
+    Function(AppException error)? onError,
+  }) {
+    _debouncer.run(() async {
+      await ApiCallHandler.call(
+        apiCall: () => _authRepo.googleLogin(payload),
+        isLoading: isLoading,
+        errorMessage: errorMessage,
+        onSuccess: onSuccess,
+        onError: onError,
+      );
+    });
+  }
 }

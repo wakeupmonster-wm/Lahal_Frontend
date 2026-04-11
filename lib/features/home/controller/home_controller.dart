@@ -29,8 +29,8 @@ class HomeController extends GetxController {
   final RxString selectedCategory = ''.obs;
 
   // ---- Search State ----
-  final RxString searchQuery = ''.obs;
-  Timer? _searchDebounce;
+  // Search state is now handled natively in SearchRestaurantsController
+
 
   // ---- Scroll State ----
   final RxBool showBackToTop = false.obs;
@@ -64,7 +64,6 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    _searchDebounce?.cancel();
     super.onClose();
   }
 
@@ -97,16 +96,6 @@ class HomeController extends GetxController {
       default:
         return RestaurantFilters.near_you;
     }
-  }
-
-  // ---- Search ----
-
-  void onSearchChanged(String query) {
-    _searchDebounce?.cancel();
-    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
-      searchQuery.value = query;
-      fetchRestaurants(reset: true);
-    });
   }
 
   // ---- Fetch Restaurants ----
@@ -147,7 +136,6 @@ class HomeController extends GetxController {
       page: _currentPage,
       limit: _pageLimit,
       filter: apiFilter,
-      search: searchQuery.value.isNotEmpty ? searchQuery.value : null,
       lat: lat,
       lng: lng,
       // Bottom sheet filter params

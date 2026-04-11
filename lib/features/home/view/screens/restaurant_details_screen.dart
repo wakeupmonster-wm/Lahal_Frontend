@@ -18,7 +18,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 class RestaurantDetailsScreen extends StatefulWidget {
   final String restaurantId;
-  const RestaurantDetailsScreen({super.key, required this.restaurantId});
+  final bool? isFav;
+  const RestaurantDetailsScreen({super.key, required this.restaurantId, this.isFav});
 
   @override
   State<RestaurantDetailsScreen> createState() =>
@@ -34,7 +35,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
   void initState() {
     super.initState();
     // Fetch details when screen loads
-    controller.fetchRestaurantDetails(widget.restaurantId);
+    controller.fetchRestaurantDetails(widget.restaurantId, isFav: widget.isFav);
   }
 
   @override
@@ -87,17 +88,20 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                 ),
               ),
               actions: [
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(tok.gap.xs),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Iconsax.heart_outline,
-                      color: tx.inverse,
-                      size: 15,
+                GestureDetector(
+                  onTap: controller.toggleFavorite,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(tok.gap.xs),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        restaurant.isFavourite ? Icons.favorite : Icons.favorite_border,
+                        color: restaurant.isFavourite ? Colors.red : tx.inverse,
+                        size: 15,
+                      ),
                     ),
                   ),
                 ),
@@ -132,19 +136,21 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                     //   bottom: 16,
                     //   right: 100,
                     // ),
-                    title: Container(
-                      width: 190,
-                      // color: Colors.red,
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 100),
-                        opacity: isCollapsed ? 1.0 : 0.0,
-                        child: AppText(
-                          restaurant.restaurantName,
-                          size: AppTextSize.s16,
-                          weight: AppTextWeight.bold,
-                          color: cs.onSurface,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                    title: IgnorePointer(
+                      child: SizedBox(
+                        width: 190,
+                        // color: Colors.red,
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 100),
+                          opacity: isCollapsed ? 1.0 : 0.0,
+                          child: AppText(
+                            restaurant.restaurantName,
+                            size: AppTextSize.s16,
+                            weight: AppTextWeight.bold,
+                            color: cs.onSurface,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ),

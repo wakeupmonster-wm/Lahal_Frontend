@@ -33,11 +33,11 @@ class OtpController extends GetxController {
     startTimer();
     _listenForSmsOtp();
     // Ensure focus is explicitly requested after transition completes
-    Future.delayed(const Duration(milliseconds: 300), () {
+    /* Future.delayed(const Duration(milliseconds: 300), () {
       if (!focusNode.hasFocus) {
         focusNode.requestFocus();
       }
-    });
+    }); */
   }
 
   void _listenForSmsOtp() async {
@@ -76,7 +76,7 @@ class OtpController extends GetxController {
 
   void reset() {
     otp.value = '';
-    pinputController.clear();
+    // pinputController.clear();  
     isLoading.value = false;
   }
 
@@ -124,6 +124,6 @@ class OtpController extends GetxController {
     reset();
     startTimer();
     _listenForSmsOtp();
-    focusNode.requestFocus();
+    // focusNode.requestFocus(); // Disabling programmatic keyboard popup
   }
 }

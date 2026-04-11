@@ -57,6 +57,24 @@ class LocationController extends GetxController {
         false);
   }
 
+  /// Async check before actually showing the popup to avoid redundant popups 
+  /// if OS-level permission was already granted previously
+  Future<bool> checkAndShowLocationPopup() async {
+    if (!shouldShowLocationPopup()) return false;
+
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        await markLocationPopupAsShown();
+        return false;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return true;
+  }
+
   /// Save popup state
   Future<void> markLocationPopupAsShown() async {
     await AppLocalStorage.instance().writeData(
@@ -155,18 +173,54 @@ class LocationController extends GetxController {
     });
   }
 
+  /// Public method to save a custom selected location
+  Future<bool> saveCustomLocation(String address, double lat, double lng) async {
+    try {
+      isLocationLoading.value = true;
+      final details = await LocationService.getAddressDetailsFromLatLng(lat, lng);
+      
+      // Update local observables
+      currentAddress.value = address;
+      latitude.value = lat;
+      longitude.value = lng;
+      hasLocation.value = true;
+      
+      final result = await _locationRepository.saveLocation(
+        address: details['address']?.isNotEmpty == true ? details['address']! : address,
+        city: details['city'] ?? '',
+        state: details['state'] ?? '',
+        lat: lat,
+        lng: lng,
+      );
+      
+      if (result != null) {
+        savedLocation.value = result;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      log(e.toString());
+      AppSnackBar.showToast(message: "Failed to save location");
+      return false;
+    } finally {
+      isLocationLoading.value = false;
+    }
+  }
+
   /// Manual search navigation
   void openManualSearch(BuildContext context) {
     context.push(AppRoutes.changeLocationScreen);
   }
 
-  /// Show permission sheet
-  void showLocationSheet(BuildContext context) {
+  /// Show permission sheet. [onGranted] is called if the user successfully
+  /// enables location via the sheet.
+  void showLocationSheet(BuildContext context, {VoidCallback? onGranted}) {
     LocationPermissionSheet.show(
       context,
       onEnable: () async {
         await markLocationPopupAsShown();
-        await enableLocation(context);
+        final granted = await enableLocation(context);
+        if (granted) onGranted?.call();
       },
       onManualSearch: () async {
         await markLocationPopupAsShown();

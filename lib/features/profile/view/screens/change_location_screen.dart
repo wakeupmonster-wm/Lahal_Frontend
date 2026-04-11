@@ -13,6 +13,7 @@ import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/components/location/use_current_location_tile.dart';
+import 'package:lahal_application/utils/theme/app_button.dart';
 
 class ChangeLocationScreen extends StatelessWidget {
   const ChangeLocationScreen({super.key});
@@ -37,11 +38,21 @@ class ChangeLocationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: tok.gap.md),
-              AppSearchField(
+              Obx(() => AppSearchField(
                 hintText: AppStrings.searchLocationHint,
                 controller: controller.searchController,
-                onChanged: (value) => controller.searchLocations(value),
-              ),
+                onChanged: (value) => controller.onSearchTextChanged(value),
+                suffixIcon: controller.showClearButton.value
+                    ? GestureDetector(
+                        onTap: controller.clearSearch,
+                        child: Icon(
+                          Icons.close,
+                          color: tx.subtle,
+                          size: tok.iconSm, // Using iconSm as it's typically ~20-24px
+                        ),
+                      )
+                    : null,
+              )),
 
               // Search Bar
               SizedBox(height: tok.gap.md),
@@ -58,11 +69,14 @@ class ChangeLocationScreen extends StatelessWidget {
                 if (controller.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (controller.searchResults.isEmpty) {
-                  return EmptyStateWidget(
+                if (controller.searchResults.isEmpty && controller.searchController.text.isNotEmpty) {
+                  return const EmptyStateWidget(
                     title: "No Locations Found",
-                    description: "We couldn't find any locations in your area.",
+                    description: "We couldn't find any locations matching your search.",
                   );
+                }
+                if (controller.searchResults.isEmpty) {
+                  return const SizedBox.shrink();
                 }
                 return Container(
                   decoration: BoxDecoration(
@@ -100,6 +114,21 @@ class ChangeLocationScreen extends StatelessWidget {
                 );
               }),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(tok.gap.lg),
+          child: Obx(
+            () => AppButton(
+              label: "Save Location",
+              onPressed: controller.isSaveEnabled.value
+                  ? () => controller.saveLocation()
+                  : null,
+              loading: controller.isSaving.value,
+              disabled: !controller.isSaveEnabled.value,
+            ),
           ),
         ),
       ),

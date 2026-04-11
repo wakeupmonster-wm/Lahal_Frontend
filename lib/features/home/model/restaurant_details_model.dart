@@ -15,6 +15,7 @@ class RestaurantDetailsModel {
   final List<RestaurantDetailsReview> reviews;
   final String createdAt;
   final String updatedAt;
+  bool isFavourite; // Made non-final to allow local toggling
 
   RestaurantDetailsModel({
     required this.id,
@@ -33,6 +34,7 @@ class RestaurantDetailsModel {
     required this.reviews,
     required this.createdAt,
     required this.updatedAt,
+    this.isFavourite = false,
   });
 
   factory RestaurantDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +58,7 @@ class RestaurantDetailsModel {
           [],
       createdAt: json['createdAt']?.toString() ?? '',
       updatedAt: json['updatedAt']?.toString() ?? '',
+      isFavourite: json['isFavourite'] == true,
     );
   }
 
@@ -82,8 +85,6 @@ class RestaurantDetailsModel {
   String get statusText => status.isOpen ? 'Open Now' : 'Closed';
   
   String get openingHours => '${status.openTime} - ${status.closeTime}';
-
-  bool get isFavourite => false; // Fetching from somewhere else or wait for favorite API
 
   List<String> get availableAmenities {
     final list = <String>[];

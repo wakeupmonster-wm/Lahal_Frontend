@@ -12,7 +12,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
   await AppLocalStorage.init("user_pref");
   // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // Lock orientation to Portrait

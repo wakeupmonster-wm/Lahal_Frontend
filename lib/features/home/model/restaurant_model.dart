@@ -183,11 +183,13 @@ class RestaurantLocation {
   });
 
   factory RestaurantLocation.fromJson(Map<String, dynamic> json) {
-    final coords = json['coordinates'] as List<dynamic>? ?? [];
+    double lon = (json['lng'] as num?)?.toDouble() ?? 0.0;
+    double lat = (json['lat'] as num?)?.toDouble() ?? 0.0;
+
     return RestaurantLocation(
       type: json['type']?.toString() ?? 'Point',
-      longitude: coords.isNotEmpty ? (coords[0] as num).toDouble() : 0.0,
-      latitude: coords.length > 1 ? (coords[1] as num).toDouble() : 0.0,
+      longitude: lon,
+      latitude: lat,
     );
   }
 }

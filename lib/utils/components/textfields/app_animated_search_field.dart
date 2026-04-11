@@ -14,6 +14,10 @@ class AppAnimatedSearchField extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.duration = const Duration(seconds: 3),
+    this.autofocus = false,
+    this.readOnly = false,
+    this.onTap,
+    this.focusNode,
   });
 
   final List<String> hints;
@@ -21,6 +25,10 @@ class AppAnimatedSearchField extends StatefulWidget {
   final void Function(String)? onChanged;
   final void Function(String)? onSubmitted;
   final Duration duration;
+  final bool autofocus;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final FocusNode? focusNode;
 
   @override
   State<AppAnimatedSearchField> createState() => _AppAnimatedSearchFieldState();
@@ -100,6 +108,10 @@ class _AppAnimatedSearchFieldState extends State<AppAnimatedSearchField> {
       children: [
         TextField(
           controller: _internalController,
+          autofocus: widget.autofocus,
+          readOnly: widget.readOnly,
+          onTap: widget.onTap,
+          focusNode: widget.focusNode,
           style: textStyle,
           textAlignVertical: TextAlignVertical.center,
           onChanged: widget.onChanged,

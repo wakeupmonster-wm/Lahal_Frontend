@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -75,8 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (locationController.shouldShowLocationPopup()) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final shouldShow = await locationController.checkAndShowLocationPopup();
+      if (shouldShow && mounted) {
         _showLocationPopup();
       }
     });
@@ -510,6 +512,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }),
 
+                    return SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final restaurant = controller.bestRestaurants[index];
+                          return RestaurantCard(
+                            restaurant: restaurant,
+                            onTap: () {
+                              context.push(
+                                AppRoutes.restaurantDetails,
+                                extra: {
+                                  'id': restaurant.id,
+                                  'isFav': restaurant.isFavourite,
+                                },
+                              );
+                            },
+                            onFavoriteToggle: () {
+                              controller.toggleFavorite(restaurant.id);
+                            },
                       // --- Loading More Indicator ---
                       Obx(() {
                         if (controller.isLoadingMore.value) {
@@ -610,7 +631,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 : tok.gap.md,
           ),
           child: AppShimmerFAB(
-            onPressed: () => context.push(AppRoutes.mapScreen),
+            onPressed: () async {
+              final permission = await Geolocator.checkPermission();
+              if (!context.mounted) return;
+              if (permission == LocationPermission.always ||
+                  permission == LocationPermission.whileInUse) {
+                context.push(AppRoutes.mapScreen);
+              } else {
+                locationController.showLocationSheet(
+                  context,
+                  onGranted: () {
+                    if (context.mounted) context.push(AppRoutes.mapScreen);
+                  },
+                );
+              }
+            },
             child: SizedBox(
               height: height * 0.054,
               child: FloatingActionButton.extended(
@@ -729,17 +764,11 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _HomeSearchBar extends StatelessWidget {
-  const _HomeSearchBar({
-    required this.tok,
-    required this.cs,
-    required this.tx,
-    required this.onSearchChanged,
-  });
+  const _HomeSearchBar({required this.tok, required this.cs, required this.tx});
 
   final AppTokens tok;
   final ColorScheme cs;
   final AppTextColors tx;
-  final Function(String) onSearchChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -760,8 +789,9 @@ class _HomeSearchBar extends StatelessWidget {
                 "Search for \"Burger\"",
                 "Search for \"Coffee\"",
               ],
-              onChanged: (value) {
-                onSearchChanged(value);
+              readOnly: true,
+              onTap: () {
+                context.push(AppRoutes.searchRestaurants);
               },
             ),
           ),

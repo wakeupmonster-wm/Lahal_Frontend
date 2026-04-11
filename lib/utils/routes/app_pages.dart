@@ -5,6 +5,7 @@ import 'package:lahal_application/features/home/view/screens/home_screen.dart';
 import 'package:lahal_application/features/home/view/screens/map_screen.dart';
 import 'package:lahal_application/features/home/view/screens/report_error_screen.dart';
 import 'package:lahal_application/features/home/view/screens/restaurant_details_screen.dart';
+import 'package:lahal_application/features/home/view/screens/search_restaurants.dart';
 import 'package:lahal_application/features/home/view/screens/notification_screen.dart';
 import 'package:lahal_application/features/prey/view/prayer_screen.dart';
 import 'package:lahal_application/features/profile/view/screens/favorites_screen.dart';
@@ -55,19 +56,30 @@ class AppGoRouter {
       ),
       _createRoute(AppRoutes.bottomNavigationBar, BottomNavigationbar()),
 
-      //===================home========================
+      //===================home======================== 
       _createRoute(AppRoutes.homeScreen, const HomeScreen()),
       _createRoute(AppRoutes.mapScreen, const MapScreen()),
+      _createRoute(AppRoutes.searchRestaurants, const SearchRestaurantsScreen()),
       _createRoute(AppRoutes.preyScreen, const PrayerScreen()),
       _createRoute(AppRoutes.profileScreen, const ProfileScreen()),
       GoRoute(
         path: AppRoutes.restaurantDetails,
         pageBuilder: (context, state) {
-          final restaurantId = state.extra as String? ?? '';
+          String restaurantId = '';
+          bool? isFav;
+
+          if (state.extra is String) {
+            restaurantId = state.extra as String;
+          } else if (state.extra is Map<String, dynamic>) {
+            final extraMap = state.extra as Map<String, dynamic>;
+            restaurantId = extraMap['id'] as String? ?? '';
+            isFav = extraMap['isFav'] as bool?;
+          }
+
           return _buildTransitionPage(
             context,
             state,
-            RestaurantDetailsScreen(restaurantId: restaurantId),
+            RestaurantDetailsScreen(restaurantId: restaurantId, isFav: isFav),
           );
         },
       ),
