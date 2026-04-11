@@ -32,6 +32,9 @@ class HomeController extends GetxController {
   // Search state is now handled natively in SearchRestaurantsController
 
 
+  // ---- Scroll State ----
+  final RxBool showBackToTop = false.obs;
+
   // ---- Filter Bottom Sheet State ----
   // 0 = no distance filter; slider starts at 0
   final RxDouble distanceRange = 0.0.obs;

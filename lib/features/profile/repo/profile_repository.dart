@@ -92,4 +92,22 @@ class ProfileRepository {
       includeHeaders: true,
     );
   }
+
+  // Fetch Terms and Conditions
+  Future<ApiResponse> getTermsAndConditions() async {
+    return await _apiService.sendRequest(
+      url: AppUrls.termsAndConditions,
+      method: HttpMethod.get,
+      includeHeaders: false,
+    );
+  }
+
+  // Fetch Privacy Policy
+  Future<ApiResponse> getPrivacyPolicy() async {
+    return await _apiService.sendRequest(
+      url: AppUrls.privacyPolicy,
+      method: HttpMethod.get,
+      includeHeaders: false,
+    );
+  }
 }

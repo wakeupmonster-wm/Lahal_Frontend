@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:lahal_application/features/home/controller/location_controller.dart'
     as global;
+import 'package:lahal_application/features/profile/services/location_service.dart';
 import 'package:lahal_application/utils/components/snackbar/app_snackbar.dart';
 import '../model/location_model.dart';
-import '../repo/location_repository.dart';
 
 class ChangeLocationController extends GetxController {
   final LocationRepository _locationRepo = LocationRepository();
@@ -48,16 +48,18 @@ class ChangeLocationController extends GetxController {
     _checkIfChanged();
   }
 
-  Future<void> searchLocations(String query) async {
-    isLoading.value = true;
-    try {
-      final results = await _locationRepo.searchLocations(query);
-      searchResults.assignAll(results);
-    } catch (e) {
-      // Handle error
-    } finally {
-      isLoading.value = false;
-    }
+  void searchLocations(String query) {
+    _locationService.searchLocations(
+      query: query,
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onSuccess: (locations) {
+        searchResults.assignAll(locations);
+      },
+      onError: (error) {
+        // Error message is handled by RxString in ApiCallHandler
+      },
+    );
   }
 
   void useCurrentLocation(BuildContext context) async {

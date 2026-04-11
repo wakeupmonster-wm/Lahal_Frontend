@@ -42,6 +42,14 @@ class AddRestaurantController extends GetxController {
   Future<void> pickImages() async {
     final List<XFile> images = await _picker.pickMultiImage();
     if (images.isNotEmpty) {
+      if (selectedImages.length + images.length > 3) {
+        Fluttertoast.showToast(
+          msg: "You can only add a maximum of 3 photos.",
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+        );
+        return;
+      }
       selectedImages.addAll(images.map((image) => File(image.path)));
       selectedImagesError.value = '';
     }
@@ -49,9 +57,9 @@ class AddRestaurantController extends GetxController {
 
   void removeImage(int index) {
     selectedImages.removeAt(index);
-    if (selectedImages.isEmpty &&
+    if (selectedImages.length != 3 &&
         autovalidateMode.value != AutovalidateMode.disabled) {
-      selectedImagesError.value = "Please add at least one photo.";
+      selectedImagesError.value = "Please add exactly 3 photos.";
     }
   }
 
@@ -61,8 +69,8 @@ class AddRestaurantController extends GetxController {
       return;
     }
 
-    if (selectedImages.isEmpty) {
-      selectedImagesError.value = "Please add at least one photo.";
+    if (selectedImages.length != 3) {
+      selectedImagesError.value = "Please add exactly 3 photos.";
       autovalidateMode.value = AutovalidateMode.onUserInteraction;
       return;
     }

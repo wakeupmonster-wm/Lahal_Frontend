@@ -14,6 +14,7 @@ import 'package:lahal_application/utils/theme/app_tokens.dart';
 import 'package:lahal_application/utils/theme/text/app_text.dart';
 import 'package:lahal_application/utils/theme/text/app_text_color.dart';
 import 'package:lahal_application/utils/theme/text/app_typography.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class RestaurantDetailsScreen extends StatefulWidget {
   final String restaurantId;
@@ -174,72 +175,126 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // --- Halal Summary Section ---
-                    _buildSectionHeader(tx, 'Halal summary'),
-                    SizedBox(height: tok.gap.md),
-                    AppText(
-                      restaurant.about.isNotEmpty
-                          ? restaurant.about
-                          : restaurant.halalInfo.summary,
-                      size: AppTextSize.s14,
-                      color: tx.subtle,
-                    ),
-                    SizedBox(height: tok.gap.md),
-                    Wrap(
-                      spacing: tok.gap.sm,
-                      children: restaurant.halalSummaryTags.map((tag) {
-                        return _buildTag(cs, tx, tag);
-                      }).toList(),
-                    ),
+                    Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSectionHeader(tx, 'Halal summary'),
+                            SizedBox(height: tok.gap.md),
+                            AppText(
+                              restaurant.about.isNotEmpty
+                                  ? restaurant.about
+                                  : restaurant.halalInfo.summary,
+                              size: AppTextSize.s14,
+                              color: tx.subtle,
+                            ),
+                            SizedBox(height: tok.gap.md),
+                            Wrap(
+                              spacing: tok.gap.sm,
+                              children: restaurant.halalSummaryTags.map((tag) {
+                                return _buildTag(cs, tx, tag)
+                                    .animate()
+                                    .fadeIn(delay: 950.ms)
+                                    .scale(begin: const Offset(0.9, 0.9));
+                              }).toList(),
+                            ),
+                          ],
+                        )
+                        .animate()
+                        .fadeIn(delay: 900.ms)
+                        .slideY(begin: 0.1, end: 0),
 
                     SizedBox(height: tok.gap.xl),
 
                     // --- Photos Grid ---
-                    _buildSectionHeader(tx, 'Photos'),
-                    SizedBox(height: tok.gap.md),
-                    _buildPhotosGrid(tok, restaurant.photos, width, height),
+                    Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSectionHeader(tx, 'Photos'),
+                            SizedBox(height: tok.gap.md),
+                            _buildPhotosGrid(
+                              tok,
+                              restaurant.photos,
+                              width,
+                              height,
+                            ),
+                          ],
+                        )
+                        .animate()
+                        .fadeIn(delay: 1000.ms)
+                        .slideY(begin: 0.1, end: 0),
 
                     SizedBox(height: tok.gap.xl),
 
                     // --- About this place ---
-                    _buildSectionHeader(tx, 'About this place'),
-                    SizedBox(height: tok.gap.md),
-                    AppText(
-                      restaurant.about.isNotEmpty
-                          ? restaurant.about
-                          : restaurant.halalInfo.summary,
-                      size: AppTextSize.s14,
-                      color: tx.subtle,
-                    ),
-                    SizedBox(height: tok.gap.md),
-                    _buildAmenitiesCard(tok, tx, cs, restaurant),
+                    Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSectionHeader(tx, 'About this place'),
+                            SizedBox(height: tok.gap.md),
+                            AppText(
+                              restaurant.about.isNotEmpty
+                                  ? restaurant.about
+                                  : restaurant.halalInfo.summary,
+                              size: AppTextSize.s14,
+                              color: tx.subtle,
+                            ),
+                            SizedBox(height: tok.gap.md),
+                            _buildAmenitiesCard(tok, tx, cs, restaurant),
+                          ],
+                        )
+                        .animate()
+                        .fadeIn(delay: 1100.ms)
+                        .slideY(begin: 0.1, end: 0),
 
                     SizedBox(height: tok.gap.xl),
 
                     // --- Reviews Section ---
                     if (restaurant.reviews.isNotEmpty) ...[
-                      _buildSectionHeader(tx, 'Reviews'),
-                      SizedBox(height: tok.gap.md),
-                      _buildReviewsList(
-                        tok,
-                        tx,
-                        cs,
-                        restaurant.reviews,
-                        controller,
-                        width,
-                        height,
-                      ),
+                      Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionHeader(tx, 'Reviews'),
+                              SizedBox(height: tok.gap.md),
+                              _buildReviewsList(
+                                tok,
+                                tx,
+                                cs,
+                                restaurant.reviews,
+                                controller,
+                                width,
+                                height,
+                              ),
+                            ],
+                          )
+                          .animate()
+                          .fadeIn(delay: 1200.ms)
+                          .slideX(begin: 0.1, end: 0),
                       SizedBox(height: tok.gap.xl),
                     ],
 
                     // --- Connects Section ---
-                    _buildSectionHeader(tx, 'Connects'),
-                    SizedBox(height: tok.gap.md),
-                    _buildConnectsGrid(tok, tx, cs, restaurant.contact),
+                    Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSectionHeader(tx, 'Connects'),
+                            SizedBox(height: tok.gap.md),
+                            _buildConnectsGrid(tok, tx, cs, restaurant.contact),
+                          ],
+                        )
+                        .animate()
+                        .fadeIn(delay: 1300.ms)
+                        .slideY(begin: 0.1, end: 0),
 
                     SizedBox(height: tok.gap.xl),
 
                     // --- Footer ---
-                    _buildFooter(tok, tx, cs, context, widget.restaurantId),
+                    _buildFooter(
+                      tok,
+                      tx,
+                      cs,
+                      context,
+                      widget.restaurantId,
+                    ).animate().fadeIn(delay: 1400.ms),
                     SizedBox(height: tok.gap.xl),
                   ],
                 ),
@@ -281,7 +336,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   child: CachedNetworkImage(
                     imageUrl: restaurant.coverImage,
                     fit: BoxFit.cover,
-                  ),
+                  ).animate().fadeIn(duration: 800.ms),
                 ),
                 // Gradient Overlay
                 Positioned.fill(
@@ -313,113 +368,138 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              restaurant.restaurantName,
-                              size: AppTextSize.s24,
-                              weight: AppTextWeight.bold,
-                              color: tx.inverse,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                                  restaurant.restaurantName,
+                                  size: AppTextSize.s24,
+                                  weight: AppTextWeight.bold,
+                                  color: tx.inverse,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                                .animate()
+                                .fadeIn(delay: 200.ms)
+                                .slideY(begin: 0.1, end: 0),
                             SizedBox(height: tok.gap.xxs / 2),
                             AppText(
-                              restaurant.address.fullAddress,
-                              size: AppTextSize.s14,
-                              color: tx.inverse.withOpacity(0.9),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                                  restaurant.address.fullAddress,
+                                  size: AppTextSize.s14,
+                                  color: tx.inverse.withOpacity(0.9),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                                .animate()
+                                .fadeIn(delay: 300.ms)
+                                .slideY(begin: 0.1, end: 0),
                             SizedBox(height: tok.gap.xxs / 2),
                             AppText(
-                              restaurant.formattedDistance,
-                              size: AppTextSize.s14,
-                              color: tx.inverse.withOpacity(0.9),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                                  restaurant.formattedDistance,
+                                  size: AppTextSize.s14,
+                                  color: tx.inverse.withOpacity(0.9),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                                .animate()
+                                .fadeIn(delay: 400.ms)
+                                .slideY(begin: 0.1, end: 0),
                             SizedBox(height: tok.gap.xxs),
                             Row(
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: const Color(0xFF10B981),
-                                  size: 16,
-                                ),
-                                SizedBox(width: tok.gap.xxs / 2),
-                                Expanded(
-                                  child: AppText(
-                                    '${restaurant.statusText} | ${restaurant.openingHours}',
-                                    size: AppTextSize.s12,
-                                    color: tx.inverse,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: const Color(0xFF10B981),
+                                      size: 16,
+                                    ),
+                                    SizedBox(width: tok.gap.xxs / 2),
+                                    Expanded(
+                                      child: AppText(
+                                        '${restaurant.statusText} | ${restaurant.openingHours}',
+                                        size: AppTextSize.s12,
+                                        color: tx.inverse,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                .animate()
+                                .fadeIn(delay: 500.ms)
+                                .slideY(begin: 0.1, end: 0),
                           ],
                         ),
                       ),
                       Container(
                         width: tok.gap.xxl * 2,
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: tok.gap.xxxs,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF047857),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(8),
-                                  topRight: Radius.circular(8),
+                        child:
+                            Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: tok.gap.xxxs,
+                                      ),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF047857),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          AppText(
+                                            restaurant.metrics.avgRating
+                                                .toStringAsFixed(1),
+                                            size: AppTextSize.s14,
+                                            weight: AppTextWeight.bold,
+                                            color: tx.inverse,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Icon(
+                                            Icons.star,
+                                            color: tx.inverse,
+                                            size: 14,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      width: tok.gap.xxl * 2,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: tok.gap.xxxs,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: cs.surfaceContainerHighest,
+                                        borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(8),
+                                          bottomRight: Radius.circular(8),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          AppText(
+                                            restaurant.metrics.totalReviews
+                                                .toString(),
+                                            size: AppTextSize.s14,
+                                            weight: AppTextWeight.bold,
+                                            color: tx.neutral,
+                                          ),
+                                          AppText(
+                                            'Reviews',
+                                            size: AppTextSize.s10,
+                                            color: tx.neutral,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                .animate()
+                                .fadeIn(delay: 600.ms)
+                                .scale(
+                                  begin: const Offset(0.95, 0.95),
+                                  end: const Offset(1, 1),
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  AppText(
-                                    restaurant.metrics.avgRating
-                                        .toStringAsFixed(1),
-                                    size: AppTextSize.s14,
-                                    weight: AppTextWeight.bold,
-                                    color: tx.inverse,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Icon(Icons.star, color: tx.inverse, size: 14),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: tok.gap.xxl * 2,
-                              padding: EdgeInsets.symmetric(
-                                vertical: tok.gap.xxxs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: cs.surfaceContainerHighest,
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(8),
-                                  bottomRight: Radius.circular(8),
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  AppText(
-                                    restaurant.metrics.totalReviews.toString(),
-                                    size: AppTextSize.s14,
-                                    weight: AppTextWeight.bold,
-                                    color: tx.neutral,
-                                  ),
-                                  AppText(
-                                    'Reviews',
-                                    size: AppTextSize.s10,
-                                    color: tx.neutral,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),
@@ -447,7 +527,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   tok: tok,
                   tx: tx,
                   cs: cs,
-                ),
+                ).animate().fadeIn(delay: 700.ms).slideY(begin: 0.3, end: 0),
               ),
               SizedBox(width: tok.gap.sm),
               Expanded(
@@ -459,7 +539,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   tok: tok,
                   tx: tx,
                   cs: cs,
-                ),
+                ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.3, end: 0),
               ),
             ],
           ),
@@ -858,7 +938,10 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   color: tx.subtle,
                 ),
                 GestureDetector(
-                  onTap: () => context.push(AppRoutes.reportErrorScreen, extra: restaurantId),
+                  onTap: () => context.push(
+                    AppRoutes.reportErrorScreen,
+                    extra: restaurantId,
+                  ),
                   child: AppText(
                     'Report error \u2192',
                     size: AppTextSize.s12,

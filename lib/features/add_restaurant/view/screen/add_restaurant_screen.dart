@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lahal_application/utils/constants/app_assets.dart';
@@ -393,7 +394,10 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                                     children: [
                                       Expanded(
                                         child: OutlinedButton(
-                                          onPressed: controller.clearForm,
+                                          onPressed: () {
+                                            HapticFeedback.mediumImpact();
+                                            controller.clearForm();
+                                          },
                                           style: OutlinedButton.styleFrom(
                                             side: BorderSide(color: cs.outline),
                                             padding: EdgeInsets.symmetric(
@@ -418,10 +422,10 @@ class _AddRestaurantScreenState extends State<AddRestaurantScreen> {
                                       Expanded(
                                         child: Obx(
                                           () => ElevatedButton(
-                                            onPressed:
-                                                controller.isLoading.value
-                                                ? null
-                                                : controller.submitRequest,
+                                            onPressed: () {
+                                              HapticFeedback.mediumImpact();
+                                              controller.submitRequest();
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
                                                   AppColor.primaryColor,

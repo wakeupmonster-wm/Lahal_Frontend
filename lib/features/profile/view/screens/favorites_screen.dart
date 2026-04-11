@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lahal_application/features/profile/controller/favorite_controller.dart';
@@ -90,15 +91,27 @@ class FavoritesScreen extends StatelessWidget {
                     .slideX(begin: -0.1, end: 0);
               }
               final favorite = controller.favoriteRestaurants[index - 1];
-              return RestaurantCard(restaurant: favorite.toRestaurantModel())
-                  .animate()
-                  .fadeIn(duration: 400.ms, delay: (index * 80).ms)
-                  .slideY(
-                    begin: 0.2,
-                    end: 0,
-                    duration: 400.ms,
-                    curve: Curves.easeOutQuad,
-                  );
+              return Obx(() {
+                final isRemoving = controller.removingIds.contains(favorite.id);
+                return RestaurantCard(
+                      restaurant: favorite.toRestaurantModel(),
+                      onFavoriteToggle: () {
+                        HapticFeedback.mediumImpact();
+                        controller.toggleFavorite(favorite.id);
+                      },
+                    )
+                    .animate(target: isRemoving ? 1 : 0)
+                    .fadeOut(duration: 300.ms)
+                    .slideX(begin: 0, end: 0.2, curve: Curves.easeIn)
+                    .animate() // Entrance animation
+                    .fadeIn(duration: 400.ms, delay: (index * 80).ms)
+                    .slideY(
+                      begin: 0.2,
+                      end: 0,
+                      duration: 400.ms,
+                      curve: Curves.easeOutQuad,
+                    );
+              });
             },
           ),
         );

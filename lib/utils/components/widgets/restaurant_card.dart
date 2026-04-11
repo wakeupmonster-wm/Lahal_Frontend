@@ -72,15 +72,31 @@ class RestaurantCard extends StatelessWidget {
                       onTap: onFavoriteToggle,
                       child: Container(
                         padding: const EdgeInsets.all(6),
-                        child: Icon(
-                          restaurant.isFavourite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          size: 22,
-                          color: restaurant.isFavourite
-                              ? Colors.red
-                              : Colors.white,
+                        child: AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          child: restaurant.isFavourite
+                              ? Icon(
+                                  Icons.favorite,
+                                  key: ValueKey(true),
+                                  color: Colors.red,
+                                  size: 22,
+                                )
+                              : Icon(
+                                  Icons.favorite_border,
+                                  key: ValueKey(false),
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
                         ),
+                        // Icon(
+                        //   restaurant.isFavourite
+                        //       ? Icons.favorite
+                        //       : Icons.favorite_border,
+                        //   size: 22,
+                        //   color: restaurant.isFavourite
+                        //       ? Colors.red
+                        //       : Colors.white,
+                        // ),
                       ),
                     ),
                   ),

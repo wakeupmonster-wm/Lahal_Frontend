@@ -37,28 +37,26 @@ class AppUrls {
   static Uri home = setUrls("/api/home");
   static Uri notifications = setUrls("/api/notifications");
 
-  static Uri faqs = setUrls("/api/faqs");
+  static Uri faqs = setUrls("/api/v1/cms/faq"); //implemented
   static Uri notificationPreferences = setUrls("/api/notification-preferences");
   static Uri nearbyRestaurants = setUrls(
     "/api/v1/restaurants/nearbyrestaurants",
   );
-  static Uri logout = setUrls("/api/v1/auth/logout"); //implemnt
+  static Uri logout = setUrls("/api/v1/auth/logout"); //implemented
 
-  //ashu add resturent
+  //ashu add resturent implemented
   static Uri submitRestaurantRequest = setUrls(
     "/api/v1/restaurants/addrestaurant-by-req",
-  ); //implment
+  );
   static Uri addRestaurantRequest = setUrls("/api/v1/restaurants/add-request");
-  static Uri updateProfile = setUrls(
-    "/api/v1/user/update-profile",
-  ); //implemented
-  static Uri getProfile = setUrls("/api/v1/user"); //implemented
-  // static Uri uploadFoodImages = setUrls("/api/v1/restaurants/upload-foodImg");
-
+  static Uri updateProfile = setUrls("/api/v1/user/update-profile");
+  static Uri getProfile = setUrls("/api/v1/user");
   //ashu profile
-  // static Uri updateProfileImage = setUrls("/api/v1/user/upload-profile-img");
   static Uri getAllFavourites = setUrls("/api/v1/user/get-all-favourites");
   static Uri deleteAccount = setUrls("/api/v1/user/delete-account");
+  // cms
+  static Uri termsAndConditions = setUrls("/api/v1/cms/terms-condition");
+  static Uri privacyPolicy = setUrls("/api/v1/cms/privacy-policy");
 
   // Third-Party
   static const String aladhanBaseUrl = "https://api.aladhan.com/v1";

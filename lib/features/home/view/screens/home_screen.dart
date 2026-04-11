@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -57,6 +59,16 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavController.setNavBarVisible(true);
       }
 
+      // Back to Top button visibility
+      final bool isScrollingUp =
+          scrollController.position.userScrollDirection ==
+          ScrollDirection.forward;
+      if (scrollController.offset > 400 && isScrollingUp) {
+        controller.showBackToTop.value = true;
+      } else if (scrollController.offset <= 400 || !isScrollingUp) {
+        controller.showBackToTop.value = false;
+      }
+
       // Pagination: load more when near bottom
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent - 200) {
@@ -94,6 +106,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _scrollToTop() {
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   void dispose() {
     scrollController.dispose();
@@ -115,293 +135,382 @@ class _HomeScreenState extends State<HomeScreen> {
     final collapsedHeight = kToolbarHeight + 20; // Search bar + paddin
     return Scaffold(
       backgroundColor: cs.surface,
-      body: RefreshIndicator(
-        onRefresh: () => controller.getBestRestaurants(),
-        child: CustomScrollView(
-          controller: scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            // --- 1. Expandable Header with Search Bar ---
-            SliverAppBar(
-              pinned: true,
-              floating: false,
-              expandedHeight: expandedHeight,
-              collapsedHeight: collapsedHeight,
-              backgroundColor: cs.surface,
-              elevation: 0,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Green Background Image
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(tok.radiusLg * 2),
-                        bottomRight: Radius.circular(tok.radiusLg * 2),
-                      ),
-                      child: SvgPicture.asset(
-                        AppAssets.homeBackground,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    // Content over background (Logo, Location)
-                    SafeArea(
-                      child: Padding(
-                        padding: EdgeInsets.all(tok.gap.xs),
-                        child: Column(
-                          children: [
-                            // Top Bar: Logo & Notification
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Stack(
+        children: [
+          RefreshIndicator(
+            onRefresh: () => controller.getBestRestaurants(),
+            child: CustomScrollView(
+              controller: scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                // --- 1. Expandable Header with Search Bar ---
+                SliverAppBar(
+                  pinned: true,
+                  floating: false,
+                  expandedHeight: expandedHeight,
+                  collapsedHeight: collapsedHeight,
+                  backgroundColor: cs.surface,
+                  elevation: 0,
+                  flexibleSpace: FlexibleSpaceBar(
+                    collapseMode: CollapseMode.parallax,
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Green Background Image
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(tok.radiusLg * 2),
+                            bottomRight: Radius.circular(tok.radiusLg * 2),
+                          ),
+                          child: SvgPicture.asset(
+                            AppAssets.homeBackground,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        // Content over background (Logo, Location)
+                        SafeArea(
+                          child: Padding(
+                            padding: EdgeInsets.all(tok.gap.xs),
+                            child: Column(
                               children: [
+                                // Top Bar: Logo & Notification
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SvgPicture.asset(
-                                      AppSvg.logoIcon,
-                                      width: tok.gap.xl,
-                                      height: tok.gap.xl,
-                                      colorFilter: ColorFilter.mode(
-                                        tx.inverse,
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
-                                    SizedBox(width: tok.gap.xs),
-                                    AppText(
-                                      'Lalah',
-                                      size: AppTextSize.s24,
-                                      weight: AppTextWeight.bold,
-                                      color: tx.inverse,
-                                    ),
+                                    Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                              AppSvg.logoIcon,
+                                              width: tok.gap.xl,
+                                              height: tok.gap.xl,
+                                              colorFilter: ColorFilter.mode(
+                                                tx.inverse,
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                            SizedBox(width: tok.gap.xs),
+                                            AppText(
+                                              'Lalah',
+                                              size: AppTextSize.s24,
+                                              weight: AppTextWeight.bold,
+                                              color: tx.inverse,
+                                            ),
+                                          ],
+                                        )
+                                        .animate()
+                                        .fadeIn(duration: 200.ms)
+                                        .slideX(begin: -0.2, end: 0),
+                                    GestureDetector(
+                                          onTap: () {
+                                            context.push(
+                                              AppRoutes.notificationScreen,
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(tok.gap.xs),
+                                            decoration: BoxDecoration(
+                                              color: cs.surface,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: SvgPicture.asset(
+                                              AppSvg
+                                                  .notificaitonNobackgroundIcon,
+                                              width: tok.iconSm,
+                                              height: tok.iconSm,
+                                              colorFilter: ColorFilter.mode(
+                                                tx.neutral,
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .animate()
+                                        .fadeIn(duration: 200.ms)
+                                        .scale(),
                                   ],
                                 ),
+                                SizedBox(height: tok.gap.md),
+                                // Location Row
                                 GestureDetector(
-                                  onTap: () {
-                                    context.push(AppRoutes.notificationScreen);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(tok.gap.xs),
-                                    decoration: BoxDecoration(
-                                      color: cs.surface,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: SvgPicture.asset(
-                                      AppSvg.notificaitonNobackgroundIcon,
-                                      width: tok.iconSm,
-                                      height: tok.iconSm,
-                                      colorFilter: ColorFilter.mode(
-                                        tx.neutral,
-                                        BlendMode.srcIn,
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: _showLocationPopup,
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            AppSvg.locationNobcakgroundIcon,
+                                            color: Colors.white,
+                                          ),
+                                          SizedBox(width: tok.gap.xxs),
+                                          Obx(
+                                            () => AppText(
+                                              locationController
+                                                      .isLocationLoading
+                                                      .value
+                                                  ? "Fetching location..."
+                                                  : locationController
+                                                        .currentAddress
+                                                        .value,
+                                              size: AppTextSize.s14,
+                                              weight: AppTextWeight.medium,
+                                              color: tx.inverse,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: tx.inverse,
+                                            size: 22,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ),
-                                ),
+                                    )
+                                    .animate()
+                                    .fadeIn(delay: 200.ms, duration: 200.ms)
+                                    .slideX(begin: -0.1, end: 0),
                               ],
                             ),
-                            SizedBox(height: tok.gap.md),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(22),
+                    child:
+                        _HomeSearchBar(
+                              tok: tok,
+                              cs: cs,
+                              tx: tx,
+                              onSearchChanged: controller.onSearchChanged,
+                            )
+                            .animate()
+                            .fadeIn(delay: 200.ms, duration: 200.ms)
+                            .slideY(
+                              begin: 0.5,
+                              end: 0,
+                              curve: Curves.easeOutBack,
+                            ),
+                  ),
+                ),
 
-                            // Location Row
-                            GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: _showLocationPopup,
-                              child: Row(
+                // --- 2. Sticky Categories + Restaurant List (only when location is available) ---
+                Obx(() {
+                  // Show NoLocationWidget when: location is denied OR popup was shown but no location yet
+                  final bool popupWasShown = !locationController
+                      .shouldShowLocationPopup();
+                  final bool noLocation =
+                      !locationController.hasLocation.value &&
+                      !locationController.isLocationLoading.value &&
+                      (locationController.locationDenied.value ||
+                          popupWasShown);
+
+                  if (noLocation) {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: NoLocationWidget(
+                        locationController: locationController,
+                      ),
+                    );
+                  }
+
+                  return SliverMainAxisGroup(
+                    slivers: [
+                      // --- Sticky Categories ---
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: CategoryHeaderDelegate(
+                          height: height * 0.145,
+                          backgroundColor: cs.surface,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: tok.gap.xs,
+                              // vertical: tok.gap.,
+                            ),
+                            child: Obx(
+                              () => Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  SvgPicture.asset(
-                                    AppSvg.locationNobcakgroundIcon,
-                                    color: Colors.white,
+                                  _buildCategoryItem(
+                                    0,
+                                    tok,
+                                    tx,
+                                    cs,
+                                    'Near you',
+                                    AppAssets.mapIcon,
+                                    controller.selectedCategory.value ==
+                                        'Near you',
+                                    () {
+                                      HapticFeedback.mediumImpact();
+                                      controller.onCategorySelected('Near you');
+                                    },
                                   ),
-                                  // Icon(
-                                  //   Icons.location_on,
-                                  //   color: tx.inverse,
-                                  //   size: 18,
-                                  // ),
-                                  SizedBox(width: tok.gap.xxs),
-                                  Obx(
-                                    () => AppText(
-                                      locationController.isLocationLoading.value
-                                          ? "Fetching location..."
-                                          : locationController
-                                                .currentAddress
-                                                .value,
-                                      size: AppTextSize.s14,
-                                      weight: AppTextWeight.medium,
-                                      color: tx.inverse,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
+                                  _buildCategoryItem(
+                                    1,
+                                    tok,
+                                    tx,
+                                    cs,
+                                    'Top rated',
+                                    AppAssets.thumbIcon,
+                                    controller.selectedCategory.value ==
+                                        'Top rated',
+                                    () {
+                                      HapticFeedback.mediumImpact();
+                                      controller.onCategorySelected(
+                                        'Top rated',
+                                      );
+                                    },
                                   ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: tx.inverse,
-                                    size: 22,
+                                  _buildCategoryItem(
+                                    2,
+                                    tok,
+                                    tx,
+                                    cs,
+                                    'Open now',
+                                    AppAssets.clockIcon,
+                                    controller.selectedCategory.value ==
+                                        'Open now',
+                                    () {
+                                      HapticFeedback.mediumImpact();
+                                      controller.onCategorySelected('Open now');
+                                    },
+                                  ),
+                                  _buildCategoryItem(
+                                    3,
+                                    tok,
+                                    tx,
+                                    cs,
+                                    'Certified',
+                                    AppAssets.certifiedIcon,
+                                    controller.selectedCategory.value ==
+                                        'Certified',
+                                    () {
+                                      HapticFeedback.mediumImpact();
+                                      controller.onCategorySelected(
+                                        'Certified',
+                                      );
+                                    },
+                                  ),
+                                  _buildCategoryItem(
+                                    4,
+                                    tok,
+                                    tx,
+                                    cs,
+                                    'Top reviewed',
+                                    AppAssets.reviewIcon,
+                                    controller.selectedCategory.value ==
+                                        'Top reviewed',
+                                    () {
+                                      HapticFeedback.mediumImpact();
+                                      controller.onCategorySelected(
+                                        'Top reviewed',
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(22),
-                child: _HomeSearchBar(tok: tok, cs: cs, tx: tx),
-              ),
-            ),
 
-            // --- 2. Sticky Categories + Restaurant List (only when location is available) ---
-            Obx(() {
-              // Show NoLocationWidget when: location is denied OR popup was shown but no location yet
-              final bool popupWasShown = !locationController
-                  .shouldShowLocationPopup();
-              final bool noLocation =
-                  !locationController.hasLocation.value &&
-                  !locationController.isLocationLoading.value &&
-                  (locationController.locationDenied.value || popupWasShown);
-
-              if (noLocation) {
-                return SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: NoLocationWidget(
-                    locationController: locationController,
-                  ),
-                );
-              }
-
-              return SliverMainAxisGroup(
-                slivers: [
-                  // --- Sticky Categories ---
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: CategoryHeaderDelegate(
-                      height: height * 0.145,
-                      backgroundColor: cs.surface,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: tok.gap.xs,
-                          // vertical: tok.gap.,
+                      // --- Best Restaurants Title ---
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: tok.gap.lg,
+                            vertical: tok.gap.md,
+                          ),
+                          child: AppText(
+                            'Best restaurants',
+                            size: AppTextSize.s18,
+                            weight: AppTextWeight.bold,
+                            color: tx.neutral,
+                          ),
                         ),
-                        child: Obx(
-                          () => Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _buildCategoryItem(
-                                tok,
-                                tx,
-                                cs,
-                                'Near you',
-                                AppAssets.mapIcon,
-                                controller.selectedCategory.value == 'Near you',
-                                () => controller.onCategorySelected('Near you'),
-                              ),
-                              _buildCategoryItem(
-                                tok,
-                                tx,
-                                cs,
-                                'Top rated',
-                                AppAssets.thumbIcon,
-                                controller.selectedCategory.value ==
-                                    'Top rated',
-                                () =>
-                                    controller.onCategorySelected('Top rated'),
-                              ),
-                              _buildCategoryItem(
-                                tok,
-                                tx,
-                                cs,
-                                'Open now',
-                                AppAssets.clockIcon,
-                                controller.selectedCategory.value == 'Open now',
-                                () => controller.onCategorySelected('Open now'),
-                              ),
-                              _buildCategoryItem(
-                                tok,
-                                tx,
-                                cs,
-                                'Certified',
-                                AppAssets.certifiedIcon,
-                                controller.selectedCategory.value ==
-                                    'Certified',
-                                () =>
-                                    controller.onCategorySelected('Certified'),
-                              ),
-                              _buildCategoryItem(
-                                tok,
-                                tx,
-                                cs,
-                                'Top reviewed',
-                                AppAssets.reviewIcon,
-                                controller.selectedCategory.value ==
-                                    'Top reviewed',
-                                () => controller.onCategorySelected(
-                                  'Top reviewed',
+                      ),
+
+                      // --- Restaurant List ---
+                      Obx(() {
+                        if (controller.isLoading.value ||
+                            locationController.isLocationLoading.value &&
+                                !locationController.hasLocation.value) {
+                          return SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) => Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: tok.gap.lg,
+                                  vertical: tok.gap.xs,
                                 ),
+                                child: const RestaurantCardShimmer(),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // --- Best Restaurants Title ---
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: tok.gap.lg,
-                        vertical: tok.gap.md,
-                      ),
-                      child: AppText(
-                        'Best restaurants',
-                        size: AppTextSize.s18,
-                        weight: AppTextWeight.bold,
-                        color: tx.neutral,
-                      ),
-                    ),
-                  ),
-
-                  // --- Restaurant List ---
-                  Obx(() {
-                    if (controller.isLoading.value ||
-                        locationController.isLocationLoading.value &&
-                            !locationController.hasLocation.value) {
-                      return SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) => Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: tok.gap.lg,
-                              vertical: tok.gap.xs,
+                              childCount: 3,
                             ),
-                            child: const RestaurantCardShimmer(),
+                          );
+                        }
+
+                        if (controller.errorMessage.isNotEmpty &&
+                            controller.bestRestaurants.isEmpty) {
+                          return SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: WarningDisplay(
+                              warningMessage: "Something went wrong",
+                              subWarningMessage: controller.errorMessage.value,
+                              onRetry: () => controller.getBestRestaurants(),
+                            ),
+                          );
+                        }
+
+                        if (controller.bestRestaurants.isEmpty) {
+                          return const SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: EmptyStateWidget(
+                              title: "No Restaurants Found",
+                              description:
+                                  "We couldn't find any restaurants in your area.",
+                            ),
+                          );
+                        }
+
+                        return SliverPadding(
+                          padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final restaurant =
+                                  controller.bestRestaurants[index];
+                              return RestaurantCard(
+                                    restaurant: restaurant,
+                                    onTap: () {
+                                      context.push(
+                                        AppRoutes.restaurantDetails,
+                                        extra: restaurant.id,
+                                      );
+                                    },
+                                    onFavoriteToggle: () {
+                                      HapticFeedback.lightImpact();
+                                      controller.toggleFavorite(restaurant.id);
+                                    },
+                                  )
+                                  .animate()
+                                  .fadeIn(
+                                    duration: 300.ms,
+                                    delay: (index * 80).ms,
+                                  )
+                                  .slideY(
+                                    begin: 0.2,
+                                    end: 0,
+                                    duration: 300.ms,
+                                    curve: Curves.easeOutQuad,
+                                  );
+                            }, childCount: controller.bestRestaurants.length),
                           ),
-                          childCount: 3,
-                        ),
-                      );
-                    }
-
-                    if (controller.errorMessage.isNotEmpty &&
-                        controller.bestRestaurants.isEmpty) {
-                      return SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: WarningDisplay(
-                          warningMessage: "Something went wrong",
-                          subWarningMessage: controller.errorMessage.value,
-                          onRetry: () => controller.getBestRestaurants(),
-                        ),
-                      );
-                    }
-
-                    if (controller.bestRestaurants.isEmpty) {
-                      return const SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: EmptyStateWidget(
-                          title: "No Restaurants Found",
-                          description:
-                              "We couldn't find any restaurants in your area.",
-                        ),
-                      );
-                    }
+                        );
+                      }),
 
                     return SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: tok.gap.lg),
@@ -422,34 +531,94 @@ class _HomeScreenState extends State<HomeScreen> {
                             onFavoriteToggle: () {
                               controller.toggleFavorite(restaurant.id);
                             },
+                      // --- Loading More Indicator ---
+                      Obx(() {
+                        if (controller.isLoadingMore.value) {
+                          return SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.all(tok.gap.lg),
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
                           );
-                        }, childCount: controller.bestRestaurants.length),
-                      ),
-                    );
-                  }),
+                        }
+                        return const SliverToBoxAdapter(
+                          child: SizedBox.shrink(),
+                        );
+                      }),
 
-                  // --- Loading More Indicator ---
-                  Obx(() {
-                    if (controller.isLoadingMore.value) {
-                      return SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.all(tok.gap.lg),
-                          child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                      // --- Footer ---
+                      SliverToBoxAdapter(child: AppFooter()),
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ),
+
+          // --- Back to Top Pill (Overlaid) ---
+          Obx(() {
+            final bool showBackToTop = controller.showBackToTop.value;
+            return Positioned(
+              top: collapsedHeight + 200,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                ignoring: !showBackToTop,
+                child: Center(
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 300),
+                    opacity: showBackToTop ? 1.0 : 0.0,
+                    child: AnimatedSlide(
+                      duration: const Duration(milliseconds: 300),
+                      offset: showBackToTop
+                          ? Offset.zero
+                          : const Offset(0, -0.5),
+                      child: GestureDetector(
+                        onTap: showBackToTop ? _scrollToTop : null,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: tok.gap.sm,
+                            vertical: tok.gap.xxs + 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColor.black.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(100),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.arrow_upward,
+                                color: AppColor.white,
+                                size: 18,
+                              ),
+                              SizedBox(width: tok.gap.xxs),
+                              AppText(
+                                "Back to top",
+                                size: AppTextSize.s12,
+                                weight: AppTextWeight.medium,
+                                color: tx.inverse,
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    }
-                    return const SliverToBoxAdapter(child: SizedBox.shrink());
-                  }),
-
-                  // --- Footer ---
-                  SliverToBoxAdapter(child: AppFooter()),
-                ],
-              );
-            }),
-          ],
-        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
       ),
       floatingActionButton: Obx(() {
         final bottomNavController = Get.find<BottomNavController>();
@@ -480,6 +649,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SizedBox(
               height: height * 0.054,
               child: FloatingActionButton.extended(
+                heroTag: 'mapButton',
                 onPressed: null, // Animation wrapper handles taps
                 backgroundColor: AppColor.primaryColor,
                 elevation: 4,
@@ -504,6 +674,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoryItem(
+    int index,
     AppTokens tok,
     AppTextColors tx,
     ColorScheme cs,
@@ -515,51 +686,78 @@ class _HomeScreenState extends State<HomeScreen> {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: Column(
-          mainAxisSize:
-              MainAxisSize.min, // Important for layout inside row/column
-          children: [
-            Container(
-              padding: EdgeInsets.all(tok.gap.xs),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColor.primaryColor.withOpacity(0.05)
-                    : cs.surfaceContainerHighest.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(tok.radiusMd),
-                border: Border.all(
-                  color: isSelected
-                      ? AppColor.primaryColor
-                      : Colors.transparent,
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: cs.onSurface.withOpacity(0.02),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Image.asset(
-                iconPath,
-                width: tok.gap.xxl,
-                height: tok.gap.xxl,
-              ),
-            ),
-            SizedBox(height: tok.gap.xs),
-            AppText(
-              label,
-              size:
-                  AppTextSize.s10, // Slightly smaller text to prevent clipping
-              weight: AppTextWeight.medium,
-              color: isSelected ? AppColor.primaryColor : tx.subtle,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow:
-                  TextOverflow.visible, // Ensures it matches parent bounds
-            ),
-          ],
-        ),
+        child:
+            Column(
+                  mainAxisSize: MainAxisSize
+                      .min, // Important for layout inside row/column
+                  children: [
+                    AnimatedContainer(
+                          duration: 300.ms,
+                          curve: Curves.easeInOut,
+                          padding: EdgeInsets.all(tok.gap.xs),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColor.primaryColor.withOpacity(0.08)
+                                : cs.surfaceContainerHighest.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(tok.radiusMd),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColor.primaryColor
+                                  : Colors.transparent,
+                              width: 1.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: cs.onSurface.withOpacity(
+                                  isSelected ? 0.05 : 0.02,
+                                ),
+                                blurRadius: isSelected ? 15 : 10,
+                                offset: Offset(0, isSelected ? 6 : 4),
+                              ),
+                            ],
+                          ),
+                          child: Image.asset(
+                            iconPath,
+                            width: tok.gap.xxl,
+                            height: tok.gap.xxl,
+                          ),
+                        )
+                        .animate(target: isSelected ? 1 : 0)
+                        .scale(
+                          begin: const Offset(1, 1),
+                          end: const Offset(1.15, 1.15),
+                          duration: 400.ms,
+                          curve: Curves.easeOutBack,
+                        )
+                        .shimmer(
+                          duration: 1200.ms,
+                          color: Colors.white.withOpacity(0.2),
+                        ),
+                    SizedBox(height: tok.gap.xs),
+                    AppText(
+                          label,
+                          size: AppTextSize
+                              .s10, // Slightly smaller text to prevent clipping
+                          weight: isSelected
+                              ? AppTextWeight.bold
+                              : AppTextWeight.medium,
+                          color: isSelected ? AppColor.primaryColor : tx.subtle,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow
+                              .visible, // Ensures it matches parent bounds
+                        )
+                        .animate(target: isSelected ? 1 : 0)
+                        .scale(
+                          begin: const Offset(1, 1),
+                          end: const Offset(1.05, 1.05),
+                          duration: 400.ms,
+                        ),
+                  ],
+                )
+                .animate()
+                .fadeIn(delay: (200 + index * 100).ms, duration: 200.ms)
+                .slideX(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
       ),
     );
   }
